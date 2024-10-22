@@ -24,6 +24,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
 
             public async Task<Result> Handle(CreateOnHoldTicketCommand command, CancellationToken cancellationToken)
             {
+                var onHoldConcern = new List<TicketOnHold>(); 
+
                 var ticketConcernExist = await _context.TicketConcerns
                     .Include(i => i.RequestorByUser)
                     .FirstOrDefaultAsync(t => t.Id == command.TicketConcernId,cancellationToken);
@@ -43,14 +45,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                 }
                 else
                 {
+
                     ticketConcernExist.OnHoldAt = DateTime.Now;
                     ticketConcernExist.OnHoldReason = command.Reason;
+                    ticketConcernExist.OnHold = true;
 
                     var addOnHold = await CreateOnHold(command, cancellationToken);
+                    onHoldConcern.Add(addOnHold);
                     await OnHoldTicketHistory(command, cancellationToken);
                     await TransactionNotification(ticketConcernExist, command, cancellationToken);
 
-                    onHoldExist = addOnHold;
                 }
 
                 if (!Directory.Exists(TicketingConString.AttachmentPath))
@@ -60,7 +64,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
 
                 if (command.OnHoldAttachments.Count(x => x.Attachment != null) > 0)
                 {
-                    await AttachmentHandler(onHoldExist, command, cancellationToken);
+
+                    var attachmentValidation = await AttachmentHandler(onHoldConcern, command, cancellationToken);
+                    if (attachmentValidation is not null)
+                        return attachmentValidation;
                 }
 
 
@@ -102,8 +109,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                 await _context.TicketHistories.AddAsync(addTicketHistory);
 
                 return addTicketHistory;
-
-
             }
 
             private async Task<TicketTransactionNotification> TransactionNotification(TicketConcern ticketConcern, CreateOnHoldTicketCommand command, CancellationToken cancellationToken)
@@ -115,8 +120,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                     AddedBy = command.Added_By.Value,
                     Created_At = DateTime.Now,
                     ReceiveBy = ticketConcern.RequestorBy.Value,
-                    //Modules = PathConString.Approval,
-                    //Modules_Parameter = PathConString.ForClosingTicket,
                     PathId = command.TicketConcernId,
 
                 };
@@ -125,7 +128,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
 
                 return addNewTicketTransactionNotification;
             }
-            private async Task<Result?> AttachmentHandler(TicketOnHold onHold, CreateOnHoldTicketCommand command, CancellationToken cancellationToken)
+            private async Task<Result?> AttachmentHandler(List<TicketOnHold> onHold, CreateOnHoldTicketCommand command, CancellationToken cancellationToken)
             {
 
                 foreach (var attachments in command.OnHoldAttachments.Where(a => a.Attachment.Length > 0))
@@ -163,7 +166,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                         var addAttachment = new TicketAttachment
                         {
                             TicketConcernId = command.TicketConcernId,
-                            ClosingTicketId = onHold.Id,
+                            TicketOnHoldId = onHold.First().Id,
                             Attachment = filePath,
                             FileName = attachments.Attachment.FileName,
                             FileSize = attachments.Attachment.Length,
