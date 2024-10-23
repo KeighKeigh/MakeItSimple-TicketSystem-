@@ -406,6 +406,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     OpenTicketNotif = openTicketNotif.Count(),
                     ForTransferNotif = forTransferNotif.Count(),
                     TransferApprovalNotif = transferApprovalNotif.Count(),
+                    OnHold = onHoldNotif.Count(), 
                     ForCloseNotif = forCloseNotif.Count(),
                     NotConfirmCloseNotif = notCloseConfirmCloseNotif.Count(),
                     ClosedNotif = closedNotif.Count(),

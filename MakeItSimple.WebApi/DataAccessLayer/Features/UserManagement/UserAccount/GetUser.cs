@@ -7,6 +7,7 @@ using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.Common.ConstantString;
 using System.Data;
+using Dapper;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 {
@@ -92,13 +93,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
                     .Include(x => x.ModifiedByUser)
                     .Include(x => x.UserRole);
 
-                    //.Include(x => x.acc);
-                    
+                //.Include(x => x.acc);
 
 
-                if(!string.IsNullOrEmpty(request.Search))
+
+                if (!string.IsNullOrEmpty(request.Search))
                 {
-                    userQuery = userQuery.Where(x => x.Fullname.Contains(request.Search) 
+                    userQuery = userQuery.Where(x => x.Fullname.Contains(request.Search)
                     || x.UserRole.UserRoleName.Contains(request.Search));
                 }
 
@@ -111,7 +112,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 
                 var userPermissions = new List<string>();
 
-                var users =  userQuery.Select(x => new GetUserResult
+                var users = userQuery.Select(x => new GetUserResult
                 {
 
                     Id = x.Id,
@@ -130,7 +131,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
                     User_Role_Name = x.UserRole.UserRoleName,
                     DepartmentId = x.DepartmentId,
                     Department_Code = x.Department.DepartmentCode,
-                    Department_Name = x.Department.DepartmentName, 
+                    Department_Name = x.Department.DepartmentName,
                     SubUnitId = x.SubUnitId,
                     SubUnit_Code = x.SubUnit.SubUnitCode,
                     SubUnit_Name = x.SubUnit.SubUnitName,
@@ -146,8 +147,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
                     UnitId = x.UnitId,
                     Unit_Code = x.Units.UnitCode,
                     Unit_Name = x.Units.UnitName,
-                    Permission =  x.UserRole.Permissions != null ? x.UserRole.Permissions : userPermissions,
-                    Is_Use = x.Approvers.Any() || x.Receivers.Any() || 
+                    Permission = x.UserRole.Permissions != null ? x.UserRole.Permissions : userPermissions,
+                    Is_Use = x.Approvers.Any() || x.Receivers.Any() ||
                     x.ApproversTickets.Any(x => x.IsApprove == null) ||
                     (x.UserRole.UserRoleName.Contains(TicketingConString.IssueHandler)
                     && x.TicketConcerns.Any(x => x.IsApprove == true && x.IsClosedApprove == null)) ?
@@ -156,8 +157,33 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 
                 });
 
-                return await PagedList<GetUserResult>.CreateAsync(users, request.PageNumber , request.PageSize);
+                return await PagedList<GetUserResult>.CreateAsync(users, request.PageNumber, request.PageSize);
 
+
+                //  var sql =  @"
+                //            SELECT 
+                //            u.id AS Id, 
+                //            u.emp_id AS EmpId,
+                //            u.fullname As Fullname,
+                //            u.username AS Username,
+                //            u.created_at As Created_Atm,
+                //            a.fullname AS Added_By,
+                //            u.fullname AS Modified_By,
+                //            u.updated_at AS Updated_At,
+
+
+                //            FROM Users u
+                //            LEFT JOIN Users a
+                //            ON u.added_by = a.id
+                //            LEFT JOIN Users m
+                //            ON u.modified_by = a.id";
+
+
+
+
+                //var results = await _dbConnection.QueryAsync<GetUserResult>(sql);
+
+                //return PagedList<GetUserResult>.Create(results.AsQueryable(), request.PageNumber, request.PageSize);
             }
 
 

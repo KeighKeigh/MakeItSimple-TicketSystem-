@@ -8,6 +8,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
         public class ResumeOnHoldTicketCommand : IRequest<Result>
         {
             public int TicketOnHoldId { get; set; }
+            public Guid? Transacted_By { get; set; }
         }
     }
 }

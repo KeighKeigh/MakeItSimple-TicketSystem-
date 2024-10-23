@@ -96,7 +96,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
             {
                 var addTicketHistory = new TicketHistory
                 {
-                    TicketConcernId = command.Id,
+                    TicketConcernId = command.TicketConcernId,
                     TransactedBy = command.Added_By,
                     TransactionDate = DateTime.Now,
                     Request = TicketingConString.OnHold,

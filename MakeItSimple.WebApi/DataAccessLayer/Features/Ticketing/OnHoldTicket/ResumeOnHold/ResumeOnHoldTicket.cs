@@ -1,9 +1,11 @@
 ﻿using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.CreateOnHold.CreateOnHoldTicket;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.ResumeOnHold
 {
@@ -42,12 +44,33 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 var ticketConcern = await _context.TicketConcerns
                     .FirstOrDefaultAsync(t => t.Id == ticketOnHold.TicketConcernId, cancellationToken);
 
+                await OnHoldTicketHistory(ticketConcern, command, cancellationToken);
+
                 ticketConcern.OnHold = null;
                 ticketConcern.Resume_At = DateTime.Now;
 
                 return ticketOnHold;
 
             }
+
+            private async Task<TicketHistory> OnHoldTicketHistory(TicketConcern ticketConcern, ResumeOnHoldTicketCommand command, CancellationToken cancellationToken)
+            {
+                var addTicketHistory = new TicketHistory
+                {
+                    TicketConcernId = ticketConcern.Id,
+                    TransactedBy = command.Transacted_By,
+                    TransactionDate = DateTime.Now,
+                    Request = TicketingConString.OnHold,
+                    Status = TicketingConString.Resume
+
+                };
+
+                await _context.TicketHistories.AddAsync(addTicketHistory);
+
+                return addTicketHistory;
+            }
+
+
         }
     }
 }
