@@ -4,6 +4,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetByUserDepartment;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetDepartment;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetUserDepartment;
 
@@ -21,7 +22,7 @@ namespace MakeItSimple.WebApi.Controllers.Setup.DepartmentController
         }
 
         [HttpPost]
-        public async Task<IActionResult> SyncDepartment([FromBody] SyncDepartmentCommand command )
+        public async Task<IActionResult> SyncDepartment([FromBody] SyncDepartmentCommand command)
         {
             try
             {
@@ -78,7 +79,7 @@ namespace MakeItSimple.WebApi.Controllers.Setup.DepartmentController
                 return Ok(successResult);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -90,16 +91,35 @@ namespace MakeItSimple.WebApi.Controllers.Setup.DepartmentController
             try
             {
                 var result = await _mediator.Send(command);
-                if(result.IsFailure)
+                if (result.IsFailure)
                 {
                     return BadRequest(result);
                 }
 
                 return Ok(result);
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
-                return Conflict(ex.Message );
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("by-user-department")]
+        public async Task<IActionResult> GetUserByDepartment([FromQuery] GetUserByDepartmentCommand command)
+        {
+            try
+            {
+                var result = await _mediator.Send(command);
+                if (result.IsFailure)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
             }
         }
 

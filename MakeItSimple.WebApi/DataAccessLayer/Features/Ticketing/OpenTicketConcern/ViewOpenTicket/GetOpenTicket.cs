@@ -344,6 +344,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             IsHold = h.IsHold,
                             ResumeAt = h.ResumeAt,
                             GetAttachmentForOnHoldTickets = h.TicketAttachments
+
                             .Select(t => new GetOpenTicketResult.GetOnHold.GetAttachmentForOnHoldTicket
                             {
                                 TicketAttachmentId = t.Id,

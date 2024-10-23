@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.Common.ConstantString;
+using System.Data;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 {
@@ -75,10 +76,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
         {
 
             private readonly MisDbContext _context;
+            private readonly IDbConnection _dbConnection;
 
-            public Handler(MisDbContext context)
+            public Handler(MisDbContext context , IDbConnection dbConnection)
             {
                 _context = context;
+                _dbConnection = dbConnection;
             }
 
             public async Task<PagedList<GetUserResult>> Handle(GetUsersQuery request, CancellationToken cancellationToken)

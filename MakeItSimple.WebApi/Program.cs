@@ -15,6 +15,8 @@ using MakeItSimple.WebApi.Common.Cloudinary;
 using MakeItSimple.WebApi;
 using Microsoft.AspNetCore.Http.Connections;
 using MakeItSimple.WebApi.Common.SignalR;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 
 
@@ -33,6 +35,9 @@ x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(180))
     .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
 
 );
+
+
+builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
 
 
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);

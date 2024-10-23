@@ -251,7 +251,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                     var openTicket = ticketConcernQuery
                          .Where(x => x.IsApprove == true && x.IsTransfer != false
-                         &&  x.IsClosedApprove == null)
+                         &&  x.IsClosedApprove == null && x.OnHold == null)
                          .Select(x => x.Id)
                          .ToList();
 
@@ -267,14 +267,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
 
                     var transferApproval = transferQuery
-                        .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
+                        .Where(t => t.IsTransfer == false && t.TicketConcern.OnHold == null && t.TransferTo == request.UserId)
                         .Select(x => x.Id)
                         .ToList();
 
                     transferApprovalNotif = transferApproval;
 
                     var forClosedTicket = ticketConcernQuery
-                        .Where(x => x.IsClosedApprove == false)
+                        .Where(x => x.IsClosedApprove == false && x.OnHold == null)
                         .Select(x => x.Id)  
                         .ToList();
 
@@ -289,7 +289,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     onHoldNotif = onHold;
 
                     var notConfirmTicket = ticketConcernQuery
-                        .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null)
+                        .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null)
                         .Select(x => x.Id)  
                         .ToList();
 
@@ -298,8 +298,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
 
 
-                    var closedTicket = ticketConcernQuery
-                        .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
+                    var closedTicket = ticketConcernQuery 
+                        .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true && x.OnHold == null)
                         .Select(x => x.Id)
                         .ToList();
 
