@@ -12,11 +12,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MakeItSimple.WebApi.Common.Cloudinary;
-using MakeItSimple.WebApi;
 using Microsoft.AspNetCore.Http.Connections;
 using MakeItSimple.WebApi.Common.SignalR;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using MakeItSimple.WebApi;
 
 
 

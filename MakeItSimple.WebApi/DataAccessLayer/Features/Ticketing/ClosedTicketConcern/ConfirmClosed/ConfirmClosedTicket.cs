@@ -43,7 +43,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 if (ticketHistory is not null)
                     await UpdateTicketHistory(ticketHistory,ticketConcernExist,command, cancellationToken); 
                
-                await TransactionNotification(ticketHistory,requestConcernId,ticketConcernExist,command,cancellationToken);
+                await TransactionNotification(ticketHistory,ticketConcernExist,command,cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
@@ -80,7 +80,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 return ticketHistory;   
             }
 
-            private async Task<TicketTransactionNotification> TransactionNotification(TicketHistory ticketHistory,RequestConcern requestConcern,TicketConcern ticketConcern, ConfirmClosedTicketCommand command, CancellationToken cancellationToken)
+            private async Task<TicketTransactionNotification> TransactionNotification(TicketHistory ticketHistory,TicketConcern ticketConcern, ConfirmClosedTicketCommand command, CancellationToken cancellationToken)
             {
 
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
@@ -90,7 +90,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
                     AddedBy = command.Transacted_By.Value,
                     Created_At = DateTime.Now,
-                    ReceiveBy = requestConcern.UserId.Value,
+                    ReceiveBy = ticketConcern.UserId.Value,
                     Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.Closed,
                     PathId = ticketConcern.Id

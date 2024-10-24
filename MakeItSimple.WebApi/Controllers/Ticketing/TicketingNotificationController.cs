@@ -1,5 +1,4 @@
-﻿using MakeItSimple.WebApi;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.CommentNotification;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.TicketingNotification;
@@ -14,6 +13,7 @@ using System.Security.Cryptography;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.GetTicketTransactionNotification;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.ClickedTransaction;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.GetAllTransactionNotification;
+using MakeItSimple.WebApi;
 
 [ApiController]
 [Route("api/ticketing-notification")]
