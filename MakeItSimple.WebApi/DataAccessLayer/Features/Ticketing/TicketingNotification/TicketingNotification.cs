@@ -258,7 +258,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     openTicketNotif = openTicket;
 
                     var forTransferTicket = transferQuery
-                         .Where(x => x.IsTransfer == false && x.TransferBy == request.UserId)
+                         .Where(x => x.IsTransfer == false && x.TicketConcern.OnHold == null && x.TransferBy == request.UserId)
                          .Select (x => x.Id)
                          .ToList();
 

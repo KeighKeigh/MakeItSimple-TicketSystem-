@@ -207,44 +207,32 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         RequestConcernId = g.Id,
                         Concern = g.Concern,
                         Resolution = g.Resolution,
-
                         CompanyId = g.CompanyId,
                         Company_Code = g.Company.CompanyCode,
                         Company_Name = g.Company.CompanyName,
-
                         BusinessUnitId = g.BusinessUnitId,
                         BusinessUnit_Code = g.BusinessUnit.BusinessCode,
                         BusinessUnit_Name = g.BusinessUnit.BusinessName,
-
                         DepartmentId = g.DepartmentId,
                         Department_Code = g.Department.DepartmentCode,
                         Department_Name = g.Department.DepartmentName,
-
                         UnitId = g.UnitId,
                         Unit_Code = g.Unit.UnitCode,
                         Unit_Name = g.Unit.UnitName,
-
                         SubUnitId = g.SubUnitId,
                         SubUnit_Code = g.SubUnit.SubUnitCode,
                         SubUnit_Name = g.SubUnit.SubUnitName,
-
                         LocationId = g.LocationId,
                         Location_Code = g.Location.LocationCode,
                         Location_Name = g.Location.LocationName,
-
                         RequestorId = g.UserId,
                         FullName = g.User.Fullname,
-
                         ChannelId = g.ChannelId,
                         Channel_Name = g.Channel.ChannelName,
-
                         CategoryId = g.CategoryId,
                         Category_Description = g.Category.CategoryDescription,
-
-
                         SubCategoryId = g.SubCategoryId,
                         SubCategory_Description = g.SubCategory.SubCategoryDescription,
-
                         Concern_Status = g.ConcernStatus,
                         Is_Done = g.IsDone,
                         Remarks = g.Remarks,

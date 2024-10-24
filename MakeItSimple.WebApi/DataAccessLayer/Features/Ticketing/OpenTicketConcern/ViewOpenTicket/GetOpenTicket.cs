@@ -97,12 +97,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                             case TicketingConString.ForTransfer:
                                 ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.IsTransfer == false && x.OnHold == null);
+                                    .Where(x => x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferBy == request.UserId);
                                 break;
 
                             case TicketingConString.TransferApproval:
                                 ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.IsTransfer == false && x.OnHold == null);
+                                    .Where(x => x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferTo == request.UserId);
                                 break;
 
                             case TicketingConString.OnHold:
@@ -148,12 +148,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                             case TicketingConString.ForTransfer:
                                 ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.IsTransfer == false && x.OnHold == null);
+                                    .Where(x => x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferBy == request.UserId);
                                 break;
 
                             case TicketingConString.TransferApproval:
                                 ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.IsTransfer == false && x.OnHold == null);
+                                    .Where(x => x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferTo == request.UserId);
                                 break;
 
                             case TicketingConString.OnHold:
