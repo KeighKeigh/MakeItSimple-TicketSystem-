@@ -279,8 +279,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         Target_Date = x.TargetDate,
                         Ticket_Status = x.IsApprove == false && x.OnHold == null ? TicketingConString.PendingRequest
                                         : x.IsApprove == true != false && x.IsTransfer != false && x.IsClosedApprove == null && x.OnHold == null ? TicketingConString.OpenTicket
-                                        : x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferTo == request.UserId ? TicketingConString.ForTransfer
-                                        : x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferBy == request.UserId ? TicketingConString.TransferApproval
+                                        : x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferBy == request.UserId ? TicketingConString.ForTransfer
+                                        : x.IsTransfer == false && x.OnHold == null && x.TransferTicketConcerns.First().TransferTo == request.UserId ? TicketingConString.TransferApproval
                                         : x.OnHold == true && x.OnHold == true ? TicketingConString.OnHold
                                         : x.IsClosedApprove == false && x.OnHold == null ? TicketingConString.ForClosing
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null ? TicketingConString.NotConfirm
