@@ -105,6 +105,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public class GetForTransferTicket
             {
                 public int? TransferTicketConcernId { get; set; }
+                public Guid? Transfer_To { get; set; }
+                public string? Transfer_To_Name { get; set; }
                 public string Transfer_Remarks { get; set; }
                 public bool? IsApprove { get; set; }
 
@@ -122,6 +124,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public class TransferApprovalTicket
             {
                 public int? TransferTicketConcernId { get; set; }
+                public Guid? Transfer_By { get; set; }
+                public string Transfer_By_Name { get; set; }
                 public string Transfer_Remarks { get; set; }
                 public bool? IsApprove { get; set; }
 

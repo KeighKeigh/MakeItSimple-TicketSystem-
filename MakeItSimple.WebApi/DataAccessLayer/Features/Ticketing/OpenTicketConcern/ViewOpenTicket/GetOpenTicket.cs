@@ -363,6 +363,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         {
                             TransferTicketConcernId = x.Id,
                             Transfer_Remarks = x.TransferRemarks,
+                            Transfer_To = x.TransferTo,
+                            Transfer_To_Name = x.TransferToUser.Fullname,
                             IsApprove = x.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
                             GetAttachmentForTransferTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.GetForTransferTicket.GetAttachmentForTransferTicket
                             {
@@ -382,6 +384,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         {
                             TransferTicketConcernId = a.Id,
                             Transfer_Remarks = a.TransferRemarks,
+                            Transfer_By = a.TransferBy,
+                            Transfer_By_Name = a.TransferByUser.Fullname,
                             IsApprove = a.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
                             GetAttachmentTransferApprovalTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.TransferApprovalTicket.GetAttachmentTransferApprovalTicket
                             {

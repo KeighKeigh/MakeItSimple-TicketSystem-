@@ -165,17 +165,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 //                });
 
                
-
-
 //                return  PagedList<GetUserResult>.Create(results.AsQueryable(), request.PageNumber, request.PageSize);
 
                      IQueryable<User> userQuery = _context.Users
                     .Include(x => x.AddedByUser)
                     .Include(x => x.ModifiedByUser)
-                    .Include(x => x.UserRole);
-
-                    //.Include(x => x.acc);
-                    
+                    .Include(x => x.UserRole);                    
 
                 if(!string.IsNullOrEmpty(request.Search))
                 {
