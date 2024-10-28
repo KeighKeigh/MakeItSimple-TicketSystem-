@@ -38,7 +38,7 @@ x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(180))
 
 );
 
-var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+var redisConnectionString = config.GetConnectionString("Redis") ?? "localhost:6379";
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConnectionString;
