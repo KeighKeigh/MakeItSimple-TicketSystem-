@@ -39,7 +39,11 @@ x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(180))
 );
 
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
-builder.Services.AddRedisCache(redisConnectionString);
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnectionString;
+});
+
 
 builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
 

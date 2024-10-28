@@ -4,6 +4,7 @@ using MakeItSimple.WebApi.Common.Extension;
 using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount;
 using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
+using MakeItSimple.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -36,42 +37,6 @@ namespace MakeItSimple.WebApi.Controllers.UserController
             _cacheService = cacheService;
         }
 
-        //[HttpGet("GetUser")]
-        //public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
-        //{
-        //    try
-        //    {
-        //        var cacheKey = $"users_{query.PageNumber}_{query.PageSize}_{query.Search}_{query.Status}";
-
-        //        var users = await _cacheService.GetOrSetAsync<PagedList<GetUserResult>>(
-        //            cacheKey,
-        //            () => _mediator.Send(query),
-        //            TimeSpan.FromMinutes(5)
-        //        );
-
-        //        if (users == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        var successResult = Result.Success(users);
-
-        //        Response.AddPaginationHeader(
-        //            users.CurrentPage,
-        //            users.PageSize,
-        //            users.TotalCount,
-        //            users.TotalPages,
-        //            users.HasPreviousPage,
-        //            users.HasNextPage
-        //        );
-
-        //        return Ok(successResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Conflict(ex.Message);
-        //    }
-        //}
 
 
         [HttpGet("GetUser")]
@@ -79,17 +44,23 @@ namespace MakeItSimple.WebApi.Controllers.UserController
         {
             try
             {
+                var cacheKey = $"users-{query.PageNumber}-{query.PageSize}";
+                var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
+
+                if (cachedUsers != null)
+                {
+                    return Ok(Result.Success(cachedUsers));
+                }
+
                 var users = await _mediator.Send(query);
 
                 Response.AddPaginationHeader(
-
-                users.CurrentPage,
-                users.PageSize,
-                users.TotalCount,
-                users.TotalPages,
-                users.HasPreviousPage,
-                users.HasNextPage
-
+                    users.CurrentPage,
+                    users.PageSize,
+                    users.TotalCount,
+                    users.TotalPages,
+                    users.HasPreviousPage,
+                    users.HasNextPage
                 );
 
                 var result = new
@@ -102,6 +73,8 @@ namespace MakeItSimple.WebApi.Controllers.UserController
                     users.HasPreviousPage,
                     users.HasNextPage
                 };
+
+                await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
                 var successResult = Result.Success(result);
                 return Ok(successResult);

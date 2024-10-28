@@ -2,7 +2,7 @@ version: '3.4'
 
 networks: 
   makeitsimple.webapi:
-    
+
 services:
   makeitsimple.webapi:
     image: makeitsimplewebapi
@@ -13,7 +13,7 @@ services:
       - "5000:5000"  
       - "5001:5001" 
     environment:
-      - ConnectionStrings__Testing= Data Source=97.74.81.27;Initial Catalog=misdb_pretest; User ID=sa; Password=r30JNfwv1@Vbb$gq; Connect Timeout=600;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Pooling=false
+      - ConnectionStrings__Testing=Data Source=97.74.81.27; Initial Catalog=misdb_pretest;User ID=sa; Password=r30JNfwv1@Vbb$gq; Connect Timeout=600;Encrypt=False; Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Pooling=false
     networks: 
       - makeitsimple.webapi
     depends_on: 
@@ -24,9 +24,9 @@ services:
     container_name: mis.database
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=${DB_PASSWORD}
+      - SA_PASSWORD=r30JNfwv1@Vbb$gq
     ports:
-      - "1433:1433" 
+      - "1433:1433"
     networks:
       - makeitsimple.webapi
 
