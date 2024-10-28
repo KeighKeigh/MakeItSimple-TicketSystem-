@@ -91,8 +91,6 @@ namespace MakeItSimple.WebApi.Controllers.AuthenticationController
         //        return Conflict(ex.Message);
         //    }
 
-
-
         //}
 
     }

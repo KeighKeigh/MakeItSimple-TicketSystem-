@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.Common.Extension;
 using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount;
@@ -23,33 +24,72 @@ namespace MakeItSimple.WebApi.Controllers.UserController
     public class UserController : ControllerBase
     {
 
-        private readonly IMediator _mediator; 
+        private readonly IMediator _mediator;
         private readonly ValidatorHandler _validatorHandler;
+        private readonly ICacheService _cacheService;
 
 
-        public UserController(IMediator mediator , ValidatorHandler validatorHandler)
+        public UserController(IMediator mediator, ValidatorHandler validatorHandler, ICacheService cacheService)
         {
             _mediator = mediator;
             _validatorHandler = validatorHandler;
+            _cacheService = cacheService;
         }
+
+        //[HttpGet("GetUser")]
+        //public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
+        //{
+        //    try
+        //    {
+        //        var cacheKey = $"users_{query.PageNumber}_{query.PageSize}_{query.Search}_{query.Status}";
+
+        //        var users = await _cacheService.GetOrSetAsync<PagedList<GetUserResult>>(
+        //            cacheKey,
+        //            () => _mediator.Send(query),
+        //            TimeSpan.FromMinutes(5)
+        //        );
+
+        //        if (users == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        var successResult = Result.Success(users);
+
+        //        Response.AddPaginationHeader(
+        //            users.CurrentPage,
+        //            users.PageSize,
+        //            users.TotalCount,
+        //            users.TotalPages,
+        //            users.HasPreviousPage,
+        //            users.HasNextPage
+        //        );
+
+        //        return Ok(successResult);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Conflict(ex.Message);
+        //    }
+        //}
+
 
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
         {
             try
             {
-
                 var users = await _mediator.Send(query);
 
                 Response.AddPaginationHeader(
-                
+
                 users.CurrentPage,
                 users.PageSize,
                 users.TotalCount,
                 users.TotalPages,
                 users.HasPreviousPage,
                 users.HasNextPage
-                
+
                 );
 
                 var result = new
@@ -79,13 +119,13 @@ namespace MakeItSimple.WebApi.Controllers.UserController
             try
             {
                 var validationResult = await _validatorHandler.AddNewUserValidator.ValidateAsync(command);
-               
-                if(!validationResult.IsValid)
+
+                if (!validationResult.IsValid)
                 {
                     return BadRequest(validationResult.Errors);
                 }
 
-                if(User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
                 {
                     command.Added_By = userId;
                 }
@@ -123,7 +163,7 @@ namespace MakeItSimple.WebApi.Controllers.UserController
                 return Ok(result);
 
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return Conflict(ex.Message);
             }
@@ -137,13 +177,13 @@ namespace MakeItSimple.WebApi.Controllers.UserController
             {
 
                 var result = await _mediator.Send(command);
-                if(result.IsFailure)
+                if (result.IsFailure)
                 {
                     return BadRequest(result);
                 }
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Conflict(ex.Message);
             }

@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
-    <ProjectGuid>2891ef0c-d7e3-4b2b-9a7b-52e9d353ad21</ProjectGuid>
+    <ProjectGuid>0d227ebf-36c9-4f58-b51c-add724485fb8</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>makeitsimple.webapi</DockerServiceName>

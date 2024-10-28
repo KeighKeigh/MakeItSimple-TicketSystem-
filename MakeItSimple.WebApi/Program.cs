@@ -17,6 +17,8 @@ using MakeItSimple.WebApi.Common.SignalR;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using MakeItSimple.WebApi;
+using StackExchange.Redis;
+using MakeItSimple.WebApi.Common.Caching;
 
 
 
@@ -36,9 +38,10 @@ x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(180))
 
 );
 
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+builder.Services.AddRedisCache(redisConnectionString);
 
 builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
-
 
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
 
@@ -65,14 +68,12 @@ builder.Services.AddScoped<ContentType>();
 builder.Services.AddScoped<TimerControl>();
 builder.Services.AddScoped<IHubCaller, HubCaller>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle  
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen( c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "RDF MakeItSimple(TicketSystem) API", Version = "v1" });
 
-    // Define the BearerAuth scheme in Swagger document
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
@@ -81,7 +82,7 @@ builder.Services.AddSwaggerGen( c =>
         Type = SecuritySchemeType.ApiKey
     });
 
-    // Assign the BearerAuth scheme to globally apply to all operations
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -137,9 +138,12 @@ builder.Services.AddAuthentication(authOptions =>
 
     });
 
+
+builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddLazyCache();
 builder.Services.AddSignalR();
+
 
 builder.Services.Configure<CloudinaryOption>(config.GetSection("Cloudinary"));
 
