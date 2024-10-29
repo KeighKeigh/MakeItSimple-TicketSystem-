@@ -223,7 +223,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures
                     UserRoleId = user.UserRoleId,
                     DepartmentId = user.DepartmentId,
                     SubUnitId = user.SubUnitId,
-                    //TeamId = user.TeamId,
                     CompanyId = user.CompanyId,
                     LocationCode = command.LocationCode,
                     BusinessUnitId = user.BusinessUnitId,    

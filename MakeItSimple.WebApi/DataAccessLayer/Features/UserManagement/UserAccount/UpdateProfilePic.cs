@@ -20,7 +20,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccoun
             public IFormFile Profile_Pic { get; set; }
         }
 
-
         public class Handler : IRequestHandler<UpdateProfilePicCommand, Result>
         {
             private readonly MisDbContext _context;

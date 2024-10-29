@@ -261,6 +261,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 Modified_By = tc.ModifiedByUser.Fullname,
                                 Updated_At = tc.UpdatedAt,
                                 Is_Active = tc.IsActive,
+                                OnHold_At = tc.OnHoldAt,
+                                OnHold_Reasons = tc.OnHoldAt != null ? tc.TicketOnHolds
+                                .OrderByDescending(x => x.CreatedAt)
+                                .First().Reason : null,
+                                Resume_At = tc.Resume_At,
                                 Closed_At = tc.Closed_At,
                                 Closing_Notes = tc.IsClosedApprove == true ? 
                                 tc.ClosingTickets.Where(x => x.IsClosing == true)

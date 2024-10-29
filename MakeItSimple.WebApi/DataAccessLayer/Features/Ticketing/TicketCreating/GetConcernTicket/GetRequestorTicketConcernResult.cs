@@ -74,6 +74,11 @@
                 public string Modified_By { get; set; }
                 public DateTime? Updated_At { get; set; }
                 public bool Is_Active { get; set; }
+
+                public DateTime ? OnHold_At { get; set; }
+                public string OnHold_Reasons { get; set; }
+                public DateTime? Resume_At { get; set; }
+
                 public DateTime? Closed_At { get; set; }
                 public bool? Is_Transfer { get; set; }
                 public DateTime? Transfer_At { get; set; }
