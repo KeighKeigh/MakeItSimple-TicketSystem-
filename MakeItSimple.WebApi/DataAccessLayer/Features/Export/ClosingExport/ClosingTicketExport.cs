@@ -39,6 +39,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     .Include(x => x.TransferTicketConcerns)
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.RequestConcern)
+                    .ThenInclude(x => x.Channel)
                     .Where(x => x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date < request.Date_To.Value.Date)
                     .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
                     .Select(x => new ClosingTicketExportResult
@@ -60,7 +61,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
                         / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m), 2),
                         Status = TicketingConString.Closed,
-                        Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
+                        Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
+                        Category = x.RequestConcern.Channel.ChannelName,
                     }).ToListAsync();
 
 
@@ -121,7 +123,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         "Actual",
                         "Varience",
                         "Status",
-                        "Remarks"
+                        "Remarks",
+                        "Category"
 
                     };
 
@@ -152,6 +155,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         row.Cell(10).Value = closing[index - 1].Varience;
                         row.Cell(11).Value = closing[index - 1].Status;
                         row.Cell(12).Value = closing[index - 1].Remarks;
+                        row.Cell(13).Value = closing[index - 1].Category;
+
 
                     }
 

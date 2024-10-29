@@ -8,6 +8,8 @@ using MakeItSimple.WebApi.Common;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewTicketHistory.GetTicketHistory;
 using Microsoft.AspNetCore.SignalR;
 using MakeItSimple.WebApi.Common.SignalR;
+using MakeItSimple.WebApi.Common.Caching;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern;
 
 namespace MakeItSimple.WebApi.Controllers.Ticketing
 {
@@ -18,13 +20,14 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
 
         private readonly IMediator _mediator;
         private readonly TimerControl _timerControl;
-        private readonly IHubContext<NotificationHub> _client;
+        private readonly ICacheService _cacheService;
 
-        public OpenTicketController(IMediator mediator, TimerControl timerControl, IHubContext<NotificationHub> client)
+        public OpenTicketController(IMediator mediator, TimerControl timerControl, ICacheService cacheService)
         {
             _mediator = mediator;
             _timerControl = timerControl;
-            _client = client;
+
+            _cacheService = cacheService;
         }
 
         [HttpGet("page")]
@@ -44,7 +47,17 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                     {
                         query.UserId = userId;
                     }
+
                 }
+
+                var cacheKey = $"{query.UserId}-{query.PageNumber}-{query.PageSize}";
+                var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
+
+                if (cachedUsers != null)
+                {
+                    return Ok(Result.Success(cachedUsers));
+                }
+
                 var openTicket = await _mediator.Send(query);
 
                 Response.AddPaginationHeader(
@@ -69,9 +82,9 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                     openTicket.HasNextPage
                 };
 
-                var successResult = Result.Success(result);
 
-                await _client.Clients.All.SendAsync("ReceiveNotification", "New data has been received or sent.");
+                await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromSeconds(30));
+                var successResult = Result.Success(result);
 
                 return Ok(successResult);
 

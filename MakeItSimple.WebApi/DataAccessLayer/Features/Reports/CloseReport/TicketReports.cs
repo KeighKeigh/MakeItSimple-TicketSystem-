@@ -38,7 +38,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.TransferTicketConcerns)
                     .ThenInclude(x => x.TicketAttachments)
-                    .Include(x => x.RequestConcern);
+                    .Include(x => x.RequestConcern)
+                    .Include(x => x.RequestConcern)
+                    .ThenInclude(x => x.Channel);
+                    
 
 
                 if (request.Unit is not null)
@@ -100,7 +103,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
                         / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m),2),
                         Status = TicketingConString.Closed,
-                        Remarks =  x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
+                        Remarks =  x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
+                        Category = x.RequestConcern.Channel.ChannelName,
                     });
 
                 return await PagedList<Reports>.CreateAsync(results, request.PageNumber, request.PageSize);

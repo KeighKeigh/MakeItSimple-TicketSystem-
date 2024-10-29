@@ -21,6 +21,7 @@
             public decimal? Efficeincy { get; set; }
             public string Status { get; set; }
             public string Remarks { get; set; }
+            public string Category { get; set; }
 
         }
     }
