@@ -122,6 +122,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         "Target Date",
                         "Actual",
                         "Varience",
+                        "Efficiency",
                         "Status",
                         "Remarks",
                         "Category"
@@ -153,9 +154,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         row.Cell(8).Value = closing[index - 1].Target_Date;
                         row.Cell(9).Value = closing[index - 1].Actual;
                         row.Cell(10).Value = closing[index - 1].Varience;
-                        row.Cell(11).Value = closing[index - 1].Status;
-                        row.Cell(12).Value = closing[index - 1].Remarks;
-                        row.Cell(13).Value = closing[index - 1].Category;
+                        row.Cell(11).Value = closing[index - 1].Efficeincy;
+                        row.Cell(12).Value = closing[index - 1].Status;
+                        row.Cell(13).Value = closing[index - 1].Remarks;
+                        row.Cell(14).Value = closing[index - 1].Category;
 
 
                     }
