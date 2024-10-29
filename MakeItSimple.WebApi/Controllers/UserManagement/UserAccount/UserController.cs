@@ -39,57 +39,18 @@ namespace MakeItSimple.WebApi.Controllers.UserController
 
 
 
-        //[HttpGet("GetUser")]
-        //public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
-        //{
-        //    try
-        //    {
-        //        var cacheKey = $"users-{query.PageNumber}-{query.PageSize}";
-        //        var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
-
-        //        if (cachedUsers != null)
-        //        {
-        //            return Ok(Result.Success(cachedUsers));
-        //        }
-
-        //        var users = await _mediator.Send(query);
-
-        //        Response.AddPaginationHeader(
-        //            users.CurrentPage,
-        //            users.PageSize,
-        //            users.TotalCount,
-        //            users.TotalPages,
-        //            users.HasPreviousPage,
-        //            users.HasNextPage
-        //        );
-
-        //        var result = new
-        //        {
-        //            users,
-        //            users.CurrentPage,
-        //            users.PageSize,
-        //            users.TotalCount,
-        //            users.TotalPages,
-        //            users.HasPreviousPage,
-        //            users.HasNextPage
-        //        };
-
-        //        await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromMinutes(5));
-
-        //        var successResult = Result.Success(result);
-        //        return Ok(successResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Conflict(ex.Message);
-        //    }
-        //}
-
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
         {
             try
             {
+                var cacheKey = $"users-{query.PageNumber}-{query.PageSize}";
+                var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
+
+                if (cachedUsers != null)
+                {
+                    return Ok(Result.Success(cachedUsers));
+                }
 
                 var users = await _mediator.Send(query);
 
@@ -113,6 +74,8 @@ namespace MakeItSimple.WebApi.Controllers.UserController
                     users.HasNextPage
                 };
 
+                await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+
                 var successResult = Result.Success(result);
                 return Ok(successResult);
             }
@@ -121,6 +84,43 @@ namespace MakeItSimple.WebApi.Controllers.UserController
                 return Conflict(ex.Message);
             }
         }
+
+        //[HttpGet("GetUser")]
+        //public async Task<IActionResult> GetUser([FromQuery] GetUsersQuery query)
+        //{
+        //    try
+        //    {
+
+        //        var users = await _mediator.Send(query);
+
+        //        Response.AddPaginationHeader(
+        //            users.CurrentPage,
+        //            users.PageSize,
+        //            users.TotalCount,
+        //            users.TotalPages,
+        //            users.HasPreviousPage,
+        //            users.HasNextPage
+        //        );
+
+        //        var result = new
+        //        {
+        //            users,
+        //            users.CurrentPage,
+        //            users.PageSize,
+        //            users.TotalCount,
+        //            users.TotalPages,
+        //            users.HasPreviousPage,
+        //            users.HasNextPage
+        //        };
+
+        //        var successResult = Result.Success(result);
+        //        return Ok(successResult);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Conflict(ex.Message);
+        //    }
+        //}
 
 
 
