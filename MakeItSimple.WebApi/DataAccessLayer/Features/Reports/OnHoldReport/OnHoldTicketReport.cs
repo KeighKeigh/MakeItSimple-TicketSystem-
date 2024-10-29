@@ -46,6 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OnHoldReport
                 }
 
                 var reports = query
+                    .Where(r => r.CreatedAt.Date >= request.Date_From.Value && r.CreatedAt <= request.Date_To.Value)
                     .Select(r => new OnHoldTicketReportResult
                     {
                         TicketConcernId = r.TicketConcernId.Value,
