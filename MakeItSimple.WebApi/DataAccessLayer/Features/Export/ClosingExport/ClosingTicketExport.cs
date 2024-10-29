@@ -47,18 +47,20 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         UserId = x.UserId,
                         Year = x.TargetDate.Value.Date.Year.ToString(),
                         Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.TargetDate.Value.Date.Month),
-                        Start_Date = $"{x.TargetDate.Value.Date.Month}/01/{x.TargetDate.Value.Date.Year}",
-                        End_Date = $"{x.TargetDate.Value.Date.Month}/{DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month)}/{x.TargetDate.Value.Date.Year}",
+                        Start_Date = $"{x.TargetDate.Value.Date.Month}-01-{x.TargetDate.Value.Date.Year}",
+                        End_Date = $"{x.TargetDate.Value.Date.Month}-{DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month)}-{x.TargetDate.Value.Date.Year}",
                         Personnel = x.User.Fullname,
                         Ticket_Number = x.Id,
                         Description = x.RequestConcern.Concern,
-                        Target_Date = x.TargetDate.Value.Date,
-                        Actual = x.Closed_At.Value.Date,
+                        Target_Date_DateTime = x.TargetDate.Value.Date,
+                        Actual_Date_DateTime = x.Closed_At.Value.Date,
+                        Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
+                        Actual = $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
                         Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = x.Closed_At != null ? Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
-                        / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m) : null,
-                        Status = x.Closed_At != null ? TicketingConString.Closed : TicketingConString.OpenTicket,
-                        Remarks = x.Closed_At == null ? null : x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
+                        Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
+                        / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m), 2),
+                        Status = TicketingConString.Closed,
+                        Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
                     }).ToListAsync();
 
 
@@ -78,12 +80,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     {
                         case TicketingConString.OnTime:
                             closing = closing
-                                .Where(x => x.Actual.Date != null && x.Target_Date.Date > x.Actual.Date).ToList();
+                                .Where(x => x.Actual != null && x.Target_Date_DateTime > x.Actual_Date_DateTime)
+                                .ToList();
                             break;
 
                         case TicketingConString.Delay:
                             closing = closing
-                                .Where(x => x.Actual.Date != null && x.Target_Date.Date < x.Actual.Date)
+                                .Where(x => x.Actual != null && x.Target_Date_DateTime < x.Actual_Date_DateTime)
                                 .ToList();
                             break;
 

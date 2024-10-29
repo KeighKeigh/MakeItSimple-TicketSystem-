@@ -13,8 +13,10 @@
             public string Personnel { get; set; }
             public int? Ticket_Number { get; set; }
             public string Description { get; set; }
-            public DateTime Target_Date { get; set; }
-            public DateTime Actual { get; set; }
+            public DateTime? Target_Date_DateTime { get; set; }
+            public DateTime? Actual_Date_DateTime { get; set; }
+            public string Target_Date { get; set; }
+            public string Actual { get; set; }
             public int Varience { get; set; }
             public decimal? Efficeincy { get; set; }
             public string Status { get; set; }

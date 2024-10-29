@@ -7,6 +7,7 @@ using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
 {
@@ -77,28 +78,29 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         || x.User.Fullname.Contains(request.Search));
                 }
 
+                ticketQuery = ticketQuery
+                    .Where(x => x.TargetDate.HasValue && x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date <= request.Date_To.Value.Date);
+
 
                 var results = ticketQuery
                     .Where(x => x.RequestConcern.Is_Confirm == true && x.IsClosedApprove == true)
-                    .Where(x => x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date < request.Date_To.Value.Date)
+
                     .Select(x => new Reports
                     {
                         Year = x.TargetDate.Value.Date.Year.ToString(),
                         Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.TargetDate.Value.Date.Month),
-                        Start_Date = new DateTime(x.TargetDate.Value.Date.Month, 1, x.TargetDate.Value.Date.Year),
-                        End_Date = new DateTime(x.TargetDate.Value.Date.Month,
-                        DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month), x.TargetDate.Value.Date.Year),
+                        Start_Date = $"{x.TargetDate.Value.Date.Month}-01-{x.TargetDate.Value.Date.Year}",
+                        End_Date = $"{x.TargetDate.Value.Date.Month}-{DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month)}-{x.TargetDate.Value.Date.Year}",
                         Personnel = x.User.Fullname,
                         Ticket_Number = x.Id,
                         Description = x.RequestConcern.Concern,
-                        Target_Date = new DateTime(x.TargetDate.Value.Date.Month, x.TargetDate.Value.Date.Day, x.TargetDate.Value.Date.Year),
-                        Actual = x.Closed_At != null ? new DateTime(x.Closed_At.Value.Date.Month, x.TargetDate.Value.Date.Day, x.TargetDate.Value.Date.Year)
-                        : new DateTime(x.TargetDate.Value.Date.Month, x.TargetDate.Value.Date.Day, x.TargetDate.Value.Date.Year),
+                        Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
+                        Actual =  $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
                         Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = x.Closed_At != null ? Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
-                       / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m) : null,
-                        Status = x.Closed_At != null ? TicketingConString.Closed : TicketingConString.OpenTicket,
-                        Remarks = x.Closed_At == null ? null : x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
+                        Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
+                        / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m),2),
+                        Status = TicketingConString.Closed,
+                        Remarks =  x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay
                     });
 
                 return await PagedList<Reports>.CreateAsync(results, request.PageNumber, request.PageSize);
