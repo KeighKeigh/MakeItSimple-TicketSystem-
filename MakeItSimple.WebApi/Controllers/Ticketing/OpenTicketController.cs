@@ -50,13 +50,13 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
 
                 }
 
-                var cacheKey = $"{query.UserId}-{query.PageNumber}-{query.PageSize}";
-                var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
+                //var cacheKey = $"{query.UserId}-{query.PageNumber}-{query.PageSize}";
+                //var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
 
-                if (cachedUsers != null)
-                {
-                    return Ok(Result.Success(cachedUsers));
-                }
+                //if (cachedUsers != null)
+                //{
+                //    return Ok(Result.Success(cachedUsers));
+                //}
 
                 var openTicket = await _mediator.Send(query);
 
@@ -83,7 +83,7 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 };
 
 
-                await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromSeconds(30));
+                //await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromSeconds(30));
                 var successResult = Result.Success(result);
 
                 return Ok(successResult);
