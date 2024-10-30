@@ -64,7 +64,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
             public async Task<Result> Handle(TicketingNotificationCommand request, CancellationToken cancellationToken)
             {
 
-                var allRequestTicketNotif = new List<int>();
+                var allRequestTicketNotif = new int();
                 var forTicketNotif = new List<int>();
                 var currentlyFixingNotif = new List<int>();
                 var notConfirmNotif = new List<int>();
@@ -110,16 +110,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     .ToList();
  
                 var requestConcernsQuery = await _context.RequestConcerns
-                    .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.TicketConcerns)
-                    .Include(x => x.User)
-                    .Include(x => x.Company)
-                    .Include(x => x.BusinessUnit)
-                    .Include(x => x.Department)
-                    .Include(x => x.Unit)
-                    .Include (x => x.SubUnit)
-                    .Include(x => x.Location)
                     .Where(x => x.IsActive == true)
+                    .AsSplitQuery()
                     .Select(x => new
                     {
                         x.Id,
@@ -134,18 +128,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     }).ToListAsync();
 
                 var ticketConcernQuery = await _context.TicketConcerns
-                    .AsNoTracking()
-                    .Include(x => x.RequestConcern)
-                    .Include(x => x.User)
-                    .Include(x => x.RequestorByUser)
+                    .AsNoTrackingWithIdentityResolution()
+                    .AsSplitQuery()
                     .Select(x => new
                     {
                         x.Id,
-                        x.RequestConcern,
+                        RequestConcern = new 
+                        {
+                            x.RequestConcern.Is_Confirm,
+                            x.RequestConcern.ConcernStatus
+                        },
                         x.RequestConcernId,
                         x.User,
                         x.UserId,
-                        x.RequestorByUser,
                         x.IsActive,
                         x.IsDone,
                         x.IsApprove,
@@ -153,40 +148,37 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         x.IsTransfer,
                         x.Closed_At,
                         x.OnHold,
-                      
+
                     }).ToListAsync();
 
                 var transferQuery = await _context.TransferTicketConcerns
-                .AsNoTracking()
-                .Include(x => x.TicketConcern)
-                .ThenInclude(x => x.User)
+                .AsNoTrackingWithIdentityResolution()
+                .AsSplitQuery()
                 .Where(x => x.IsActive == true)
                 .Where(x => x.IsRejectTransfer == false)
                 .Select(x => new
                 {
                     x.Id,
-                    x.TicketConcern,
+                    TicketConcern = new
+                    {
+                        x.TicketConcern.OnHold,
+                    },
                     x.TicketConcernId,
                     x.TicketApprover,
                     x.IsTransfer,
                     x.TransferBy,
                     x.TransferTo,
             
-
-
                 }).ToListAsync();
 
                 var closeQuery = await _context.ClosingTickets
-                    .AsNoTracking()
-                    .Include(x => x.TicketConcern)
-                    .ThenInclude(x => x.User)
+                    .AsNoTrackingWithIdentityResolution()
                     .Where(x => x.IsActive)
                     .Where(x => x.IsRejectClosed == false)
                     .Where(x => x.IsClosing == false)
                     .Select(x => new
                     {
                         x.Id,
-                        x.TicketConcern,
                         x.IsClosing,
                         x.TicketApprover
 
@@ -196,19 +188,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 if (requestorPermissionList.Any(x => x.Contains(request.Role)))
                 {
 
-                    var transferApprovalList = _context.TransferTicketConcerns
+                    var transferApprovalList = await _context.TransferTicketConcerns
+                        .AsNoTrackingWithIdentityResolution()
                         .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
-                        .Select(t => t.TicketConcernId);
+                        .Select(t => t.TicketConcernId)
+                        .ToListAsync();
 
                     requestConcernsQuery = requestConcernsQuery
                         .Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id))
                         .ToList();
 
-                    var allRequestTicket = requestConcernsQuery
-                        .Select(x => x.Id)
-                        .ToList();
-
-                        allRequestTicketNotif = allRequestTicket;
+                        allRequestTicketNotif = requestConcernsQuery.Count();
 
                     var forApprovalTicket = requestConcernsQuery
                             .Where(x => x.ConcernStatus == TicketingConString.ForApprovalTicket)
@@ -265,9 +255,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                          .Select (x => x.Id)
                          .ToList();
 
-
                     forTransferNotif = forTransferTicket;
-
 
                     var transferApproval = transferQuery
                         .Where(t => t.IsTransfer == false && t.TicketConcern.OnHold == null && t.TransferTo == request.UserId)
@@ -399,7 +387,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                 var notification = new TicketingNotifResult
                 {
-                    AllRequestTicketNotif = allRequestTicketNotif.Count(),
+                    AllRequestTicketNotif = allRequestTicketNotif,
                     ForTicketNotif = forTicketNotif.Count(),
                     CurrentlyFixingNotif = currentlyFixingNotif.Count(),
                     NotConfirmNotif = notConfirmNotif.Count(),
