@@ -29,7 +29,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 if (onHoldExist is null)
                     return Result.Failure(TicketRequestError.TicketConcernIdNotExist());
 
-                await UpdateOnHold(onHoldExist,command,cancellationToken);  
+                await UpdateOnHold(onHoldExist,command,cancellationToken);
+                await OnHoldTicketHistory(onHoldExist, command, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
@@ -44,8 +45,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 var ticketConcern = await _context.TicketConcerns
                     .FirstOrDefaultAsync(t => t.Id == ticketOnHold.TicketConcernId, cancellationToken);
 
-                await OnHoldTicketHistory(ticketConcern, command, cancellationToken);
-
                 ticketConcern.OnHold = null;
                 ticketConcern.Resume_At = DateTime.Now;
 
@@ -53,11 +52,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
 
             }
 
-            private async Task<TicketHistory> OnHoldTicketHistory(TicketConcern ticketConcern, ResumeOnHoldTicketCommand command, CancellationToken cancellationToken)
+            private async Task<TicketHistory> OnHoldTicketHistory(TicketOnHold onHold, ResumeOnHoldTicketCommand command, CancellationToken cancellationToken)
             {
                 var addTicketHistory = new TicketHistory
                 {
-                    TicketConcernId = ticketConcern.Id,
+                    TicketConcernId = onHold.TicketConcernId,
                     TransactedBy = command.Transacted_By,
                     TransactionDate = DateTime.Now,
                     Request = TicketingConString.OnHold,

@@ -48,6 +48,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     
                     transferApprover.IsApprove = true;
                     await UpdateTransferTicket(transferTicketExist,userDetails,command,cancellationToken);
+                    await UpdateTicketHistory(transferTicketExist, userDetails, command, cancellationToken);
 
                 }
                 else
@@ -92,23 +93,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 ticketConcernExist.UserId = transferTicketConcern.TransferTo;
                 ticketConcernExist.TargetDate = command.Target_Date;
 
-                await CreateTicketHistory(transferTicketConcern, ticketConcernExist, user, command, cancellationToken);
+                await CreateTicketHistory(transferTicketConcern, user, command, cancellationToken);
 
             }
 
-            private async Task CreateTicketHistory(TransferTicketConcern transferTicketConcern,TicketConcern ticketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            private async Task CreateTicketHistory(TransferTicketConcern transferTicketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
 
                 var addNewTransferTransactionNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Ticket concern number {ticketConcern.Id} has transfer",
+                    Message = $"Ticket concern number {transferTicketConcern.TicketConcernId} has transfer",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
                     ReceiveBy = transferTicketConcern.TransferBy.Value,
                     Modules = PathConString.ConcernTickets,
                     Modules_Parameter = PathConString.ForTransfer,
-                    PathId = ticketConcern.Id ,
+                    PathId = transferTicketConcern.TicketConcernId ,
 
                 };
 

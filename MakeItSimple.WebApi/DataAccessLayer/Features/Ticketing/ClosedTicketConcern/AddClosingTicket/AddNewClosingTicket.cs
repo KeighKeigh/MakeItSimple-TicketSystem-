@@ -56,9 +56,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             else
             {
 
-                //var approverByUser = await _context.Users
-                //        .FirstOrDefaultAsync(x => x.Id == ticketConcernExist.UserId, cancellationToken);
-
                 var approverList = await _context.Approvers
                     .Include(x => x.User)
                     .Where(x => x.SubUnitId == ticketConcernExist.User.SubUnitId)
@@ -190,7 +187,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             return addTicketHistory;
         }
 
-        private async Task<TicketHistory> AddApproverHistory(TicketConcern ticketConcern, Approver approver, AddNewClosingTicketCommand command, CancellationToken cancellationToken)
+        private async Task AddApproverHistory(TicketConcern ticketConcern, Approver approver, AddNewClosingTicketCommand command, CancellationToken cancellationToken)
         {
             var approverLevel = approver.ApproverLevel == 1 ? $"{approver.ApproverLevel}st"
                 : approver.ApproverLevel == 2 ? $"{approver.ApproverLevel}nd"
@@ -209,7 +206,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
             await _context.TicketHistories.AddAsync(addApproverHistory, cancellationToken);
 
-            return addApproverHistory;
         }
 
         private async Task<TicketHistory> AddConfirmationHistory(ClosingTicket closingTicket, TicketConcern ticketConcern, AddNewClosingTicketCommand command, CancellationToken cancellationToken)

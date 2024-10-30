@@ -113,6 +113,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     .AsNoTracking()
                     .Include(x => x.TicketConcerns)
                     .Include(x => x.User)
+                    .Include(x => x.Company)
+                    .Include(x => x.BusinessUnit)
+                    .Include(x => x.Department)
+                    .Include(x => x.Unit)
+                    .Include (x => x.SubUnit)
+                    .Include(x => x.Location)
                     .Where(x => x.IsActive == true)
                     .Select(x => new
                     {
@@ -195,13 +201,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .Select(t => t.TicketConcernId);
 
                     requestConcernsQuery = requestConcernsQuery
-                        .Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id) && requestConcernsQuery.Any())
+                        .Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id))
                         .ToList();
 
                     var allRequestTicket = requestConcernsQuery
                         .Select(x => x.Id)
                         .ToList();
-
 
                         allRequestTicketNotif = allRequestTicket;
 
@@ -210,9 +215,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                             .Select(x => x.Id)
                             .ToList();
 
-
                     forTicketNotif = forApprovalTicket;
-
 
                     var currentlyFixing = requestConcernsQuery
                                     .Where(x => x.ConcernStatus == TicketingConString.CurrentlyFixing)

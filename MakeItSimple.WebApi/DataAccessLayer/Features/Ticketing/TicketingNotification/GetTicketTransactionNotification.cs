@@ -13,7 +13,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
             public string Message { get; set; } 
             public string Added_By { get; set; }  
             public DateTime Created_At { get; set; }
-
             public string Receive_By { get; set; }
             public bool Is_Checked { get; set; }
             public string Modules { get; set; }

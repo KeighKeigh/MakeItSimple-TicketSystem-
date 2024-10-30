@@ -48,6 +48,10 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
         {
             try
             {
+                if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                {
+                    command.Transacted_By = userId;
+                }
                 var results = await _mediator.Send(command);
                 if (results.IsFailure)
                 {
