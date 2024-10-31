@@ -153,9 +153,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                 var transferQuery = await _context.TransferTicketConcerns
                 .AsNoTrackingWithIdentityResolution()
-                .AsSplitQuery()
                 .Where(x => x.IsActive == true)
-                .Where(x => x.IsRejectTransfer == false)
+                .Where(x => x.IsTransfer == false)
+                //.Where(x => x.IsRejectTransfer == false)
+                .AsSplitQuery()
                 .Select(x => new
                 {
                     x.Id,
@@ -165,7 +166,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     },
                     x.TicketConcernId,
                     x.TicketApprover,
-                    x.IsTransfer,
                     x.TransferBy,
                     x.TransferTo,
             
@@ -219,7 +219,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .Select (x => x.Id)
                         .ToList();
 
-
                     notConfirmNotif = notConfirm;
 
 
@@ -239,7 +238,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .Select(x => x.Id)
                         .ToList();
 
-
                     allTicketNotif = allTicketConcern;
 
                     var openTicket = ticketConcernQuery
@@ -251,14 +249,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     openTicketNotif = openTicket;
 
                     var forTransferTicket = transferQuery
-                         .Where(x => x.IsTransfer == false && x.TicketConcern.OnHold == null && x.TransferBy == request.UserId)
+                         .Where(x =>  x.TransferBy == request.UserId)
                          .Select (x => x.Id)
                          .ToList();
 
                     forTransferNotif = forTransferTicket;
 
                     var transferApproval = transferQuery
-                        .Where(t => t.IsTransfer == false && t.TicketConcern.OnHold == null && t.TransferTo == request.UserId)
+                        .Where(t => t.TransferTo == request.UserId)
                         .Select(x => x.Id)
                         .ToList();
 

@@ -60,7 +60,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
                 await CancelTicketHistory(closingTicketExist, command, cancellationToken); 
 
-                await TransactionHistory(ticketConcernExist,closingTicketExist,command, cancellationToken);
+                await TransactionHistory(closingTicketExist,command, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
@@ -70,7 +70,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             {
                 var addTicketHistory = new TicketHistory
                 {
-                    TicketConcernId = closingTicket.Id,
+                    TicketConcernId = closingTicket.TicketConcernId,
                     TransactedBy = command.Transacted_By,
                     TransactionDate = DateTime.Now,
                     Request = TicketingConString.Cancel,
@@ -84,19 +84,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
             }
 
-            private async Task<TicketTransactionNotification> TransactionHistory(TicketConcern ticketConcern,ClosingTicket closingTicket, CancelClosingTicketCommand command, CancellationToken cancellationToken)
+            private async Task<TicketTransactionNotification> TransactionHistory(ClosingTicket closingTicket, CancelClosingTicketCommand command, CancellationToken cancellationToken)
             {
 
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Ticket closing request #{ticketConcern.Id} has been canceled",
+                    Message = $"Ticket closing request #{closingTicket.TicketConcernId} has been canceled",
                     AddedBy = closingTicket.AddedBy.Value,
                     Created_At = DateTime.Now,
                     ReceiveBy = closingTicket.TicketApprover.Value,
                     Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.OpenTicket,
-                    PathId = ticketConcern.Id,
+                    PathId = closingTicket.TicketConcernId,
                 };
 
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
