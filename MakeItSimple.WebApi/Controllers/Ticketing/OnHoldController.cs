@@ -42,7 +42,6 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
 
         }
 
-
         [HttpPut("resume")]
         public async Task<IActionResult> ResumeOnHoldTicket([FromBody]ResumeOnHoldTicketCommand command)
         {

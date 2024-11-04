@@ -44,13 +44,13 @@ namespace MakeItSimple.WebApi.Controllers.UserController
         {
             try
             {
-                var cacheKey = $"users-{query.PageNumber}-{query.PageSize}";
-                var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
+                //var cacheKey = $"users-{query.PageNumber}-{query.PageSize}";
+                //var cachedUsers = await _cacheService.GetCacheAsync(cacheKey);
 
-                if (cachedUsers != null)
-                {
-                    return Ok(Result.Success(cachedUsers));
-                }
+                //if (cachedUsers != null)
+                //{
+                //    return Ok(Result.Success(cachedUsers));
+                //}
 
                 var users = await _mediator.Send(query);
 
@@ -74,7 +74,7 @@ namespace MakeItSimple.WebApi.Controllers.UserController
                     users.HasNextPage
                 };
 
-                await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+                //await _cacheService.SetCacheAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
                 var successResult = Result.Success(result);
                 return Ok(successResult);
