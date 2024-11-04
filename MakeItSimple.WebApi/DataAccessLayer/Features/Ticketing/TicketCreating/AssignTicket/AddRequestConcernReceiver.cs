@@ -174,7 +174,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     Message = $"Ticket number {ticketConcern.RequestConcernId} is now ongoing",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = command.UserId.Value,
+                    ReceiveBy = ticketConcern.RequestConcern.UserId.Value,
                     Modules = PathConString.ConcernTickets,
                     Modules_Parameter = PathConString.Ongoing,
                     PathId = ticketConcern.RequestConcernId.Value,
