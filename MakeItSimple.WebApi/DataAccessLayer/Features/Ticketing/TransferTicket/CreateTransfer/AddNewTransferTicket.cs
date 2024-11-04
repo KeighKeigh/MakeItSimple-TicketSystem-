@@ -52,6 +52,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     transferTicketExist = addTransferTicket;
 
                     await CreateApprover(ticketConcernExist,transferTicketExist,command ,cancellationToken);
+                    await CreateTransactionNotification(ticketConcernExist,userDetails,command,cancellationToken);
                     await CreateHistory(ticketConcernExist,command,cancellationToken);
 
                 }
