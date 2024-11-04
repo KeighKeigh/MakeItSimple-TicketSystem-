@@ -14,7 +14,7 @@
             public string Target_Date { get; set; }
             public string Actual { get; set; }
             public int Varience { get; set; }
-            public decimal? Efficeincy { get; set; }
+            public string Efficeincy { get; set; }
             public string Status { get; set; }
             public string Remarks { get; set; }
             public string Category { get; set; }

@@ -25,8 +25,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                 var dateToday = DateTime.Today;
 
                 IQueryable<TicketConcern> ticketConcernQuery = _context.TicketConcerns
-                    .AsNoTracking()
-                    .Include(x => x.AddedByUser)
+                   .AsNoTrackingWithIdentityResolution()
+                   .Include(x => x.AddedByUser)
                     .Include(x => x.ModifiedByUser)
                     .Include(x => x.RequestorByUser)
                     .Include(x => x.User)
@@ -35,7 +35,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.TransferTicketConcerns)
                     .ThenInclude(x => x.TicketAttachments)
-                    .Include(x => x.RequestConcern);
+                    .Include(x => x.RequestConcern)
+                    .AsSplitQuery();
+
+
 
 
                 if (ticketConcernQuery.Any())

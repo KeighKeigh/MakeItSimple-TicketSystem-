@@ -100,8 +100,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
                         Actual =  $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
                         Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
-                        / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m),2),
+                        Efficeincy = x.TargetDate > x.Closed_At ? $"100 %" : "50 %",
                         Status = TicketingConString.Closed,
                         Remarks =  x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
                         Category = x.RequestConcern.Channel.ChannelName,

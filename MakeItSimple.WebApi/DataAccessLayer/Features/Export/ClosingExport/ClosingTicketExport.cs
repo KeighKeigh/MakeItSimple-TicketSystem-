@@ -1,14 +1,9 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
-using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.ConstantString;
-using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport.TicketReports;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
 {
@@ -58,11 +53,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
                         Actual = $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
                         Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = Math.Round(Math.Max(0, 100m - (decimal)EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date)
-                        / DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month) * 100m), 2),
-                        Status = TicketingConString.Closed,
+                        Efficeincy = x.TargetDate > x.Closed_At ? $"100 %" : "50 %",
                         Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
                         Category = x.RequestConcern.Channel.ChannelName,
+
                     }).ToListAsync();
 
 
