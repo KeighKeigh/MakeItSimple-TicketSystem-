@@ -1,21 +1,14 @@
 ﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.Common.Cloudinary;
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.Models;
-using MakeItSimple.WebApi.Models.Setup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System.Net;
-using System.Net.Mail;
-using System.Threading;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AddRequest
 {
@@ -36,7 +29,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             public async Task<Result> Handle(AddRequestConcernCommand command, CancellationToken cancellationToken)
             {
 
-                var ticketConcernList = new List<TicketConcern>();
+                var ticketConcernList = new int();
 
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Added_By, cancellationToken);
@@ -44,19 +37,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 var userId = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.UserId);
 
-                if (userId == null)
-                    return Result.Failure(UserError.UserNotExist());
-
                 var locationExist = await _context.Locations
                     .FirstOrDefaultAsync(l => l.LocationCode == command.Location_Code, cancellationToken);
-
-                if (locationExist is null)
-                    return Result.Failure(TicketRequestError.LocationNotExist());
                 
-                var validationResult = await ValidateEntities(command, cancellationToken);
+                var validationResult = await ValidateEntities(userId,locationExist ,command, cancellationToken);
                 if (validationResult is not null)
                     return validationResult;
-
 
                 var requestConcernIdExist = await _context.RequestConcerns
                     .Include(x => x.User)
@@ -71,8 +57,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                     await UpdateRequest(requestConcernIdExist,locationExist ,ticketConcernExist,command, cancellationToken);
 
-                    ticketConcernList.Add(ticketConcernExist);
-
+                    ticketConcernList = ticketConcernExist.Id;
                 }
                 else
                 {
@@ -80,7 +65,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     var addRequestConcern = await AddRequestConcern(userId,locationExist ,command, cancellationToken);
                     var addTicketConcern = await AddTicketConcern(addRequestConcern, command, cancellationToken);
 
-                    ticketConcernList.Add(addTicketConcern);
+                    ticketConcernList = addTicketConcern.Id;
 
                     await AddTicketHistory(userId, addTicketConcern, command, cancellationToken);
                     await AddNewTicketTransactionNotification(userDetails, addRequestConcern, command, cancellationToken);
@@ -115,7 +100,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     requestConcernIdExist.Concern = command.Concern;
                     isChange = true;
                 }
-
 
                 if (requestConcernIdExist.CompanyId != command.CompanyId)
                 {
@@ -164,6 +148,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     isChange = true;
                 }
 
+                if(requestConcernIdExist.BackJobId != command.BackJobId)
+                {
+                    requestConcernIdExist.BackJobId = command.BackJobId;
+                    isChange = true;    
+                }
+
                 if (isChange)
                 {
                     requestConcernIdExist.ModifiedBy = command.Modified_By;
@@ -175,7 +165,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             }
 
-            private async Task<Result?> AttachmentHandler(AddRequestConcernCommand command, List<TicketConcern> ticketConcernList, CancellationToken cancellationToken)
+            private async Task<Result?> AttachmentHandler(AddRequestConcernCommand command, int ticketConcern, CancellationToken cancellationToken)
             {
 
                 foreach (var attachments in command.RequestAttachmentsFiles.Where(a => a.Attachment.Length > 0))
@@ -212,7 +202,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     {
                         var addAttachment = new TicketAttachment
                         {
-                            TicketConcernId = ticketConcernList.First().Id,
+                            TicketConcernId = ticketConcern,
                             Attachment = filePath,
                             FileName = attachments.Attachment.FileName,
                             FileSize = attachments.Attachment.Length,
@@ -232,8 +222,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 return null;
             }
 
-            private async Task<Result?> ValidateEntities(AddRequestConcernCommand command, CancellationToken cancellationToken)
+            private async Task<Result?> ValidateEntities(User user,Location location,AddRequestConcernCommand command, CancellationToken cancellationToken)
             {
+
+                if (user is null)
+                    return Result.Failure(UserError.UserNotExist());
 
                 var companyExist = await _context.Companies
                     .FirstOrDefaultAsync(c => c.Id == command.CompanyId, cancellationToken);
@@ -265,10 +258,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 if (subUnitExist is null)
                     return Result.Failure(TicketRequestError.SubUnitNotExist());
 
-                var locationExist = await _context.Companies
-                   .FirstOrDefaultAsync(c => c.Id == command.CompanyId, cancellationToken);
 
-                if (locationExist is null)
+                if (location is null)
                     return Result.Failure(TicketRequestError.LocationNotExist());
 
                 var categoryExist = await _context.Categories
@@ -311,6 +302,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     IsDone = false,
                     ContactNumber = command.Contact_Number,
                     RequestType = command.Request_Type,
+                    BackJobId = command.BackJobId,
 
                 };
 

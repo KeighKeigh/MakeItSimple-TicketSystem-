@@ -29,6 +29,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             public string Notes { get; set; }
             public string Contact_Number { get; set; }
             public string Request_Type { get; set; }
+            public int ? BackJobId { get; set; }
 
             public List<RequestAttachmentsFile> RequestAttachmentsFiles { get; set; }
 

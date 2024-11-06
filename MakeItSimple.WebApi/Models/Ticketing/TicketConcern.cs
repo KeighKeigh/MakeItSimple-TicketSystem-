@@ -15,17 +15,12 @@ namespace MakeItSimple.WebApi.Models.Ticketing
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
-
         public Guid? AddedBy { get; set; }
         public virtual User AddedByUser { get; set; }
-
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
-
         public Guid ? UserId { get; set; }
         public virtual User User { get; set; }
-
-
         public bool ? IsTransfer { get; set; }
         public DateTime? TransferAt { get; set; }
         public Guid? TransferBy { get; set; }

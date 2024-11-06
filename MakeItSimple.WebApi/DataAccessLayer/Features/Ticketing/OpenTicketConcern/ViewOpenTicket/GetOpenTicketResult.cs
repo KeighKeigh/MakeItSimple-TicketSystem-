@@ -39,6 +39,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public string Notes { get; set; }
             public string Contact_Number { get; set; }
             public string Request_Type { get; set; }
+            public int? BackJobId { get; set; }
 
             public int? ChannelId { get; set; }
             public string Channel_Name { get; set; }

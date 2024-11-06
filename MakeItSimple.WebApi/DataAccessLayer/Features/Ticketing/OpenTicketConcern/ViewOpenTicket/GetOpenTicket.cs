@@ -36,6 +36,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                     .Include(x => x.TransferTicketConcerns)
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.RequestConcern)
+                    .ThenInclude(x => x.User)
                     .AsSplitQuery();
 
                 if (ticketConcernQuery.Any())
@@ -206,6 +207,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         if (request.UserType == TicketingConString.IssueHandler)
                         {
                             var transferApprovalList =  _context.TransferTicketConcerns
+                                .AsNoTracking()
                                 .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
                                 .Select(t => t.TicketConcernId);
 
@@ -218,7 +220,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                 .ToListAsync();
 
                             var businessUnitDefault = await _context.BusinessUnits
-                            .AsNoTrackingWithIdentityResolution()
+                            .AsNoTracking()
                             .Where(x => x.IsActive == true)
                             .Where(x => listOfRequest.Contains(x.Id))
                             .Select(x => x.Id)
@@ -227,6 +229,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             var receiverList = await _context.Receivers
                                 .AsNoTrackingWithIdentityResolution()
                                 .Include(x => x.BusinessUnit)
+                                .AsSplitQuery()
                                 .Where(x => businessUnitDefault.Contains(x.BusinessUnitId.Value) && x.IsActive == true &&
                                  x.UserId == request.UserId)
                                 .Select(x => x.BusinessUnitId)
@@ -284,6 +287,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         Notes = x.RequestConcern.Notes,
                         Contact_Number = x.RequestConcern.ContactNumber,
                         Request_Type = x.RequestConcern.RequestType,
+                        BackJobId = x.RequestConcern.BackJobId,
                         ChannelId = x.RequestConcern.ChannelId,
                         Channel_Name = x.RequestConcern.Channel.ChannelName,
                         UserId = x.UserId,
@@ -411,7 +415,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                         Transaction_Date = x.ticketHistories.Max(x => x.TransactionDate).Value,
 
-                    }).OrderBy(x => x.Transaction_Date); 
+                    }).OrderBy(x => x.TicketConcernId); 
 
 
                 return await PagedList<GetOpenTicketResult>.CreateAsync(results, request.PageNumber, request.PageSize);

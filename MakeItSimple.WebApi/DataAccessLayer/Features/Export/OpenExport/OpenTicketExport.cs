@@ -2,8 +2,6 @@
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport.OpenTicketReports;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
 {
@@ -24,7 +22,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
                 var openTicket = await _context.TicketConcerns
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Category)
-                    .Where(x => x.IsApprove == true && x.IsClosedApprove != true && x.IsTransfer != true )
+                    .Where(x => x.IsApprove == true && x.IsClosedApprove != true && x.OnHold != true && x.IsTransfer != true)
                     .Where(x => x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date <= request.Date_To.Value.Date)
                     .Select(t => new OpenTicketExportResult
                     {
@@ -96,7 +94,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
                         "Modified By",
                         "Updated At",
                         "Remarks"
-
                     };
 
                     var range = worksheet.Range(worksheet.Cell(1, 1), worksheet.Cell(1, headers.Count));

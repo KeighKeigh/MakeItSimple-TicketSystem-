@@ -127,6 +127,7 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 };
 
                 var successResult = Result.Success(result);
+
                 //var timerControl = _timerControl;
                 //var clientsAll = _client.Clients.All;
 

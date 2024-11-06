@@ -14,7 +14,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
             public string Message { get; set; }
             public string Added_By { get; set; }
             public DateTime Created_At { get; set; }
-
             public string Receive_By { get; set; }
             public bool Is_Checked { get; set; }
             public string Modules { get; set; }
@@ -46,9 +45,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
             {
 
                 var result = await _context.TicketTransactionNotifications
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)
                     .Include(x => x.ReceiveByUser)
                     .Where(x => x.ReceiveBy == request.UserId)
+                    .AsSplitQuery()
                     .Select(x => new AllTransactionResult
                     {
                         Id = x.Id,

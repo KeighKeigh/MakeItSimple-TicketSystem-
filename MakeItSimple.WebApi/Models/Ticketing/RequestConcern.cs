@@ -14,6 +14,8 @@ namespace MakeItSimple.WebApi.Models.Ticketing
     public class RequestConcern : BaseEntity
     {
         public int Id { get; set; }
+
+
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
@@ -72,10 +74,10 @@ namespace MakeItSimple.WebApi.Models.Ticketing
 
         public string Notes { get; set; }
 
-
         public string ContactNumber { get; set; }
 
         public string RequestType { get; set; }
+        public int ? BackJobId { get; set; }
 
         public ICollection<TicketConcern> TicketConcerns { get; set; }
 

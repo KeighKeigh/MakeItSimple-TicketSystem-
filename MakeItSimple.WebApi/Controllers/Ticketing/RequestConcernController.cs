@@ -18,6 +18,7 @@ using MakeItSimple.WebApi.Common.SignalR;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.DownloadImageTicketing;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ViewImage.ViewTicketImage;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ApprovalTicket.RequestApprovalReceiver;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.BackJob.TicketBackJob;
 
 
 
@@ -63,6 +64,25 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 return Conflict(ex.Message);
             }
         } 
+
+        [HttpGet("backjob")]
+        public async Task<IActionResult> TicketBackJob([FromQuery] TicketBackJobQuery command)
+        {
+            try
+            {
+                if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                {
+                    command.UserId = userId;
+
+                }
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
 
         [HttpPut("cancel-request")]
         public async Task<IActionResult> CancelRequestConcern([FromBody] CancelRequestConcernCommand command)

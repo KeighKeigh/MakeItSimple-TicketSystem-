@@ -46,7 +46,6 @@ namespace MakeItSimple.WebApi.Models
         public int? BusinessUnitId { get; set; }
         public virtual BusinessUnit BusinessUnit { get; set; }
 
-
         public int ? DepartmentId { get; set; }
         public virtual Department Department { get; set; }
 
@@ -55,9 +54,6 @@ namespace MakeItSimple.WebApi.Models
 
         public int ? SubUnitId { get; set; }
         public virtual SubUnit SubUnit { get; set; }
-
-        //public int ? TeamId { get; set; }
-        //public virtual Team Team { get; set; }
 
         public int? LocationId { get; set; }
         public virtual Location Location { get; set; }

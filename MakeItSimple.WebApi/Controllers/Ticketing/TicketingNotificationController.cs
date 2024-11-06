@@ -6,7 +6,6 @@ using System.Security.Claims;
 using Microsoft.Extensions.Caching.Memory;
 using MakeItSimple.WebApi.Common.SignalR;
 using LazyCache;
-using MakeItSimple.WebApi.Common.Caching;
 using Newtonsoft.Json;
 using System.Text;
 using System.Security.Cryptography;

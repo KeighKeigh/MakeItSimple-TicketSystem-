@@ -197,7 +197,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                     }
 
-
                 }
 
                 var results = requestConcernsQuery
@@ -239,6 +238,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         Notes = g.Notes,
                         Contact_Number = g.ContactNumber,
                         Request_Type = g.RequestType,
+                        BackJobId = g.BackJobId,
                         Added_By = g.AddedByUser.Fullname,
                         Date_Needed = g.DateNeeded,
                         Created_At = g.CreatedAt,
@@ -261,6 +261,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 Modified_By = tc.ModifiedByUser.Fullname,
                                 Updated_At = tc.UpdatedAt,
                                 Is_Active = tc.IsActive,
+                                OnHold = tc.OnHold,
                                 OnHold_At = tc.OnHoldAt,
                                 OnHold_Reasons = tc.OnHoldAt != null ? tc.TicketOnHolds
                                 .OrderByDescending(x => x.CreatedAt)

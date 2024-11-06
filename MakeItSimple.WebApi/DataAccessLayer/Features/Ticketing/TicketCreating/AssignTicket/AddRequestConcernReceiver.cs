@@ -1,7 +1,4 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.Common.Cloudinary;
+﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
@@ -9,8 +6,6 @@ using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System.Xml.Schema;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AssignTicket
 {
@@ -130,6 +125,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 {
                     var requestConcern = await _context.RequestConcerns
                         .FirstOrDefaultAsync(x => x.Id == ticketConcern.RequestConcernId, cancellationToken);
+
+                    if (requestConcern.ChannelId != command.ChannelId)
+                    {
+                        requestConcern.ChannelId = command.ChannelId;
+                        hasChanged = true;
+                    }
+
+                    if (requestConcern.CategoryId != command.CategoryId)
+                    {
+                        requestConcern.CategoryId = command.CategoryId;
+                        hasChanged = true;
+                    }
+
+                    if (requestConcern.SubCategoryId != command.SubCategoryId)
+                    {
+                        requestConcern.SubCategoryId = command.SubCategoryId;
+                        hasChanged = true;
+                    }
+
+                    if(hasChanged)
+                    {
+                        requestConcern.ModifiedBy = command.Modified_By;
+                        requestConcern.UpdatedAt = DateTime.Now;
+                    }
 
                     requestConcern.Remarks = null;
                 }
