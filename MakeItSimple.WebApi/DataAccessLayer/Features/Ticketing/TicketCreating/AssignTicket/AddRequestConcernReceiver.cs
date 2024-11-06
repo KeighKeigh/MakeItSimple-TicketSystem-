@@ -132,13 +132,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         hasChanged = true;
                     }
 
-                    if (requestConcern.CategoryId != command.CategoryId)
+                    if (requestConcern.CategoryId != command.CategoryId && command.CategoryId != null)
                     {
                         requestConcern.CategoryId = command.CategoryId;
                         hasChanged = true;
                     }
 
-                    if (requestConcern.SubCategoryId != command.SubCategoryId)
+                    if (requestConcern.SubCategoryId != command.SubCategoryId && command.SubCategoryId != null)
                     {
                         requestConcern.SubCategoryId = command.SubCategoryId;
                         hasChanged = true;
