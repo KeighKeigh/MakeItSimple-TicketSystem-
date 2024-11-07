@@ -3,26 +3,15 @@ using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup;
+using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
+namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.RejectTransfer
 {
-    public class RejectTransferTicket
+    public partial class RejectTransferTicket
     {
-
-        public class RejectTransferTicketCommand : IRequest<Result>
-        { 
-            public Guid ? RejectTransfer_By { get; set; }
-            public Guid ? Transacted_By { get; set; }
-            public string Role { get; set; }
-            public int TransferTicketId { get; set; }
-
-            public string Modules { get; set; }
-
-            public string Reject_Remarks { get; set; }
-        }
 
         public class Handler : IRequestHandler<RejectTransferTicketCommand, Result>
         {
@@ -39,15 +28,24 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Transacted_By);
 
-                var transferTicketExist = await _context.TransferTicketConcerns.
-                    FirstOrDefaultAsync(x => x.Id == command.TransferTicketId, cancellationToken);
+                var transferTicketExist = await _context.TransferTicketConcerns
+                    .Include(t => t.TicketConcern)                 
+                    .FirstOrDefaultAsync(x => x.Id == command.TransferTicketId, cancellationToken);
 
-                if (transferTicketExist == null)
-                {
+                if (transferTicketExist is null)
                     return Result.Failure(TransferTicketError.TransferTicketConcernIdNotExist());
-                }
 
-                var userRoleList = await _context.UserRoles.ToListAsync();
+                if(transferTicketExist.IsActive is false)
+                    return Result.Failure(TicketRequestError.TicketAlreadyCancel());
+
+                var userRoleList =
+                    await _context.UserRoles
+                    .Select(u => new
+                    {
+                        u.Permissions,
+                        u.UserRoleName,
+                    })
+                    .ToListAsync();
 
                 var approverUserList = await _context.ApproverTicketings
                     .Where(x => x.TransferTicketConcernId == transferTicketExist.Id)
@@ -67,26 +65,37 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                     return Result.Failure(TicketRequestError.NotAutorize());
                 }
 
-                transferTicketExist.IsActive = false;
-                transferTicketExist.IsRejectTransfer = true;
-                transferTicketExist.RejectTransferBy = command.RejectTransfer_By;
-                transferTicketExist.RejectTransferAt = DateTime.Now;
-                transferTicketExist.RejectRemarks = command.Reject_Remarks;
+                await UpdateRejectConcernStatus(approverUserList, transferTicketExist,command,cancellationToken);
+
+                await TransferHistory(userDetails, transferTicketExist, command, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+
+
+            private async Task UpdateRejectConcernStatus(List<ApproverTicketing> approverTicketing,TransferTicketConcern transferTicketConcern, RejectTransferTicketCommand command,CancellationToken cancellationToken)
+            {
+                transferTicketConcern.IsActive = false;
+                transferTicketConcern.IsRejectTransfer = true;
+                transferTicketConcern.RejectTransferBy = command.RejectTransfer_By;
+                transferTicketConcern.RejectTransferAt = DateTime.Now;
+                transferTicketConcern.RejectRemarks = command.Reject_Remarks;
 
                 var ticketConcernExist = await _context.TicketConcerns
-                    .FirstOrDefaultAsync(x => x.Id == transferTicketExist.TicketConcernId);
+                    .FirstOrDefaultAsync(x => x.Id == transferTicketConcern.TicketConcernId);
 
                 ticketConcernExist.IsTransfer = null;
                 ticketConcernExist.Remarks = command.Reject_Remarks;
 
-                foreach (var approverUserId in approverUserList)
+                foreach (var approverUserId in approverTicketing)
                 {
                     _context.Remove(approverUserId);
                 }
 
                 var ticketHistory = await _context.TicketHistories
-                    .Where(x => (x.TicketConcernId == ticketConcernExist.Id
-                     && x.IsApprove == null && x.Request.Contains(TicketingConString.Approval))
+                    .Where(x => x.TicketConcernId == ticketConcernExist.Id
+                     && x.IsApprove == null && x.Request.Contains(TicketingConString.Approval)
                      || x.Request.Contains(TicketingConString.NotConfirm))
                     .ToListAsync();
 
@@ -95,13 +104,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                     _context.TicketHistories.Remove(item);
                 }
 
+            }
+
+            private async Task TransferHistory(User user,TransferTicketConcern transferTicketConcern, RejectTransferTicketCommand command, CancellationToken cancellationToken)
+            {
                 var addTicketHistory = new TicketHistory
                 {
-                    TicketConcernId = transferTicketExist.TicketConcernId,
-                    TransactedBy = transferTicketExist.TransferBy,
+                    TicketConcernId = transferTicketConcern.TicketConcernId,
+                    TransactedBy = transferTicketConcern.TransferBy,
                     TransactionDate = DateTime.Now,
                     Request = TicketingConString.Reject,
-                    Status = $"{TicketingConString.TransferReject} {userDetails.Fullname}",
+                    Status = $"{TicketingConString.TransferReject} {user.Fullname}",
                     Remarks = command.Reject_Remarks
                 };
 
@@ -111,21 +124,21 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Transfer request for ticket number {transferTicketExist.TicketConcernId} was rejected.",
-                    AddedBy = userDetails.Id,
+                    Message = $"Transfer request for ticket number {transferTicketConcern.TicketConcernId} was rejected.",
+                    AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = ticketConcernExist.UserId.Value,
+                    ReceiveBy = transferTicketConcern.TicketConcern.UserId.Value,
                     Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.OpenTicket,
-                    PathId = transferTicketExist.TicketConcernId,
+                    PathId = transferTicketConcern.TicketConcernId,
 
                 };
 
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
 
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
             }
+
+
         }
     }
 }

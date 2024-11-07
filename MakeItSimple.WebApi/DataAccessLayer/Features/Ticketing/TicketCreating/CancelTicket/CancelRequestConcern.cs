@@ -30,7 +30,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 if (requestTransactionExist is null)
                     return Result.Failure(TicketRequestError.RequestConcernIdNotExist());
-                
+
+                if (requestTransactionExist.TicketConcerns.First().IsApprove == true)
+                    return Result.Failure(TicketRequestError.TicketAlreadyAssign());
+
                 requestTransactionExist.IsActive = false;
 
                 var ticketConcernExist = await _context.TicketConcerns
@@ -46,7 +49,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 {
                     cancelAttachment.IsActive = false;
                 }
-
 
                 await TicketNotification(ticketConcernExist, requestTransactionExist, command, cancellationToken);
 

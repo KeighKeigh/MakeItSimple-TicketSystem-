@@ -28,13 +28,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Transacted_By);
 
-
                 var transferTicketExist = await _context.TransferTicketConcerns
                     .Include(x => x.TicketConcern)
                     .FirstOrDefaultAsync(x => x.Id == command.TransferTicketId, cancellationToken);
 
                 if (transferTicketExist is null)
                     return Result.Failure(TransferTicketError.TransferTicketConcernIdNotExist());
+
+                if(transferTicketExist.IsActive is false )
+                    return Result.Failure(TicketRequestError.TicketAlreadyCancel());
 
                 var transferApprover = await _context.ApproverTicketings
                     .Where(x => x.TransferTicketConcernId == transferTicketExist.Id && x.IsApprove == null)

@@ -1,19 +1,12 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using MakeItSimple.WebApi.Common.Cloudinary;
-using MakeItSimple.WebApi.Common.ConstantString;
+﻿using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
-using Microsoft.Extensions.Options;
-using System.Security.Policy;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
-using System.Threading;
 using MakeItSimple.WebApi.Models;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult.GetForClosingTicket;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.AddClosingTicket
 {
@@ -49,6 +42,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
             if (closingTicketExist is not null)
             {
+                var approver = await _context.ApproverTicketings
+                    .Where(a => a.ClosingTicketId == closingTicketExist.Id && a.IsApprove != null)
+                    .FirstOrDefaultAsync();
+
+                if (approver is not null)
+                    return Result.Failure(TicketRequestError.TicketAlreadyApproved());
 
                 await UpdateClosingTicket(closingTicketExist,command,cancellationToken);
 
@@ -91,7 +90,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 ticketConcernExist.IsClosedApprove = false;
 
             }
-
 
             if (!Directory.Exists(TicketingConString.AttachmentPath))
             {

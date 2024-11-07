@@ -41,6 +41,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                 if (transferTicketExist is not null)
                 {
+                    if (transferTicketExist.IsActive is false)
+                        return Result.Failure(TicketRequestError.TicketAlreadyCancel());
+
+                    if (transferTicketExist.IsRejectTransfer is true)
+                        return Result.Failure(TicketRequestError.TicketAlreadyReject());
+
                     await UpdateTransferTicket(transferTicketExist,command ,cancellationToken);
 
                 }

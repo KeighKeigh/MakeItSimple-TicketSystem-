@@ -110,5 +110,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing
         public static Error LocationNotExist() =>
         new Error("TicketRequest.LocationNotExist", "Location not exist!");
 
+        public static Error TicketAlreadyAssign() =>
+        new Error("TicketRequest.TicketAlreadyAssign", "Request concern already assigned!");
+
+         public static Error TicketAlreadyCancel() =>
+        new Error("TicketRequest.TicketAlreadyCancel", "Request concern already cancelled!");
+
+       public static Error TicketAlreadyApproved() =>
+       new Error("TicketRequest.TicketAlreadyApprove", "Ticket concern already approved!");
+
+        public static Error TicketAlreadyReject() =>
+       new Error("TicketRequest.TicketAlreadyReject", "Ticket concern already rejected!");
+
     }
 }

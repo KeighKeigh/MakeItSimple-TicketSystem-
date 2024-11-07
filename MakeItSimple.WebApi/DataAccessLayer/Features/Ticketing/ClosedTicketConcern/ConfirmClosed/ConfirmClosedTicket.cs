@@ -26,9 +26,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             {
 
                 var requestConcernId = await _context.RequestConcerns
+                    .Include(x => x.TicketConcerns)
                     .FirstOrDefaultAsync(x => x.Id == command.RequestConcernId, cancellationToken);
 
                 var updateRequestConcern = await UpdateConfirmTicket(requestConcernId,command, cancellationToken);
+
                 if (updateRequestConcern is not null)
                     return updateRequestConcern;
 
@@ -49,17 +51,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 return Result.Success();
             }
 
-
             private async Task<Result?> UpdateConfirmTicket(RequestConcern requestConcern, ConfirmClosedTicketCommand command, CancellationToken cancellationToken)
             {
 
                 if (requestConcern is null)
                     return Result.Failure(TicketRequestError.RequestConcernIdNotExist());
 
+                if (requestConcern.TicketConcerns.First().IsClosedApprove is not true)
+                    return Result.Failure(TicketRequestError.TicketAlreadyReject());
 
                 if (requestConcern.Is_Confirm is true)
                     return Result.Failure(TicketRequestError.ConfirmAlready());
-
 
                 requestConcern.Is_Confirm = true;
                 requestConcern.Confirm_At = DateTime.Today;

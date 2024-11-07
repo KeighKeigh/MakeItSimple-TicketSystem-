@@ -58,5 +58,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing
       public static Error TransferInvalid() =>
       new Error("TransferTicketError.TransferInvalid", "Ticket concern have another transaction!");
 
+      public static Error TransferAlreadyReject() =>
+      new Error("TransferTicketError.TransferAlreadyReject", "Transfer concern already rejected!");
+
     }
 }

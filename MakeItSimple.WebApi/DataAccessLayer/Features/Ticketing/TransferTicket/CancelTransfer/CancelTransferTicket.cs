@@ -5,7 +5,6 @@ using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
 {
@@ -27,9 +26,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                 var transferTicketExist = await _context.TransferTicketConcerns
                 .FirstOrDefaultAsync(x => x.Id == command.TransferTicketId);
 
-                if (transferTicketExist == null)
+                if (transferTicketExist is null)
                     return Result.Failure(TransferTicketError.TransferTicketConcernIdNotExist());
-                
+
+                if (transferTicketExist.IsTransfer is true)
+                    return Result.Failure(TicketRequestError.TicketAlreadyApproved());
+
+                if (transferTicketExist.IsRejectTransfer is true)
+                    return Result.Failure(TransferTicketError.TransferAlreadyReject());
 
                 transferTicketExist.IsActive = false;
 
@@ -58,9 +62,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket
                 }
 
                 await CreateTicketHistory(ticketConcernExist, command, cancellationToken);
-
                 await CreateTransactionNotification(ticketConcernExist,transferTicketExist,command,cancellationToken);
-
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();

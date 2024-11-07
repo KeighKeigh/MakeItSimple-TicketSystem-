@@ -58,9 +58,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     if (closingTicketExist is null)
                         return Result.Failure(ClosingTicketError.ClosingTicketIdNotExist());
 
+                    if(closingTicketExist.IsActive is false)
+                        return Result.Failure(ClosingTicketError.TicketAlreadyCancel());
+
                     var closedRequestId = await _context.ApproverTicketings
                         .Where(x => x.ClosingTicketId == closingTicketExist.Id && x.IsApprove == null)
                         .ToListAsync();
+
 
                     var ticketHistoryList = await _context.TicketHistories
                         .Where(x => x.TicketConcernId == closingTicketExist.TicketConcernId

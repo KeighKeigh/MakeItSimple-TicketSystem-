@@ -1,53 +1,14 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
-using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CompanySetup.GetCompany.GetCompanyResult;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification
+namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.TicketsNotification
 {
-    public class TicketingNotification
+    public partial class TicketingNotification
     {
-        public class TicketingNotifResult
-        {
-            public int AllRequestTicketNotif { get; set; }
-            public int ForTicketNotif { get; set; }
-            public int CurrentlyFixingNotif { get; set; }
-            public int NotConfirmNotif { get; set; }
-            public int DoneNotif { get; set; }
-            public int ReceiverForApprovalNotif { get; set; }
-            public int AllTicketNotif { get; set; }
-            public int OpenTicketNotif { get; set; }
-            public int ForTransferNotif { get; set; }
-            public int TransferApprovalNotif { get; set; }
-            public int ForCloseNotif { get; set; }
-
-            public int OnHold { get; set; }
-
-            public int NotConfirmCloseNotif { get; set; }
-            public int ClosedNotif { get; set; }
-            public int ForApprovalClosingNotif { get; set; }
-
-        }
-
-        public class BusinessUnitNotif
-        {
-            public int Id { get; set; }
-            public bool Is_Active { get; set; }
-        }
-
-        public class TicketingNotificationCommand : IRequest<Result>
-        {
-            public Guid UserId { get; set; }
-            public string Role { get; set; }
-
-
-        }
 
         public class Handler : IRequestHandler<TicketingNotificationCommand, Result>
         {
@@ -327,7 +288,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                 }
 
-
                 var notification = new TicketingNotifResult
                 {
                     AllRequestTicketNotif = allRequestTicketNotif,
@@ -349,8 +309,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 };
 
                 var confirmList = ticketConcernQuery
-                    .Where(x => x.UserId == request.UserId 
-                    && x.RequestConcern.Is_Confirm == null 
+                    .Where(x => x.UserId == request.UserId
+                    && x.RequestConcern.Is_Confirm == null
                     && x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm)
                     .ToList();
 
@@ -361,14 +321,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                     var daysClose = confirm.Closed_At.Value.Day - DateTime.Now.Day;
 
-                    daysClose = Math.Abs(daysClose) * (1);
+                    daysClose = Math.Abs(daysClose) * 1;
 
                     if (daysClose >= 1)
                     {
                         daysClose = daysClose * hoursDifference;
                     }
 
-                    var hourConvert = (daysClose + confirm.Closed_At.Value.Hour) - DateTime.Now.Hour;
+                    var hourConvert = daysClose + confirm.Closed_At.Value.Hour - DateTime.Now.Hour;
 
                     if (hourConvert >= hoursDifference)
                     {
@@ -412,7 +372,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
-                return  Result.Success(notification);
+                return Result.Success(notification);
 
             }
         }

@@ -55,6 +55,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     var ticketConcernExist = await _context.TicketConcerns
                         .FirstOrDefaultAsync(x => x.RequestConcernId == requestConcernIdExist.Id, cancellationToken);
 
+                    if (ticketConcernExist.IsApprove is true)
+                        return Result.Failure(TicketRequestError.TicketAlreadyAssign());
+                    
                     await UpdateRequest(requestConcernIdExist,locationExist ,ticketConcernExist,command, cancellationToken);
 
                     ticketConcernList = ticketConcernExist.Id;
@@ -88,7 +91,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 return Result.Success();
 
             }
-
 
             private async Task<RequestConcern> UpdateRequest(RequestConcern requestConcernIdExist,Location location,TicketConcern ticketConcernExist, AddRequestConcernCommand command , CancellationToken cancellationToken)
             {
@@ -165,7 +167,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             }
 
-            private async Task<Result?> AttachmentHandler(AddRequestConcernCommand command, int ticketConcern, CancellationToken cancellationToken)
+            private async Task<Result?> AttachmentHandler(AddRequestConcernCommand command, int ticketConcern, CancellationToken cancellationToken) 
             {
 
                 foreach (var attachments in command.RequestAttachmentsFiles.Where(a => a.Attachment.Length > 0))

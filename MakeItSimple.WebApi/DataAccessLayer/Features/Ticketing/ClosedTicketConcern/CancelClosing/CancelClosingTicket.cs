@@ -32,6 +32,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 if (closingTicketExist == null)
                     return Result.Failure(ClosingTicketError.ClosingTicketIdNotExist());
 
+                var approver = await _context.ApproverTicketings
+                    .FirstOrDefaultAsync(a => a.ClosingTicketId == command.ClosingTicketId &&
+                    a.IsApprove == true);
+
+                if(approver is not null) 
+                    return Result.Failure(TicketRequestError.TicketAlreadyApproved());
+
                 var ticketConcernExist = await _context.TicketConcerns
                     .FirstOrDefaultAsync(x => x.Id == closingTicketExist.TicketConcernId);
 

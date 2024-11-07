@@ -58,6 +58,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 if (upsertConcern is not null)
                 {
+                    if (upsertConcern.IsActive is false)
+                        return Result.Failure(TicketRequestError.TicketAlreadyCancel());
+
                     await AssignTicket(upsertConcern,command,cancellationToken);
 
                     await TransactionNotification(upsertConcern, userDetails, command, cancellationToken);

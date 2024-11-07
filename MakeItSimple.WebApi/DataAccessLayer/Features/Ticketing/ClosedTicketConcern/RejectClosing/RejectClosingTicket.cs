@@ -2,24 +2,15 @@
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
+using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern
+namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.RejectClosing
 {
-    public class RejectClosingTicket
+    public partial class RejectClosingTicket
     {
-        public class RejectClosingTicketCommand : IRequest<Result>
-        {
-            public Guid? RejectClosed_By { get; set; }
-            public Guid? Transacted_By { get; set; }
-            public string Reject_Remarks { get; set; }
-            public int ? ClosingTicketId { get; set; }
-            public string Modules { get; set; }
-
-        }
 
         public class Handler : IRequestHandler<RejectClosingTicketCommand, Result>
         {
@@ -36,20 +27,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     .FirstOrDefaultAsync(x => x.Id == command.Transacted_By);
 
                 var closedTicketExist = await _context.ClosingTickets
+                    .Include(c => c.TicketConcern)
                         .FirstOrDefaultAsync(x => x.Id == command.ClosingTicketId);
 
-                if (closedTicketExist == null)
-                {
+                if (closedTicketExist is null)          
                     return Result.Failure(ClosingTicketError.ClosingTicketIdNotExist());
-                }
 
-                closedTicketExist.RejectClosedAt = DateTime.Now;
-                closedTicketExist.IsRejectClosed = true;
-                closedTicketExist.RejectClosedBy = command.RejectClosed_By;
-                closedTicketExist.RejectRemarks = command.Reject_Remarks;
+                await UpdateCloseStatus(closedTicketExist,command,cancellationToken);
+                await ClosingTicketHistory(userDetails,closedTicketExist,command,cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+
+
+            private async Task UpdateCloseStatus(ClosingTicket closingTicket ,RejectClosingTicketCommand command, CancellationToken cancellationToken)
+            {
+
+                closingTicket.RejectClosedAt = DateTime.Now;
+                closingTicket.IsRejectClosed = true;
+                closingTicket.RejectClosedBy = command.RejectClosed_By;
+                closingTicket.RejectRemarks = command.Reject_Remarks;
 
                 var ticketConcernExist = await _context.TicketConcerns
-                    .FirstOrDefaultAsync(x => x.Id == closedTicketExist.TicketConcernId);
+                    .FirstOrDefaultAsync(x => x.Id == closingTicket.TicketConcernId);
 
                 ticketConcernExist.IsClosedApprove = null;
                 ticketConcernExist.Remarks = command.Reject_Remarks;
@@ -64,8 +65,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 }
 
                 var ticketHistory = await _context.TicketHistories
-                    .Where(x => x.TicketConcernId == ticketConcernExist.Id)
-                    .Where(x => (x.IsApprove == null && x.Request.Contains(TicketingConString.Approval))
+                    .Where(x => x.TicketConcernId == closingTicket.TicketConcernId)
+                    .Where(x => x.IsApprove == null && x.Request.Contains(TicketingConString.Approval)
                      || x.Request.Contains(TicketingConString.NotConfirm))
                     .ToListAsync();
 
@@ -74,15 +75,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     _context.TicketHistories.Remove(item);
                 }
 
+            }
+
+            private async Task ClosingTicketHistory(User user, ClosingTicket closingTicket, RejectClosingTicketCommand command, CancellationToken cancellationToken)
+            {
                 var addTicketHistory = new TicketHistory
                 {
-                    TicketConcernId = closedTicketExist.TicketConcernId,
+                    TicketConcernId = closingTicket.TicketConcernId,
                     TransactedBy = command.Transacted_By,
                     TransactionDate = DateTime.Now,
                     Request = TicketingConString.Reject,
-                    Status = $"{TicketingConString.CloseReject} {userDetails.Fullname}",
+                    Status = $"{TicketingConString.CloseReject} {user.Fullname}",
                     Remarks = command.Reject_Remarks,
-                    
+
                 };
 
                 await _context.TicketHistories.AddAsync(addTicketHistory, cancellationToken);
@@ -90,20 +95,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Closing request for ticket number {ticketConcernExist.Id} was rejected.",
-                    AddedBy = userDetails.Id,
+                    Message = $"Closing request for ticket number {closingTicket.TicketConcernId} was rejected.",
+                    AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = ticketConcernExist.UserId.Value,
+                    ReceiveBy = closingTicket.TicketConcern.UserId.Value,
                     Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.OpenTicket,
-                    PathId =  ticketConcernExist.Id,
+                    PathId = closingTicket.TicketConcernId,
 
                 };
 
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
-
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
             }
 
 

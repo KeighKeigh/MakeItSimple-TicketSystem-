@@ -206,9 +206,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                         if (request.UserType == TicketingConString.IssueHandler)
                         {
-                            var transferApprovalList =  _context.TransferTicketConcerns
+                            var transferApprovalList = _context.TransferTicketConcerns
                                 .AsNoTracking()
-                                .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
+                                .Where(t => t.IsTransfer == false && t.IsActive == true && t.TransferTo == request.UserId)
                                 .Select(t => t.TicketConcernId);
 
                             ticketConcernQuery = ticketConcernQuery.Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id));

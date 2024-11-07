@@ -34,5 +34,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing
        public static Error NoApproverHasSetup() =>
        new Error("ClosingTicketError.NoApproverHasSetup", "No aprrover has been setup!");
 
+        public static Error TicketAlreadyCancel() =>
+        new Error("TicketRequest.TicketAlreadyCancel", "Ticket concern already cancelled!");
+
     }
 }
