@@ -43,9 +43,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                      .Include(x => x.Channel)
                      .Include(x => x.TicketConcerns)
                      .ThenInclude(x => x.User)
-                     .OrderBy(x => x.Id)
                      .AsSplitQuery()
-                     ;
+                     .OrderBy(x => x.Id);
 
 
                 if (requestConcernsQuery.Any())
@@ -99,7 +98,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     if (request.Is_Approve != null)
                     {
                         var ticketStatusList = await _context.TicketConcerns
-                            .AsNoTrackingWithIdentityResolution()
+                            .AsNoTracking()
                             .Where(x => x.IsApprove == request.Is_Approve)
                             .Select(x => x.RequestConcernId)
                             .ToListAsync();
@@ -167,7 +166,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 .ToListAsync();
 
                             var businessUnitDefault = await _context.BusinessUnits
-                            .AsNoTrackingWithIdentityResolution()
+                            .AsNoTracking()
                             .Where(x => x.IsActive == true)
                             .Where(x => listOfRequest.Contains(x.Id))
                             .Select(x => x.Id)
@@ -176,6 +175,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                             var receiverList = await _context.Receivers
                                 .AsNoTrackingWithIdentityResolution()
                                 .Include(x => x.BusinessUnit)
+                                .AsSplitQuery()
                                 .Where(x => businessUnitDefault
                                 .Contains(x.BusinessUnitId.Value) && x.IsActive == true &&
                                  x.UserId == request.UserId)

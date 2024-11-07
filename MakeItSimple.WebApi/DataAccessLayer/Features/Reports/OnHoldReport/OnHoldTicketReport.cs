@@ -23,9 +23,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OnHoldReport
             {
 
                 IQueryable<TicketOnHold> query = _context.TicketOnHolds
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(q => q.TicketConcern)
                     .ThenInclude(q => q.RequestConcern)
-                    .Include(q => q.AddedByUser);
+                    .Include(q => q.AddedByUser)
+                    .AsSplitQuery();
 
                 if (request.Unit is not null)
                 {

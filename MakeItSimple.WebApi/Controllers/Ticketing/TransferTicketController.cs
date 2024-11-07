@@ -10,6 +10,7 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTick
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.CreateTransfer.AddNewTransferTicket;
 using Microsoft.AspNetCore.SignalR;
 using MakeItSimple.WebApi.Common.SignalR;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.TransferUser.TransferTicketUser;
 
 namespace MakeItSimple.WebApi.Controllers.Ticketing
 {
@@ -220,6 +221,35 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
 
             }
             catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("transfer-user")]
+        public async Task<IActionResult> TransferTicketUser([FromQuery] TransferTicketUserCommand command)
+        {
+            try
+            {
+                if (User.Identity is ClaimsIdentity identity)
+                {
+
+                    if (Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                    {
+                        command.Transfer_By = userId;
+                    }
+                }
+
+                var results = await _mediator.Send(command);
+                if (results.IsFailure)
+                {
+                    return BadRequest(results);
+                }
+                return Ok(results);
+
+
+            }
+            catch(Exception ex)
             {
                 return Conflict(ex.Message);
             }

@@ -4,15 +4,10 @@ using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification
+namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.ClickedTicketTransaction
 {
-    public class ClickedTransaction
+    public partial class ClickedTransaction
     {
-        public class ClickedTransactionCommand : IRequest<Result>
-        {
-            public int Id { get; set; } 
-
-        }
 
         public class Handler : IRequestHandler<ClickedTransactionCommand, Result>
         {
@@ -23,15 +18,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 _context = context;
             }
 
-            public async  Task<Result> Handle(ClickedTransactionCommand command, CancellationToken cancellationToken)
+            public async Task<Result> Handle(ClickedTransactionCommand command, CancellationToken cancellationToken)
             {
                 var transactionExist = await _context.TicketTransactionNotifications
                     .FirstOrDefaultAsync(x => x.Id == command.Id);
 
-                if(transactionExist is null)
-                {
+                if (transactionExist is null)  
                     return Result.Failure(TicketRequestError.TransactionNotExist());
-                }
 
                 transactionExist.IsChecked = true;
 

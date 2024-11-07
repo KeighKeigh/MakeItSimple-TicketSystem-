@@ -33,7 +33,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.TransferTicketConcerns)
                     .ThenInclude(x => x.TicketAttachments)
-                    .Include(x => x.RequestConcern);
+                    .Include(x => x.RequestConcern)
+                    .AsSplitQuery();
 
                 if (request.Unit is not null)
                 {

@@ -9,9 +9,9 @@ using LazyCache;
 using Newtonsoft.Json;
 using System.Text;
 using System.Security.Cryptography;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.GetTicketTransactionNotification;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.ClickedTransaction;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.GetAllTransactionNotification;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.TransactionNotification.GetTicketTransactionNotification;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.ClickedTicketTransaction.ClickedTransaction;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.AllTransactionNotification.GetAllTransactionNotification;
 using MakeItSimple.WebApi;
 
 [ApiController]

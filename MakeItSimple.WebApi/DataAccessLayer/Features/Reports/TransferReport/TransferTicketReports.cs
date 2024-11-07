@@ -30,7 +30,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.TransferReport
                     .Include(x => x.TicketConcern)
                     .ThenInclude(x => x.User)
                     .Include(x => x.TicketConcern)
-                    .ThenInclude(x => x.RequestConcern);
+                    .ThenInclude(x => x.RequestConcern)
+                    .AsSplitQuery();
 
 
                 if (request.Unit is not null)

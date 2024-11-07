@@ -151,7 +151,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .ToListAsync();
 
                     requestConcernsQuery = requestConcernsQuery
-                        .Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id))
+                        .Where(x => x.UserId == request.UserId)
                         .ToList();
 
                     allRequestTicketNotif = requestConcernsQuery.Count();
@@ -173,7 +173,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .Count();
 
                     ticketConcernQuery = ticketConcernQuery
-                        .Where(x => x.IsApprove == true && x.UserId == request.UserId && ticketConcernQuery.Any())
+                        .Where(x => x.IsApprove == true && x.UserId == request.UserId || transferApprovalList.Contains(x.Id) && ticketConcernQuery.Any())
                         .ToList();
 
                     allTicketNotif = ticketConcernQuery.Count();

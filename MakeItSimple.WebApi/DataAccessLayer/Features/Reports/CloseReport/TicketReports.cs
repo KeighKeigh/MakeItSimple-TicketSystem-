@@ -28,7 +28,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
             {
 
                 IQueryable<TicketConcern> ticketQuery = _context.TicketConcerns
-                    .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)
                     .Include(x => x.ModifiedByUser)
                     .Include(x => x.RequestorByUser)
@@ -40,7 +40,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.RequestConcern)
                     .Include(x => x.RequestConcern)
-                    .ThenInclude(x => x.Channel);
+                    .ThenInclude(x => x.Channel)
+                    .AsSplitQuery();
                     
 
 

@@ -23,7 +23,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
             {
 
                 var closing = await _context.TicketConcerns
-                     .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)
                     .Include(x => x.ModifiedByUser)
                     .Include(x => x.RequestorByUser)
@@ -35,6 +35,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
+                    .AsSplitQuery()
                     .Where(x => x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date < request.Date_To.Value.Date)
                     .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
                     .Select(x => new ClosingTicketExportResult
@@ -53,7 +54,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
                         Actual = $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
                         Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = x.TargetDate > x.Closed_At ? $"100 %" : "50 %",
+                        Efficeincy = x.TargetDate > x.Closed_At ? $"100%" : "50%",
                         Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
                         Category = x.RequestConcern.Channel.ChannelName,
 
@@ -150,7 +151,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         row.Cell(11).Value = closing[index - 1].Efficeincy;
                         row.Cell(12).Value = closing[index - 1].Remarks;
                         row.Cell(13).Value = closing[index - 1].Category;
-
 
                     }
 

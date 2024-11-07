@@ -5,7 +5,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors
 {
     public class UserError
     {
-
         public static Error UserAlreadyExist(string EmpId, string Fullname) =>
         new ("User.UserAlreadyExist", $"User {EmpId} , {Fullname} already Exist");
 
