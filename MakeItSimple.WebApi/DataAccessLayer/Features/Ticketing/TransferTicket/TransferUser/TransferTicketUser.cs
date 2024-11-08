@@ -10,7 +10,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
     public partial class TransferTicketUser
     {
 
-
         public class Handler : IRequestHandler<TransferTicketUserCommand, Result>
         {
             private readonly MisDbContext _context;
