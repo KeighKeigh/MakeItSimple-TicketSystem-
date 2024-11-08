@@ -26,6 +26,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 var requestTransactionExist = await _context.RequestConcerns
                     .Include(x => x.User)
+                    .Include(x => x.TicketConcerns)
                     .FirstOrDefaultAsync(x => x.Id == command.RequestConcernId,cancellationToken);
 
                 if (requestTransactionExist is null)

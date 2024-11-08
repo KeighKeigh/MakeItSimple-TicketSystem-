@@ -33,6 +33,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 if (closedTicketExist is null)          
                     return Result.Failure(ClosingTicketError.ClosingTicketIdNotExist());
 
+                if (closedTicketExist.IsActive is false)
+                    return Result.Failure(ClosingTicketError.TicketAlreadyCancel());
+
                 await UpdateCloseStatus(closedTicketExist,command,cancellationToken);
                 await ClosingTicketHistory(userDetails,closedTicketExist,command,cancellationToken);
 
