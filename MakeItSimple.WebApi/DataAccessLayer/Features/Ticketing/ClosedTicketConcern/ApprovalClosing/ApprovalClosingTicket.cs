@@ -169,7 +169,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 return closingTicket;
             }
 
-            private async Task<TicketTransactionNotification> ApprovalClosingNotification(ClosingTicket closingTicket, User user, ApproverTicketing approverTicketing, ApproveClosingTicketCommand command , CancellationToken cancellationToken ) 
+            private async Task ApprovalClosingNotification(ClosingTicket closingTicket, User user, ApproverTicketing approverTicketing, ApproveClosingTicketCommand command , CancellationToken cancellationToken ) 
             {
 
                 closingTicket.TicketApprover = approverTicketing.UserId;
@@ -189,8 +189,21 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
 
+                var addTicketApproveNotification = new TicketTransactionNotification
+                {
 
-                return addNewTicketTransactionNotification;
+                    Message = $"Ticket number {closingTicket.TicketConcernId} was approved by {user.Fullname}",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = closingTicket.TicketConcern.UserId.Value,
+                    Modules = PathConString.IssueHandlerConcerns,
+                    Modules_Parameter = PathConString.ForClosingTicket,
+                    PathId = closingTicket.TicketConcernId
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addTicketApproveNotification);
+                
             }
 
             private async Task<TicketTransactionNotification> ConfirmationNotification(ClosingTicket closingTicket, User user, RequestConcern requestConcern, ApproveClosingTicketCommand command, CancellationToken cancellationToken)
