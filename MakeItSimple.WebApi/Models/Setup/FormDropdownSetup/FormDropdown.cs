@@ -1,12 +1,11 @@
 ﻿using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
+using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 
-namespace MakeItSimple.WebApi.Models.Setup.FormSetup
+namespace MakeItSimple.WebApi.Models.Setup.FormDropdownSetup
 {
-    public class Form : BaseEntity
+    public class FormDropdown : BaseEntity
     {
         public int Id { get; set; }
-        public string Form_Name { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
@@ -15,7 +14,11 @@ namespace MakeItSimple.WebApi.Models.Setup.FormSetup
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
 
-        public ICollection<QuestionCategory> QuestionCategories{ get; set; }
+        public string DropdownDescription { get; set; }
+
+        public int FormQuestionId { get; set; }
+        public virtual FormQuestion FormQuestion { get; set; }
+       
 
     }
 }

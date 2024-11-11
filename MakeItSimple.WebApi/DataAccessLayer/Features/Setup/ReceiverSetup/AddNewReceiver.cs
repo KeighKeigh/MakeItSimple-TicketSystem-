@@ -2,7 +2,7 @@
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup;
-using MakeItSimple.WebApi.Models.Setup;
+using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;

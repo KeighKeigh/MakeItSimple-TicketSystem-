@@ -1,6 +1,6 @@
 ﻿using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Data;
-using MakeItSimple.WebApi.Models.Setup;
+using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.GetReceiver.GetReceiverResult;

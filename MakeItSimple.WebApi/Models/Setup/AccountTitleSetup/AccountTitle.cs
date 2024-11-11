@@ -10,13 +10,10 @@
         public virtual User AddedByUser { get; set; }
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
-
         public int AccountNo { get; set; }
         public string AccountCode { get; set; }
         public string AccountTitles { get; set; }
-
         public DateTime SyncDate { get; set; }
-
         public string SyncStatus { get; set; }
 
     }

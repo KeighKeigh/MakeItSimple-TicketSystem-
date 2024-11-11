@@ -24,9 +24,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public async Task<Result> Handle(GetTicketHistoryQuery request, CancellationToken cancellationToken)
             {
                 var ticketHistory = await _context.TicketHistories
-                    .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.TransactedByUser)
                     .Include(x => x.TicketConcern)
+                    .AsSplitQuery()
                     .Where(x => x.TicketConcernId == request.TicketConcernId)
                     .GroupBy(x => x.TicketConcernId).Select(x => new GetTicketHistoryResult
                     {
@@ -44,8 +45,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             Approver_Level = x.Approver_Level,
                             IsApproved = x.IsApprove,
 
-                        }).ToList(),
-
+                        })
+                        .ToList(),
                         UpComingApprovers = x.OrderBy(x => x.Id)
                         .OrderByDescending(x => x.Id)
                         .Where(x => x.IsApprove == null && x.Approver_Level != null || x.Request.Contains(TicketingConString.Approval)
@@ -61,7 +62,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             Approver_Level = x.Approver_Level,
                             IsApproved = x.IsApprove,
 
-                        }).ToList(),
+                        })
+                        .ToList(),
 
                     }).ToListAsync();
 

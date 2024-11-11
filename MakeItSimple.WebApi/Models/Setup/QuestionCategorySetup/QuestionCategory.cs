@@ -1,8 +1,9 @@
-﻿using MakeItSimple.WebApi.Models.Setup.FormSetup;
+﻿using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.Models.Setup.FormSetup;
 
-namespace MakeItSimple.WebApi.Models.Setup.QuestionModuleSetup
+namespace MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup
 {
-    public class QuestionModuleForm
+    public class QuestionCategory : BaseEntity
     {
         public int Id { get; set; }
         public bool IsActive { get; set; } = true;
@@ -12,17 +13,8 @@ namespace MakeItSimple.WebApi.Models.Setup.QuestionModuleSetup
         public virtual User AddedByUser { get; set; }
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
-
-
         public int FormId { get; set; }
         public virtual Form Form { get; set; }
-
-        public int QuestionModuleId { get; set; }
-        public virtual QuestionModule QuestionModule { get; set; }
-
-
-
-
-
+        public string QuestionCategoryName {  get; set; }
     }
 }

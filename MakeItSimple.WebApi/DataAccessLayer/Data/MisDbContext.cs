@@ -7,7 +7,6 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.CompanySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.DepartmentSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.LocationSetup;
-using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.QuestionModuleSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubUnitSetup;
@@ -15,7 +14,6 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.UnitSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension;
 using MakeItSimple.WebApi.Models;
-using MakeItSimple.WebApi.Models.Setup;
 using MakeItSimple.WebApi.Models.Setup.AccountTitleSetup;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
@@ -26,7 +24,7 @@ using MakeItSimple.WebApi.Models.Setup.CompanySetup;
 using MakeItSimple.WebApi.Models.Setup.DepartmentSetup;
 using MakeItSimple.WebApi.Models.Setup.FormSetup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
-using MakeItSimple.WebApi.Models.Setup.QuestionModuleSetup;
+using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.Models.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.Models.Setup.SubUnitSetup;
 using MakeItSimple.WebApi.Models.Setup.UnitSetup;
@@ -78,8 +76,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data
         //Phase 2 
 
         public virtual DbSet<Form> Forms { get; set; }
-        public virtual DbSet<QuestionModule> QuestionModules { get; set; }
-        public virtual DbSet<QuestionModuleForm> QuestionModuleForms { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -118,8 +114,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data
 
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());
-            modelBuilder.ApplyConfiguration(new QuestionModulesConfiguration());
-            modelBuilder.ApplyConfiguration(new QuestionModuleFormConfiguration()); 
             
 
 

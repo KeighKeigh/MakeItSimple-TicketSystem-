@@ -25,7 +25,6 @@ using MakeItSimple.WebApi.Common.Caching;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-// Add services to the container.
 
 
 var connectionString = builder.Configuration.GetConnectionString("Testing");
@@ -86,7 +85,6 @@ builder.Services.AddSwaggerGen( c =>
         Type = SecuritySchemeType.ApiKey
     });
 
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -142,12 +140,10 @@ builder.Services.AddAuthentication(authOptions =>
 
     });
 
-
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddLazyCache();
 builder.Services.AddSignalR();
-
 
 builder.Services.Configure<CloudinaryOption>(config.GetSection("Cloudinary"));
 
@@ -168,7 +164,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -182,7 +177,7 @@ app.UseRouting();
 app.UseHttpsRedirection();
 app.UseCors(clientPermission);
 
-//app.MapControllers();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseWebSockets();

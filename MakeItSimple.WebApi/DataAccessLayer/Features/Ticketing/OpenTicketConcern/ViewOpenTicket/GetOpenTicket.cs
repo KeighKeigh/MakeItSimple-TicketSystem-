@@ -304,7 +304,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null ? TicketingConString.NotConfirm
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true && x.OnHold == null ? TicketingConString.Closed
                                         : "Unknown",
-
                         Added_By = x.AddedByUser.Fullname,
                         Created_At = x.CreatedAt,
                         Remarks = x.Remarks,
@@ -328,7 +327,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                           SubCategoryId = x.SubCategoryId,
                           SubCategory_Description = x.SubCategory.SubCategoryDescription,
                           Notes = x.Notes,
-                          IsApprove = x.ApproverTickets.Any(x => x.IsApprove == null) ? false : true,
+                          IsApprove = x.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
                           ApproverLists = x.ApproverTickets
                           .Where(x => x.IsApprove != null)
                           .Select(x => new ApproverList
@@ -347,7 +346,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                               FileSize = x.FileSize,
 
                           }).ToList(),
-
 
                       })
                       .ToList(),

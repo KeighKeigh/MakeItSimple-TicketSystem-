@@ -1,11 +1,10 @@
-﻿
-using MakeItSimple.WebApi.Models.Setup;
-using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
+﻿using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
 using MakeItSimple.WebApi.Models.Setup.ChannelSetup;
 using MakeItSimple.WebApi.Models.Setup.CompanySetup;
 using MakeItSimple.WebApi.Models.Setup.DepartmentSetup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
+using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.Models.Setup.SubUnitSetup;
 
 using MakeItSimple.WebApi.Models.Setup.UnitSetup;

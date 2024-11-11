@@ -23,7 +23,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
             {
                 var transferAlreadyList = await _context.TransferTicketConcerns
                     .AsNoTracking()
-                    .Where(t => t.IsTransfer == true)
+                    .Where(t => t.IsTransfer == true && t.TicketConcernId == command.TicketConcernId)
                     .Select(x => x.TransferTo)
                     .ToListAsync();
 

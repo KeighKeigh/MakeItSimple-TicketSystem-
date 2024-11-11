@@ -6,7 +6,6 @@
         public class GetTicketHistoryResult
         {
             public int? TicketConcernId { get; set; }
-
             public List<GetTicketHistoryConcern> GetTicketHistoryConcerns { get; set; }
             public class GetTicketHistoryConcern
             {
@@ -19,7 +18,6 @@
                 public int? Approver_Level { get; set; }
                 public bool? IsApproved { get; set; }
             }
-
             public List<UpComingApprover> UpComingApprovers { get; set; }
             public class UpComingApprover
             {

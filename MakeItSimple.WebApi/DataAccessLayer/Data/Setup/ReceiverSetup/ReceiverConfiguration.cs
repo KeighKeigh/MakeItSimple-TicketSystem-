@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using MakeItSimple.WebApi.Models.Setup;
+using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup
 {

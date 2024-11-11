@@ -5,19 +5,10 @@ using MakeItSimple.WebApi.Models.Setup.FormSetup;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup
+namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup.AddForms
 {
-    public class AddNewForm
+    public partial class AddNewForm
     {
-
-        public class AddNewFormCommand : IRequest<Result>
-        {
-            public int ? Id { get; set; }
-            public string Form_Name { get; set; }
-            public Guid Added_By { get; set; }
-            public Guid Modified_By { get; set; }
-
-        }
 
         public class Handler : IRequestHandler<AddNewFormCommand, Result>
         {
@@ -41,10 +32,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup
                         && !f.Form_Name.Equals(formExist.Form_Name));
 
                     if (formNameExist is not null)
-                    {
                         return Result.Failure(FormError.FormNameExist());
-                    }
-
+                      
                     formExist.Form_Name = command.Form_Name;
                     formExist.ModifiedBy = command.Modified_By;
 
@@ -55,10 +44,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup
                         .FirstOrDefaultAsync(f => f.Form_Name == command.Form_Name);
 
                     if (formNameExist is not null)
-                    {
                         return Result.Failure(FormError.FormNameExist());
-                    }
-
+                    
                     var addNewForms = new Form
                     {
                         Form_Name = command.Form_Name,
@@ -66,7 +53,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup
 
                     };
 
-                    await _context.Forms.AddAsync(addNewForms,cancellationToken);
+                    await _context.Forms.AddAsync(addNewForms, cancellationToken);
 
                 }
 
