@@ -22,8 +22,12 @@ using MakeItSimple.WebApi.Models.Setup.ChannelSetup;
 using MakeItSimple.WebApi.Models.Setup.ChannelUserSetup;
 using MakeItSimple.WebApi.Models.Setup.CompanySetup;
 using MakeItSimple.WebApi.Models.Setup.DepartmentSetup;
+using MakeItSimple.WebApi.Models.Setup.FormCheckBoxSetup;
+using MakeItSimple.WebApi.Models.Setup.FormDropdownSetup;
 using MakeItSimple.WebApi.Models.Setup.FormSetup;
+using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
+using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
 using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.Models.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.Models.Setup.SubUnitSetup;
@@ -34,7 +38,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Text.Json;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Data
+namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 {
     public class MisDbContext : DbContext
     {
@@ -76,6 +80,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data
         //Phase 2 
 
         public virtual DbSet<Form> Forms { get; set; }
+        public virtual DbSet<QuestionCategory> QuestionCategories { get; set; }
+        public virtual DbSet<FormQuestion> FormQuestions { get; set; }
+        public virtual DbSet<FormCheckBox> FormCheckBoxes { get; set; }
+        public virtual DbSet<FormDropdown> FormDropdowns { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -114,7 +122,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data
 
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());
-            
+
 
 
 

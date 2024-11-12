@@ -1,5 +1,4 @@
 using FluentValidation;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.Common.Behavior;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Common;
@@ -19,6 +18,7 @@ using Microsoft.Data.SqlClient;
 using MakeItSimple.WebApi;
 using StackExchange.Redis;
 using MakeItSimple.WebApi.Common.Caching;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 
 

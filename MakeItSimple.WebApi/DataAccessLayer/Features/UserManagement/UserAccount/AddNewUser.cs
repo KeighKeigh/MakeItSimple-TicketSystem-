@@ -1,9 +1,9 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Data;
-using MakeItSimple.WebApi.DataAccessLayer.Errors;
+﻿using MakeItSimple.WebApi.DataAccessLayer.Errors;
 using MakeItSimple.WebApi.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures
 {

@@ -1,5 +1,6 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Models.Setup.FormSetup;
+using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 
 namespace MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup
 {
@@ -16,5 +17,7 @@ namespace MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup
         public int FormId { get; set; }
         public virtual Form Form { get; set; }
         public string QuestionCategoryName {  get; set; }
+
+        public ICollection<FormQuestion> FormQuestions { get; set; }
     }
 }

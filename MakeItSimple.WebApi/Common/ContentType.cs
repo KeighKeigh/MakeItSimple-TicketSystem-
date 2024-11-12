@@ -20,7 +20,7 @@
                 ".gif" => "image/gif",
                 ".bmp" => "image/bmp",
                 ".tiff" => "image/tiff",
-                _ => "application/octet-stream", // Default for unknown types
+                _ => "application/octet-stream",
             };
         }
     }

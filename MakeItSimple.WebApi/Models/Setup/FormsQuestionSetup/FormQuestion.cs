@@ -20,11 +20,9 @@ namespace MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup
         public virtual QuestionCategory QuestionCategory { get; set; }
         public string QuestionType { get; set; }
 
-        public int? FormDropdownId { get; set; }
-        public virtual FormDropdown FormDropdown { get; set; }
+        public ICollection<FormCheckBox> FormCheckBoxes { get; set; }
+        public ICollection<FormDropdown> FormDropdowns { get; set; }
 
-        public int? FormCheckBoxId { get; set; }
-        public virtual FormCheckBox FormCheckBox { get; set; }
         
     }
 }

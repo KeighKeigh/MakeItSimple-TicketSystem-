@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MakeItSimple.WebApi.Models.Setup.ChannelSetup;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup;
@@ -7,6 +6,7 @@ using MakeItSimple.WebApi.Models.Setup.ChannelUserSetup;
 using MakeItSimple.WebApi.Common;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.AddNewChannel.AddNewChannelCommands;
 using MakeItSimple.WebApi.Models;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup
 {

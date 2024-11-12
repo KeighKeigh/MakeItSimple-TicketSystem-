@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

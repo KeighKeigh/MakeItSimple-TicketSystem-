@@ -1,11 +1,11 @@
 ﻿using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubUnitSetup.SyncSubUnit;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Linq;
 using MakeItSimple.WebApi.Models.Setup.UnitSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.UnitSetup
 {

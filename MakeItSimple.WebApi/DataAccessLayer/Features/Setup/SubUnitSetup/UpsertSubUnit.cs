@@ -1,11 +1,11 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Data;
-using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup;
+﻿using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup;
 using MediatR;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
 using MakeItSimple.WebApi.Models.Setup.SubUnitSetup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.CodeAnalysis;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubUnitSetup
 {

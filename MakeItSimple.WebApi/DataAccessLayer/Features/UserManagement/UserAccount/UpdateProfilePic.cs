@@ -2,7 +2,7 @@
 using CloudinaryDotNet.Actions;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Cloudinary;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Errors;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MediatR;

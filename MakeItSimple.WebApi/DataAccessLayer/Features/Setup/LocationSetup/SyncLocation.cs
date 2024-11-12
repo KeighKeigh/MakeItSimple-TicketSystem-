@@ -1,5 +1,5 @@
 ﻿using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup;
 using MakeItSimple.WebApi.Models.Setup.CompanySetup;

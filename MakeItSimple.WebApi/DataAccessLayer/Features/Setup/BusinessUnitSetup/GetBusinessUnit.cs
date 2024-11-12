@@ -1,5 +1,5 @@
 ﻿using MakeItSimple.WebApi.Common.Pagination;
-using MakeItSimple.WebApi.DataAccessLayer.Data;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,4 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Data;
-using MakeItSimple.WebApi.DataAccessLayer.Errors;
+﻿using MakeItSimple.WebApi.DataAccessLayer.Errors;
 using MakeItSimple.WebApi.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using Dapper;
 using CloudinaryDotNet;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures
 {
