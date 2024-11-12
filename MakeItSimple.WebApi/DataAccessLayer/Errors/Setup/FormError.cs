@@ -11,6 +11,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Setup
         public static Error QuestionCategoryNotExist() =>
         new Error("Form.QuestionCategoryNotExist", "Question category not exist!");
 
+        public static Error QuestionCategoryAlreadyExist() =>
+        new Error("Form.QuestionCategoryAlreadyExist", "Question category already exist!");
 
     }
 }

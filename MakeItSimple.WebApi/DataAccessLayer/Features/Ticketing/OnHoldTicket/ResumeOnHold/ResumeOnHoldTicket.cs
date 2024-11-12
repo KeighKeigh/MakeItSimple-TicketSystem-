@@ -24,6 +24,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
             {
 
                 var onHoldExist = await _context.TicketOnHolds
+                    .Include(o => o.TicketConcern)
                     .FirstOrDefaultAsync(o => o.Id == command.TicketOnHoldId, cancellationToken);
 
                 if (onHoldExist is null)
@@ -31,6 +32,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
 
                 await UpdateOnHold(onHoldExist,command,cancellationToken);
                 await OnHoldTicketHistory(onHoldExist, command, cancellationToken);
+                await TransactionNotification(onHoldExist, command, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
@@ -67,6 +69,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 await _context.TicketHistories.AddAsync(addTicketHistory);
 
                 return addTicketHistory;
+            }
+
+            private async Task TransactionNotification(TicketOnHold onHold, ResumeOnHoldTicketCommand command, CancellationToken cancellationToken)
+            {
+                var addNewTicketTransactionNotification = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket number {onHold.TicketConcernId} is resume",
+                    AddedBy = command.Transacted_By.Value,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = onHold.TicketConcern.RequestorBy.Value,
+                    PathId = onHold.TicketConcernId.Value,
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
+
             }
 
 

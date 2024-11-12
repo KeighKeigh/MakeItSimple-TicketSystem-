@@ -22,15 +22,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySet
             public async Task<Result> Handle(AddNewQuestionCategoryCommand command, CancellationToken cancellationToken)
             {
 
-
                 var validator = await Validator(command, cancellationToken);
                 if (validator is not null)
                     return validator;
 
                 await CreateQuestionCategory(command, cancellationToken);
+
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
-
+               
             }
 
             private async Task<Result?> Validator(AddNewQuestionCategoryCommand command, CancellationToken cancellationToken)
@@ -39,7 +39,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySet
                     .FirstOrDefaultAsync(f => f.Id == command.FormId, cancellationToken);
 
                 if (formExist is null)
-                    return Result.Success(FormError.FormNotExist());
+                    return Result.Failure(FormError.FormNotExist());
+
+                var questionCategoriesAlreadyExist = await _context.QuestionCategories
+                    .FirstOrDefaultAsync(q => q.FormId == command.FormId && q.QuestionCategoryName == command.Question_Category_Name, cancellationToken);
+
+                if (questionCategoriesAlreadyExist is not null)
+                    return Result.Failure(FormError.QuestionCategoryAlreadyExist());
 
                 return null;
 
@@ -54,6 +60,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySet
                     AddedBy = command.Added_By,
 
                 };
+
+                await _context.QuestionCategories.AddAsync(addFormCategory);
             }
 
 

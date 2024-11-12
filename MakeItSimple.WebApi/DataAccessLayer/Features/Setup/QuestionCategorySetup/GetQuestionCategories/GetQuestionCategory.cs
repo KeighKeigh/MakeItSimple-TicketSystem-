@@ -7,28 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySetup.GetQuestionCategories
 {
-    public class GetQuestionCategory
+    public partial class GetQuestionCategory
     {
-        public record GetQuestionCategoryResult
-        {
-            public int Id { get; set; }
-            public int FormId { get; set; }
-            public string Form_Name { get; set; }
-            public string Question_Category_Name { get; set; }
-            public string Added_By { get; set; }
-            public DateTime Created_At { get; set; }
-            public string Modified_By { get; set; }
-            public DateTime? Updated_At { get; set; }
-            public string Is_Active { get; set; }
-
-        }
-
-        public class GetQuestionCategoryQuery : UserParams, IRequest<PagedList<GetQuestionCategoryResult>>
-        {
-            public string Search {  get; set; }
-            public bool? Status { get; set; }
-
-        }
 
         public class Handler : IRequestHandler<GetQuestionCategoryQuery, PagedList<GetQuestionCategoryResult>>
         {
@@ -61,9 +41,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySet
                         Id = r.Id,  
                         FormId = r.FormId,
                         Form_Name = r.Form.Form_Name,
+                        Question_Category_Name = r.QuestionCategoryName,
                         Added_By = r.AddedByUser.Fullname,
-
-
+                        Created_At = r.CreatedAt,
+                        Modified_By = r.ModifiedByUser.Fullname,
+                        Updated_At = r.UpdatedAt,
+                        Is_Active = r.IsActive,
+                   
                     });
 
                 return await PagedList<GetQuestionCategoryResult>.CreateAsync(results, request.PageNumber, request.PageSize);
