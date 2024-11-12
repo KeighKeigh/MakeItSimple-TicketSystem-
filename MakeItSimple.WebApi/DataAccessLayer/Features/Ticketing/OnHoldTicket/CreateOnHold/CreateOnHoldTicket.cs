@@ -117,6 +117,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                     Message = $"Ticket number {command.TicketConcernId} is on-hold",
                     AddedBy = command.Added_By.Value,
                     Created_At = DateTime.Now,
+                    Modules = PathConString.ConcernTickets,
+                    Modules_Parameter = PathConString.Ongoing,
                     ReceiveBy = ticketConcern.RequestorBy.Value,
                     PathId = command.TicketConcernId,
 

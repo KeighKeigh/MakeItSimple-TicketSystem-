@@ -79,6 +79,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                     Message = $"Ticket number {onHold.TicketConcernId} is resume",
                     AddedBy = command.Transacted_By.Value,
                     Created_At = DateTime.Now,
+                    Modules = PathConString.ConcernTickets,
+                    Modules_Parameter = PathConString.Ongoing,
                     ReceiveBy = onHold.TicketConcern.RequestorBy.Value,
                     PathId = onHold.TicketConcernId.Value,
 
