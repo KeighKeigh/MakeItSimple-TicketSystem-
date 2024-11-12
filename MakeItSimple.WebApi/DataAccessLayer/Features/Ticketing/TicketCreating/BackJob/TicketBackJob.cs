@@ -25,7 +25,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     .AsNoTrackingWithIdentityResolution()
                     .Include(r => r.RequestConcern)
                     .AsSplitQuery()
-                    .Where(r => r.UserId == request.UserId)
+                    .Where(r => r.RequestConcern.UserId == request.UserId)
                     .Where(r => r.IsClosedApprove == true && r.RequestConcern.Is_Confirm == true)
                     .Select(r => new TicketBackJobResult
                     {

@@ -21,10 +21,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
             public async Task<Result> Handle(TransferTicketUserCommand command, CancellationToken cancellationToken)
             {
-                var transferAlreadyList = await _context.TransferTicketConcerns
+                var transferAlreadyTransferToList = await _context.TransferTicketConcerns
                     .AsNoTracking()
                     .Where(t => t.IsTransfer == true && t.TicketConcernId == command.TicketConcernId)
                     .Select(x => x.TransferTo)
+                    .ToListAsync();
+
+                var transferAlreadyTransferByList = await _context.TransferTicketConcerns
+                    .AsNoTracking()
+                    .Where(t => t.IsTransfer == true && t.TicketConcernId == command.TicketConcernId)
+                    .Select(x => x.TransferBy)
                     .ToListAsync();
 
                 var ticketConcern = await _context.TicketConcerns
@@ -41,7 +47,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     .Include(r => r.Channel)
                     .AsSplitQuery()
                     .Where(r => r.ChannelId == ticketConcern.RequestConcern.ChannelId
-                    && !transferAlreadyList.Contains(r.UserId) && r.UserId != command.Transfer_By)
+                    && !transferAlreadyTransferToList.Contains(r.UserId) && !transferAlreadyTransferByList.Contains(r.UserId) && r.UserId != command.Transfer_By)
                     .Select(r => new TransferTicketUserResult
                     {
                         Id = r.UserId,

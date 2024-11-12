@@ -21,24 +21,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup.GetForms
 
             public async Task<PagedList<GetFormResult>> Handle(GetFormQuery request, CancellationToken cancellationToken)
             {
-                //IQueryable<Form> formsQuery = _context.Forms
-                //    .AsNoTrackingWithIdentityResolution()
-                //    .Include(x => x.AddedByUser)
-                //    .Include(x => x.ModifiedByUser)
-                //    .AsSplitQuery();
-
-
-                //if (!string.IsNullOrEmpty(request.Search))
-                //{
-                //    formsQuery = formsQuery
-                //        .Where(f => f.Form_Name.Contains(request.Search));
-                //}
-
-                //if (request.Status is not null)
-                //{
-                //    formsQuery = formsQuery
-                //        .Where(f => f.IsActive == request.Status);
-                //}
 
                 var formResult =  _context.Forms
                     .AsNoTrackingWithIdentityResolution()
