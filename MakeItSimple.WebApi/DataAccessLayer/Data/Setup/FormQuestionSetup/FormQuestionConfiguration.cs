@@ -1,13 +1,13 @@
 ﻿using MakeItSimple.WebApi.Models.Setup.FormSetup;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
+using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCategorySetup
+namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormQuestionSetup
 {
-    public class QuestionCategoryConfiguration : IEntityTypeConfiguration<QuestionCategory>
+    public class FormQuestionConfiguration : IEntityTypeConfiguration<FormQuestion>
     {
-        public void Configure(EntityTypeBuilder<QuestionCategory> builder) 
+        public void Configure(EntityTypeBuilder<FormQuestion> builder)
         {
 
             builder.HasOne(u => u.AddedByUser)

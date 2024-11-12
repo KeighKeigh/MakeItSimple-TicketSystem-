@@ -5,6 +5,10 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.CategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ChannelSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.CompanySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.DepartmentSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCategorySetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCheckBoxSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormDropdownSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormQuestionSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.LocationSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup;
@@ -122,6 +126,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());
+            modelBuilder.ApplyConfiguration(new QuestionCategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new FormQuestionConfiguration());
+            modelBuilder.ApplyConfiguration(new FormCheckBoxConfiguration());
+            modelBuilder.ApplyConfiguration(new FormDropdownConfiguration());
 
 
 
