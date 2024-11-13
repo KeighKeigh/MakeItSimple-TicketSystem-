@@ -4,6 +4,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MakeItSimple.WebApi.Migrations
 {
     [DbContext(typeof(MisDbContext))]
-    partial class MisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241113011507_updateBackJob")]
+    partial class updateBackJob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2831,11 +2834,11 @@ namespace MakeItSimple.WebApi.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_request_concerns_users_user_id");
 
-                    b.HasOne("MakeItSimple.WebApi.Models.Ticketing.RequestConcern", "BackJob")
+                    b.HasOne("MakeItSimple.WebApi.Models.Ticketing.TicketConcern", "BackJob")
                         .WithMany()
                         .HasForeignKey("BackJobId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_request_concerns_request_concerns_back_job_id");
+                        .HasConstraintName("fk_request_concerns_ticket_concerns_back_job_id1");
 
                     b.HasOne("MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup.BusinessUnit", "BusinessUnit")
                         .WithMany()

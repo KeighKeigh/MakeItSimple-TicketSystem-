@@ -43,8 +43,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                      .Include(x => x.Channel)
                      .Include(x => x.TicketConcerns)
                      .ThenInclude(x => x.User)
+                     .Include(x => x.BackJob)
                      .AsSplitQuery()
-                     .OrderBy(x => x.Id);
+                     .OrderByDescending(x => x.Id);
 
 
                 if (requestConcernsQuery.Any())
@@ -239,6 +240,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         Contact_Number = g.ContactNumber,
                         Request_Type = g.RequestType,
                         BackJobId = g.BackJobId,
+                        Back_Job_Concern = g.BackJob.Concern,
                         Added_By = g.AddedByUser.Fullname,
                         Date_Needed = g.DateNeeded,
                         Created_At = g.CreatedAt,

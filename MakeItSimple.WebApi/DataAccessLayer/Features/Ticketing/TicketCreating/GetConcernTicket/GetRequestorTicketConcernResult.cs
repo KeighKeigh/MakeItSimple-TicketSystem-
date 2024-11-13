@@ -49,6 +49,8 @@
             public string Contact_Number { get; set; }
             public string Request_Type { get; set; }
             public int? BackJobId { get; set; }
+            public string Back_Job_Concern { get; set; }
+          
             public DateTime? Date_Needed { get; set; }
             public string Added_By { get; set; }
             public DateTime Created_At { get; set; }

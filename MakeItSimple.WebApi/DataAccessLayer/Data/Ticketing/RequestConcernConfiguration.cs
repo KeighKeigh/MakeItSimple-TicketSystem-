@@ -25,6 +25,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.Ticketing
            .HasForeignKey(u => u.RejectBy)
            .OnDelete(DeleteBehavior.Restrict);
 
+           builder.HasOne(u => u.BackJob)
+           .WithMany()
+           .HasForeignKey(u => u.BackJobId)
+           .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

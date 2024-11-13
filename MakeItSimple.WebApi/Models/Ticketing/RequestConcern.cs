@@ -78,6 +78,7 @@ namespace MakeItSimple.WebApi.Models.Ticketing
 
         public string RequestType { get; set; }
         public int ? BackJobId { get; set; }
+        public virtual RequestConcern BackJob { get; set; }
 
         public ICollection<TicketConcern> TicketConcerns { get; set; }
 

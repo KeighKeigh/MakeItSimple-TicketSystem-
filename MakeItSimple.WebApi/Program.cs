@@ -46,6 +46,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
 
+
+
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
 
 builder.Services.AddMediatR(x =>

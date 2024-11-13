@@ -37,6 +37,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                     .ThenInclude(x => x.TicketAttachments)
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.User)
+                    .Include(x => x.RequestConcern)
+                    .ThenInclude(x => x.BackJob)
                     .AsSplitQuery();
 
                 if (ticketConcernQuery.Any())
@@ -288,6 +290,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         Contact_Number = x.RequestConcern.ContactNumber,
                         Request_Type = x.RequestConcern.RequestType,
                         BackJobId = x.RequestConcern.BackJobId,
+                        Back_Job_Concern = x.RequestConcern.BackJob.Concern, 
                         ChannelId = x.RequestConcern.ChannelId,
                         Channel_Name = x.RequestConcern.Channel.ChannelName,
                         UserId = x.UserId,
