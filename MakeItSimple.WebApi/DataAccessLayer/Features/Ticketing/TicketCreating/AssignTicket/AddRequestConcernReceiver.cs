@@ -24,6 +24,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             public async Task<Result> Handle(AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
             {
+                var requestConcernId = new int();
 
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Modified_By, cancellationToken);
@@ -39,13 +40,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 var issueHandlerPermissionList = allUserList
                     .Where(x => x.Permissions
-                .Contains(TicketingConString.IssueHandler))
+                    .Contains(TicketingConString.IssueHandler))
                     .Select(x => x.UserRoleName)
                     .ToList();
 
                 var requestorPermissionList = allUserList
                     .Where(x => x.Permissions
-                .Contains(TicketingConString.Requestor))
+                    .Contains(TicketingConString.Requestor))
                     .Select(x => x.UserRoleName)
                     .ToList();
 
@@ -70,8 +71,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 }
                 else
                 {
-                    return Result.Failure(TicketRequestError.TicketIdNotExist());
+
+                    var requestorDetails = await _context.Users
+                         .FirstOrDefaultAsync(r => r.Id == command.Requestor_By);
+
+                    var createRequestConcern = await CreateRequestConcern(requestorDetails,command,cancellationToken);
+
+                    requestConcernId = createRequestConcern.Id;
+
+                    var createTicketConcern = await CreateTicketConcern(createRequestConcern, requestorDetails, command, cancellationToken);
+
+                    upsertConcern = createTicketConcern;
+
+
+                    await TicketingHistory(createTicketConcern,userDetails, command, cancellationToken);
+                    await ReceiverTransactionNotification(createTicketConcern,userDetails, command, cancellationToken);
                 }
+
 
                 if (!Directory.Exists(TicketingConString.AttachmentPath))
                 {
@@ -135,17 +151,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         hasChanged = true;
                     }
 
-                    if (requestConcern.CategoryId != command.CategoryId && command.CategoryId != null)
-                    {
-                        requestConcern.CategoryId = command.CategoryId;
-                        hasChanged = true;
-                    }
-
-                    if (requestConcern.SubCategoryId != command.SubCategoryId && command.SubCategoryId != null)
-                    {
-                        requestConcern.SubCategoryId = command.SubCategoryId;
-                        hasChanged = true;
-                    }
 
                     if(hasChanged)
                     {
@@ -265,7 +270,122 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             }
 
 
+            private async Task<RequestConcern> CreateRequestConcern(User user, AddRequestConcernReceiverCommand command,CancellationToken cancellationToken)
+            {
+                var addRequestConcern = new RequestConcern
+                {
+                    UserId = command.Requestor_By,
+                    Concern = command.Concerns,
+                    AddedBy = command.Added_By,
+                    ConcernStatus = TicketingConString.CurrentlyFixing,
+                    CompanyId = user.CompanyId,
+                    BusinessUnitId = user.BusinessUnitId,
+                    DepartmentId = user.DepartmentId,
+                    UnitId = user.UnitId,
+                    SubUnitId = user.SubUnitId,
+                    LocationId = user.LocationId,
+                    ChannelId = command.ChannelId,
+                    DateNeeded = command.DateNeeded,
+                    ContactNumber = command.Contact_Number,
+                    RequestType = command.Request_Type,
+                    BackJobId = command.BackJobId,
+                    Notes = command.Notes,
+                    IsDone = false,
 
+                };
+
+                await _context.RequestConcerns.AddAsync(addRequestConcern);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return addRequestConcern;
+
+            }
+
+            private async Task<TicketConcern> CreateTicketConcern(RequestConcern requestConcern, User user, AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
+            {
+                var addTicketConcern = new TicketConcern
+                {
+                    RequestConcernId = requestConcern.Id,
+                    TargetDate = command.Target_Date,
+                    UserId = command.UserId,
+                    RequestorBy = command.Requestor_By,
+                    IsApprove = true,
+                    AddedBy = command.Added_By,
+                    ConcernStatus = requestConcern.ConcernStatus,
+                    IsAssigned = true,
+                    ApprovedBy = command.Added_By,
+                    ApprovedAt = DateTime.Now,
+
+                };
+
+                await _context.TicketConcerns.AddAsync(addTicketConcern);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return addTicketConcern;
+
+            }
+
+            private async Task TicketingHistory(TicketConcern ticketConcern, User user,AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
+            {
+                var addRequestTicketHistory = new TicketHistory
+                {
+                    TicketConcernId = ticketConcern.Id,
+                    TransactedBy = command.Added_By,
+                    TransactionDate = DateTime.Now,
+                    Request = TicketingConString.Request,
+                    Status = $"{TicketingConString.ConcernCreated} {user.Fullname}"
+                };
+
+                await _context.TicketHistories.AddAsync(addRequestTicketHistory, cancellationToken);
+
+
+                var asignedTicketHistory = new TicketHistory
+                {
+                    TicketConcernId = ticketConcern.Id,
+                    TransactedBy = command.Added_By,
+                    TransactionDate = DateTime.Now,
+                    Request = TicketingConString.ConcernAssign,
+                    Status = $"{TicketingConString.RequestAssign} {ticketConcern.User.Fullname}"
+                };
+
+                await _context.TicketHistories.AddAsync(asignedTicketHistory, cancellationToken);
+
+            }
+
+            private async Task ReceiverTransactionNotification(TicketConcern ticketConcern, User user, AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
+            {
+
+                var addNewTicketTransactionNotification = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket number {ticketConcern.Id} has been assigned",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = command.UserId.Value,
+                    Modules = PathConString.IssueHandlerConcerns,
+                    Modules_Parameter = PathConString.OpenTicket,
+                    PathId = ticketConcern.Id,
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
+
+                var addNewTicketTransactionOngoing = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket number {ticketConcern.RequestConcernId} is now ongoing",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = command.Requestor_By.Value,
+                    Modules = PathConString.ConcernTickets,
+                    Modules_Parameter = PathConString.Ongoing,
+                    PathId = ticketConcern.RequestConcernId.Value,
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionOngoing);
+
+            }
 
 
         }

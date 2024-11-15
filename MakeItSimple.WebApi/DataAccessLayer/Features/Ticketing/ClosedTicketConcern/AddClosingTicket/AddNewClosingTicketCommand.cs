@@ -12,9 +12,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
         public int? ClosingTicketId { get; set; }
         public string Resolution { get; set; }
         public string Notes { get; set; }
-        public int? CategoryId { get; set; }
-        public int? SubCategoryId { get; set; }
+        //public int? CategoryId { get; set; }
+        //public int? SubCategoryId { get; set; }
         public string Modules { get; set; }
+        public List<ClosingTicketCategory> ClosingTicketCategories { get; set; }
+        public class ClosingTicketCategory
+        {
+            public int? TicketCategoryId { get; set; }
+            public int? CategoryId { get; set; } 
+        }
+
+        public List<ClosingSubTicketCategory> ClosingSubTicketCategories { get; set; }
+        public class ClosingSubTicketCategory
+        {
+            public int? TicketSubCategoryId { get; set; }
+            public int? SubCategoryId { get; set; }
+        }
+
         public List<AddClosingAttachment> AddClosingAttachments { get; set; }
 
         public class AddClosingAttachment

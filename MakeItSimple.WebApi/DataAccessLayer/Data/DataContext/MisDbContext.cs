@@ -80,6 +80,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         public virtual DbSet<TicketCommentView> TicketCommentViews { get; set; }
         public virtual DbSet<TicketTransactionNotification> TicketTransactionNotifications { get; set; }
         public virtual DbSet<TicketOnHold> TicketOnHolds { get; set; }
+        public virtual DbSet<TicketCategory> TicketCategories { get; set; }
+
+        public virtual DbSet<TicketSubCategory> TicketSubCategories {  get; set; } 
 
         //Phase 2 
 

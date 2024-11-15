@@ -83,12 +83,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                 }
 
                 ticketQuery = ticketQuery
-                    .Where(x => x.TargetDate.HasValue && x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date <= request.Date_To.Value.Date);
-
+                    .Where(x =>  x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date);
 
                 var results = ticketQuery
                     .Where(x => x.RequestConcern.Is_Confirm == true && x.IsClosedApprove == true)
-
                     .Select(x => new Reports
                     {
                         Year = x.TargetDate.Value.Date.Year.ToString(),

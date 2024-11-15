@@ -41,15 +41,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.QuestionCategorySet
                     return Result.Failure(FormError.QuestionCategoryNotExist());
 
                 var formExist = await _context.Forms
-                    .FirstOrDefaultAsync(f => f.Id.Equals(command.FormId), cancellationToken);
+                    .FirstOrDefaultAsync(f => f.Id == command.FormId, cancellationToken);
 
                 if (formExist is null)
                     return Result.Failure(FormError.FormNotExist());
 
                 var questionCategoriesAlreadyExist = await _context.QuestionCategories
-                    .FirstOrDefaultAsync(q => q.FormId.Equals(command.FormId) && q.QuestionCategoryName.Equals(command.Question_Category_Name), cancellationToken);
+                    .AnyAsync(q => q.FormId == command.FormId && 
+                    string.Equals(q.QuestionCategoryName, command.Question_Category_Name)
+                    && !string.Equals(questionCategory.QuestionCategoryName, command.Question_Category_Name));
 
-                if (questionCategoriesAlreadyExist is not null && !questionCategory.QuestionCategoryName.Equals(command.Question_Category_Name))
+                if (questionCategoriesAlreadyExist)
                     return Result.Failure(FormError.QuestionCategoryAlreadyExist());
 
                 return null;

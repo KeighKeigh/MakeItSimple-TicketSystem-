@@ -36,7 +36,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
                     .AsSplitQuery()
-                    .Where(x => x.TargetDate.Value.Date >= request.Date_From.Value.Date && x.TargetDate.Value.Date < request.Date_To.Value.Date)
+                    .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date)
                     .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
                     .Select(x => new ClosingTicketExportResult
                     {

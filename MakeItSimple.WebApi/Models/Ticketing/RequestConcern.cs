@@ -81,9 +81,8 @@ namespace MakeItSimple.WebApi.Models.Ticketing
         public virtual RequestConcern BackJob { get; set; }
 
         public ICollection<TicketConcern> TicketConcerns { get; set; }
-
-
-
+        public ICollection<TicketCategory> TicketCategories { get; set; }
+        public ICollection<TicketSubCategory> TicketSubCategories { get; set; }
 
     }
 }

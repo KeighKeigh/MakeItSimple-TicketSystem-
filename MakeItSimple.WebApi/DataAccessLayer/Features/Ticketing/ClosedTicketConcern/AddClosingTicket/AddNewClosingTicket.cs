@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AddRequest.AddRequestConcern;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.AddClosingTicket
 {
@@ -22,6 +23,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
         public async Task<Result> Handle(AddNewClosingTicketCommand command, CancellationToken cancellationToken)
         {
+            var ticketCategoryList = new List<int>();
+            var ticketSubCategoryList = new List<int>();
 
             var userDetails = await _context.Users
                .FirstOrDefaultAsync(x => x.Id == command.Added_By, cancellationToken);
@@ -83,6 +86,47 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     await AddApproverHistory(ticketConcernExist, approver, command, cancellationToken);
                 }
 
+                foreach (var category in command.ClosingTicketCategories)
+                {
+                    var ticketCategoryExist = await _context.TicketCategories
+                        .FirstOrDefaultAsync(t => t.Id == category.TicketCategoryId, cancellationToken);
+
+                    if (ticketCategoryExist is not null)
+                    {
+                        ticketCategoryList.Add(category.TicketCategoryId.Value);
+
+                    }
+                    else
+                    {
+                        await CreateTicketCategory(ticketConcernExist.RequestConcernId.Value, category, cancellationToken);
+
+                    }
+
+                }
+
+                foreach (var subCategory in command.ClosingSubTicketCategories)
+                {
+                    var ticketSubCategoryExist = await _context.TicketSubCategories
+                        .FirstOrDefaultAsync(t => t.Id == subCategory.TicketSubCategoryId, cancellationToken);
+
+                    if (ticketSubCategoryExist is not null)
+                    {
+                        ticketSubCategoryList.Add(subCategory.TicketSubCategoryId.Value);
+                    }
+                    else
+                    {
+                        await CreateSubTicketCategory(ticketConcernExist.RequestConcernId.Value, subCategory, cancellationToken);
+                    }
+
+                }
+
+                if (ticketCategoryList.Any())
+                    await RemoveTicketCategory(ticketConcernExist.RequestConcernId.Value, ticketCategoryList, cancellationToken);
+
+                if (ticketSubCategoryList.Any())
+                    await RemoveTicketSubCategory(ticketConcernExist.RequestConcernId.Value, ticketSubCategoryList, cancellationToken);
+
+
                 await AddConfirmationHistory(newClosingTicket, ticketConcernExist, command, cancellationToken);
 
                 await TransactionNotification(newClosingTicket, ticketConcernExist, userDetails, command, cancellationToken);
@@ -116,8 +160,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             {
                 TicketConcernId = ticketConcern.Id,
                 Resolution = command.Resolution,
-                CategoryId = command.CategoryId,
-                SubCategoryId = command.SubCategoryId,
+                //CategoryId = command.CategoryId,
+                //SubCategoryId = command.SubCategoryId,
                 IsClosing = false,
                 TicketApprover = approver.UserId,
                 AddedBy = command.Added_By,
@@ -155,15 +199,25 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             if (!approver.Any())
                 return Result.Failure(ClosingTicketError.NoApproverHasSetup());
 
-            var categoryExist = await _context.Categories
-                .FirstOrDefaultAsync(x => x.Id == command.CategoryId,cancellationToken);
-            if (categoryExist is null)
-                return Result.Failure(TicketRequestError.CategoryNotExist());
+            foreach (var category in command.ClosingTicketCategories)
+            {
+                var ticketCategoryExist = await _context.Categories
+                  .FirstOrDefaultAsync(c => c.Id == category.CategoryId, cancellationToken);
 
-            var subCategoryExist = await _context.SubCategories
-                .FirstOrDefaultAsync(x => x.Id == command.SubCategoryId, cancellationToken);
-            if (subCategoryExist is null)
-                return Result.Failure(TicketRequestError.SubCategoryNotExist());
+                if (ticketCategoryExist is null)
+                    return Result.Failure(TicketRequestError.CategoryNotExist());
+
+            }
+
+            foreach (var subCategory in command.ClosingSubTicketCategories)
+            {
+                var ticketSubCategoryExist = await _context.SubCategories
+                    .FirstOrDefaultAsync(c => c.Id == subCategory.SubCategoryId, cancellationToken);
+
+                if (ticketSubCategoryExist is null)
+                    return Result.Failure(TicketRequestError.SubCategoryNotExist());
+
+            }
 
             return null;
 
@@ -324,16 +378,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 closingTicket.Notes = command.Notes;
                 IsChanged = true;
             }
-            if (closingTicket.CategoryId != command.CategoryId)
-            {
-                closingTicket.CategoryId = command.CategoryId;
-                IsChanged = true;
-            }
-            if (closingTicket.SubCategoryId != command.SubCategoryId)
-            {
-                closingTicket.SubCategoryId = command.SubCategoryId;
-                IsChanged = true;
-            }
 
             if (IsChanged)
             {
@@ -344,6 +388,79 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             return closingTicket;
         }
 
+        private async Task CreateTicketCategory(int requestConcernId, AddNewClosingTicketCommand.ClosingTicketCategory category, CancellationToken cancellationToken)
+        {
+
+            var addTicketCategory = new TicketCategory
+            {
+                RequestConcernId = requestConcernId,
+                CategoryId = category.CategoryId.Value,
+
+            };
+
+            await _context.TicketCategories.AddAsync(addTicketCategory);
+
+        }
+
+        private async Task CreateSubTicketCategory(int requestConcernId, AddNewClosingTicketCommand.ClosingSubTicketCategory subCategory, CancellationToken cancellationToken)
+        {
+            var addTicketSubCategory = new TicketSubCategory
+            {
+                RequestConcernId = requestConcernId,
+                SubCategoryId = subCategory.SubCategoryId.Value,
+
+            };
+
+            await _context.TicketSubCategories.AddAsync(addTicketSubCategory);
+
+        }
+
+        private async Task RemoveTicketCategory(int requestConcernId, List<int> ticketCategoryList, CancellationToken cancellationToken)
+        {
+            var allTicketCategory = await _context.TicketCategories
+                .Where(r => r.RequestConcernId == requestConcernId)
+                .Select(a => new
+                {
+                    a.Id,
+
+                }).ToListAsync();
+
+            var removeTicketCategory = allTicketCategory
+                .Where(r => !ticketCategoryList.Contains(r.Id));
+
+            foreach (var remove in removeTicketCategory)
+            {
+                var ticketCategoryExist = await _context.TicketCategories
+                    .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                _context.TicketCategories.Remove(ticketCategoryExist);
+
+            }
+        }
+
+        private async Task RemoveTicketSubCategory(int requestConcernId, List<int> ticketSubCategoryList, CancellationToken cancellationToken)
+        {
+            var allSubTicketCategory = await _context.TicketSubCategories
+                .Where(r => r.RequestConcernId == requestConcernId)
+                .Select(a => new
+                {
+                    a.Id,
+
+                }).ToListAsync();
+
+            var removeSubTicketCategory = allSubTicketCategory
+                .Where(r => !ticketSubCategoryList.Contains(r.Id));
+
+            foreach (var remove in removeSubTicketCategory)
+            {
+                var ticketSubCategoryExist = await _context.TicketSubCategories
+                    .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                _context.TicketSubCategories.Remove(ticketSubCategoryExist);
+
+            }
+
+        }
     }
 
 }

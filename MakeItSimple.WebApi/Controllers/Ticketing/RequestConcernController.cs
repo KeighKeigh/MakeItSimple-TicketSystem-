@@ -19,6 +19,8 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreati
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ViewImage.ViewTicketImage;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ApprovalTicket.RequestApprovalReceiver;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.BackJob.TicketBackJob;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ViewMultipleSubCategories;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.ViewMultipleSubCategories.ViewMultipleSubCategory;
 
 
 
@@ -75,6 +77,21 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                     command.UserId = userId;
 
                 }
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("multiple-sub-category")]
+        public async Task<IActionResult> ViewMultipleSubCategory([FromQuery] ViewMultipleSubCategoryQuery command)
+        {
+            try
+            {
+
                 var result = await _mediator.Send(command);
                 return Ok(result);
             }

@@ -1,4 +1,6 @@
 ﻿using CloudinaryDotNet;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
@@ -30,6 +32,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             {
 
                 var ticketConcernList = new int();
+                var requestConcernId = new int();
+                var ticketCategoryList = new List<int>();
+                var ticketSubCategoryList = new List<int>();
+
 
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Added_By, cancellationToken);
@@ -61,11 +67,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     await UpdateRequest(requestConcernIdExist,locationExist ,ticketConcernExist,command, cancellationToken);
 
                     ticketConcernList = ticketConcernExist.Id;
+                    requestConcernId = requestConcernIdExist.Id;
                 }
                 else
                 {
 
                     var addRequestConcern = await AddRequestConcern(userId,locationExist ,command, cancellationToken);
+
+                    requestConcernId = addRequestConcern.Id;
+
                     var addTicketConcern = await AddTicketConcern(addRequestConcern, command, cancellationToken);
 
                     ticketConcernList = addTicketConcern.Id;
@@ -74,6 +84,47 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     await AddNewTicketTransactionNotification(userDetails, addRequestConcern, command, cancellationToken);
 
                 }
+
+                foreach(var category in command.AddRequestTicketCategories)
+                {
+                    var ticketCategoryExist = await _context.TicketCategories
+                        .FirstOrDefaultAsync(t => t.Id == category.TicketCategoryId, cancellationToken);
+
+                    if (ticketCategoryExist is not null)
+                    {
+                        ticketCategoryList.Add(category.TicketCategoryId.Value);
+
+                    }
+                    else
+                    {
+                       await CreateTicketCategory(requestConcernId,category, cancellationToken); 
+
+                    }
+
+                }
+
+                foreach (var subCategory in command.AddRequestTicketSubCategories)
+                {
+                    var ticketSubCategoryExist = await _context.TicketSubCategories
+                        .FirstOrDefaultAsync(t => t.Id == subCategory.TicketSubCategoryId, cancellationToken);
+
+                    if (ticketSubCategoryExist is not null)
+                    {
+                        ticketSubCategoryList.Add(subCategory.TicketSubCategoryId.Value);
+                    }
+                    else
+                    {
+                        await CreateSubTicketCategory(requestConcernId, subCategory, cancellationToken);
+                    }
+
+                }
+
+                if(ticketCategoryList.Any())
+                    await RemoveTicketCategory(requestConcernId, ticketCategoryList, cancellationToken);
+
+                if(ticketSubCategoryList.Any())
+                    await RemoveTicketSubCategory(requestConcernId, ticketSubCategoryList, cancellationToken);
+
 
                 if (!Directory.Exists(TicketingConString.AttachmentPath))
                 {
@@ -92,13 +143,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             }
 
-
-            private async Task<RequestConcern> UpdateRequest(RequestConcern requestConcernIdExist,Location location,TicketConcern ticketConcernExist, AddRequestConcernCommand command , CancellationToken cancellationToken)
+            private async Task UpdateRequest(RequestConcern requestConcernIdExist,Location location,TicketConcern ticketConcernExist, AddRequestConcernCommand command , CancellationToken cancellationToken)
             {
                 
                 bool isChange = false;
 
-                if (requestConcernIdExist.Concern != command.Concern)
+                if (!string.Equals(requestConcernIdExist.Concern, command.Concern, StringComparison.OrdinalIgnoreCase))
                 {
                     requestConcernIdExist.Concern = command.Concern;
                     isChange = true;
@@ -109,37 +159,32 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     requestConcernIdExist.CompanyId = command.CompanyId;
                     isChange = true;
                 }
+
                 if (requestConcernIdExist.BusinessUnitId != command.BusinessUnitId)
                 {
                     requestConcernIdExist.BusinessUnitId = command.BusinessUnitId;
                     isChange = true;
                 }
-                if (requestConcernIdExist.BusinessUnitId != command.BusinessUnitId)
-                {
-                    requestConcernIdExist.BusinessUnitId = command.BusinessUnitId;
-                    isChange = true;
-                }
+
                 if (requestConcernIdExist.LocationId != location.Id)
                 {
                     requestConcernIdExist.LocationId = location.Id;
                     isChange = true;
                 }
+
                 if (requestConcernIdExist.ChannelId != command.ChannelId)
                 {
                     requestConcernIdExist.ChannelId = command.ChannelId;
                     isChange = true;
                 }
-                if (requestConcernIdExist.CategoryId != command.CategoryId)
-                {
-                    requestConcernIdExist.SubCategoryId = command.SubCategoryId;
-                    isChange = true;
-                }
-                if (requestConcernIdExist.ContactNumber != command.Contact_Number)
+
+                if (!string.Equals(requestConcernIdExist.ContactNumber, command.Contact_Number, StringComparison.OrdinalIgnoreCase))
                 {
                     requestConcernIdExist.ContactNumber = command.Contact_Number;
                     isChange = true;
                 }
-                if (requestConcernIdExist.RequestType != command.Request_Type)
+
+                if (!string.Equals(requestConcernIdExist.RequestType, command.Request_Type, StringComparison.OrdinalIgnoreCase))
                 {
                     requestConcernIdExist.RequestType = command.Request_Type;
                     isChange = true;
@@ -151,20 +196,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     isChange = true;
                 }
 
-                if(requestConcernIdExist.BackJobId != command.BackJobId)
+                if (requestConcernIdExist.BackJobId != command.BackJobId)
                 {
                     requestConcernIdExist.BackJobId = command.BackJobId;
-                    isChange = true;    
+                    isChange = true;
                 }
-
-                if (isChange)
-                {
-                    requestConcernIdExist.ModifiedBy = command.Modified_By;
-                    requestConcernIdExist.UpdatedAt = DateTime.Now;
-                    ticketConcernExist.UpdatedAt = DateTime.Now;
-                }
-
-                return requestConcernIdExist;
 
             }
 
@@ -265,20 +301,31 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 if (location is null)
                     return Result.Failure(TicketRequestError.LocationNotExist());
 
-                var categoryExist = await _context.Categories
-                  .FirstOrDefaultAsync(c => c.Id == command.CategoryId, cancellationToken);
-
                 var channelExist = await _context.Channels
                   .FirstOrDefaultAsync(c => c.Id == command.ChannelId, cancellationToken);
 
-                if (categoryExist is null)
-                    return Result.Failure(TicketRequestError.CategoryNotExist());
+                if (channelExist is null)
+                    return Result.Failure(TicketRequestError.ChannelNotExist());
 
-                var subCategoryExist = await _context.SubCategories
-                    .FirstOrDefaultAsync(c => c.Id == command.SubCategoryId, cancellationToken);
+                foreach(var category in command.AddRequestTicketCategories) 
+                {
+                    var ticketCategoryExist = await _context.Categories
+                      .FirstOrDefaultAsync(c => c.Id == category.CategoryId, cancellationToken);
 
-                if (subCategoryExist is null)
-                    return Result.Failure(TicketRequestError.SubUnitNotExist());
+                    if (ticketCategoryExist is null)
+                        return Result.Failure(TicketRequestError.CategoryNotExist());
+
+                }
+
+                foreach (var subCategory in command.AddRequestTicketSubCategories)
+                {
+                    var ticketSubCategoryExist = await _context.SubCategories
+                        .FirstOrDefaultAsync(c => c.Id == subCategory.SubCategoryId, cancellationToken);
+
+                    if (ticketSubCategoryExist is null)
+                        return Result.Failure(TicketRequestError.SubCategoryNotExist());
+
+                }
 
                 return null;
             }
@@ -299,8 +346,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     LocationId = location.Id,
                     DateNeeded = command.DateNeeded,
                     ChannelId = command.ChannelId,
-                    CategoryId = command.CategoryId,
-                    SubCategoryId = command.SubCategoryId,
                     Notes = command.Notes,
                     IsDone = false,
                     ContactNumber = command.Contact_Number,
@@ -313,6 +358,32 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return addRequestConcern;
+
+            }
+            private async Task CreateTicketCategory(int requestConcernId, AddRequestConcernCommand.AddRequestTicketCategory category,CancellationToken cancellationToken)
+            {
+
+                    var addTicketCategory = new TicketCategory
+                    {
+                        RequestConcernId = requestConcernId,
+                        CategoryId = category.CategoryId.Value,
+
+                    };
+
+                    await _context.TicketCategories.AddAsync(addTicketCategory);
+                
+            }
+
+            private async Task CreateSubTicketCategory(int requestConcernId, AddRequestConcernCommand.AddRequestTicketSubCategory subCategory, CancellationToken cancellationToken)
+            {
+                var addTicketSubCategory = new TicketSubCategory
+                {
+                    RequestConcernId = requestConcernId,
+                    SubCategoryId = subCategory.SubCategoryId.Value,
+
+                };
+
+                await _context.TicketSubCategories.AddAsync(addTicketSubCategory);
 
             }
 
@@ -334,6 +405,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 return addTicketConcern;
             }
+
 
             private async Task<TicketHistory> AddTicketHistory(User user, TicketConcern ticketConcern, AddRequestConcernCommand command, CancellationToken cancellationToken)
             {
@@ -372,6 +444,53 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
 
                 return addNewTicketTransactionNotification;
+
+            }
+
+            private async Task RemoveTicketCategory(int requestConcernId, List<int> ticketCategoryList, CancellationToken cancellationToken)
+            {
+                var allTicketCategory = await _context.TicketCategories
+                    .Where(r => r.RequestConcernId == requestConcernId)
+                    .Select(a => new
+                    {
+                        a.Id,
+
+                    }).ToListAsync();
+
+                var removeTicketCategory = allTicketCategory
+                    .Where(r => !ticketCategoryList.Contains(r.Id));
+
+                foreach (var remove in removeTicketCategory)
+                {
+                    var ticketCategoryExist = await _context.TicketCategories
+                        .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                    _context.TicketCategories.Remove(ticketCategoryExist);
+
+                }
+            }
+
+            private async Task RemoveTicketSubCategory(int requestConcernId, List<int> ticketSubCategoryList, CancellationToken cancellationToken)
+            {
+                var allSubTicketCategory = await _context.TicketSubCategories
+                    .Where(r => r.RequestConcernId == requestConcernId)
+                    .Select(a => new
+                    {
+                        a.Id,
+
+                    }).ToListAsync();
+
+                var removeSubTicketCategory = allSubTicketCategory
+                    .Where(r => !ticketSubCategoryList.Contains(r.Id));
+
+                foreach (var remove in removeSubTicketCategory)
+                {
+                    var ticketSubCategoryExist = await _context.TicketSubCategories
+                        .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                    _context.TicketSubCategories.Remove(ticketSubCategoryExist);
+
+                }
 
             }
 

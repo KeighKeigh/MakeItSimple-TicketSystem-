@@ -30,13 +30,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken);
 
-                var allUserList = await _context
-                    .UserRoles
+                var allUserList = await _context.UserRoles
                     .ToListAsync();
 
                 var receiverPermissionList = allUserList
                     .Where(x => x.Permissions
-                .Contains(TicketingConString.Receiver))
+                    .Contains(TicketingConString.Receiver))
                     .Select(x => x.UserRoleName)
                     .ToList();
 
@@ -76,9 +75,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 return Result.Success();
             }
 
-
-
-
             private async Task<Result?> ValidationHandler(TicketConcern ticketConcern , Receiver receiver , RequestApprovalReceiverCommand command, CancellationToken cancellationToken)
             {   
 
@@ -87,7 +83,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 return null;
                 
-
             }
 
             private async Task<TicketConcern> UpdateTicket(TicketConcern ticketConcern, RequestApprovalReceiverCommand command, CancellationToken cancellationToken)
