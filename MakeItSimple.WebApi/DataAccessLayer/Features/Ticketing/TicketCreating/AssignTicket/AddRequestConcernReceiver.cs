@@ -6,6 +6,7 @@ using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AddRequest.AddRequestConcern;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AssignTicket
 {
@@ -25,6 +26,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             public async Task<Result> Handle(AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
             {
                 var requestConcernId = new int();
+                var ticketCategoryList = new List<int>();
+                var ticketSubCategoryList = new List<int>();
 
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Modified_By, cancellationToken);
@@ -83,11 +86,49 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                     upsertConcern = createTicketConcern;
 
-
                     await TicketingHistory(createTicketConcern,userDetails, command, cancellationToken);
                     await ReceiverTransactionNotification(createTicketConcern,userDetails, command, cancellationToken);
                 }
 
+                foreach (var category in command.RequestorTicketCategories)
+                {
+                    var ticketCategoryExist = await _context.TicketCategories
+                        .FirstOrDefaultAsync(t => t.Id == category.TicketCategoryId, cancellationToken);
+
+                    if (ticketCategoryExist is not null)
+                    {
+                        ticketCategoryList.Add(category.TicketCategoryId.Value);
+
+                    }
+                    else
+                    {
+                        await CreateTicketCategory(requestConcernId, category, cancellationToken);
+
+                    }
+
+                }
+
+                foreach (var subCategory in command.RequestorTicketSubCategories)
+                {
+                    var ticketSubCategoryExist = await _context.TicketSubCategories
+                        .FirstOrDefaultAsync(t => t.Id == subCategory.TicketSubCategoryId, cancellationToken);
+
+                    if (ticketSubCategoryExist is not null)
+                    {
+                        ticketSubCategoryList.Add(subCategory.TicketSubCategoryId.Value);
+                    }
+                    else
+                    {
+                        await CreateSubTicketCategory(requestConcernId, subCategory, cancellationToken);
+                    }
+
+                }
+
+                if (ticketCategoryList.Any())
+                    await RemoveTicketCategory(requestConcernId, ticketCategoryList, cancellationToken);
+
+                if (ticketSubCategoryList.Any())
+                    await RemoveTicketSubCategory(requestConcernId, ticketSubCategoryList, cancellationToken);
 
                 if (!Directory.Exists(TicketingConString.AttachmentPath))
                 {
@@ -113,6 +154,32 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 {
                     case null:
                         return Result.Failure(TicketRequestError.UserNotExist());
+                }
+
+                var channelExist = await _context.Channels
+                  .FirstOrDefaultAsync(c => c.Id == command.ChannelId, cancellationToken);
+
+                if (channelExist is null)
+                    return Result.Failure(TicketRequestError.ChannelNotExist());
+
+                foreach (var category in command.RequestorTicketCategories)
+                {
+                    var ticketCategoryExist = await _context.Categories
+                      .FirstOrDefaultAsync(c => c.Id == category.CategoryId, cancellationToken);
+
+                    if (ticketCategoryExist is null)
+                        return Result.Failure(TicketRequestError.CategoryNotExist());
+
+                }
+
+                foreach (var subCategory in command.RequestorTicketSubCategories)
+                {
+                    var ticketSubCategoryExist = await _context.SubCategories
+                        .FirstOrDefaultAsync(c => c.Id == subCategory.SubCategoryId, cancellationToken);
+
+                    if (ticketSubCategoryExist is null)
+                        return Result.Failure(TicketRequestError.SubCategoryNotExist());
+
                 }
 
                 if (dateToday > command.Target_Date)
@@ -386,6 +453,82 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionOngoing);
 
             }
+
+
+            private async Task CreateTicketCategory(int requestConcernId, AddRequestConcernReceiverCommand.RequestorTicketCategory category, CancellationToken cancellationToken)
+            {
+
+                var addTicketCategory = new TicketCategory
+                {
+                    RequestConcernId = requestConcernId,
+                    CategoryId = category.CategoryId.Value,
+
+                };
+
+                await _context.TicketCategories.AddAsync(addTicketCategory);
+
+            }
+
+            private async Task CreateSubTicketCategory(int requestConcernId, AddRequestConcernReceiverCommand.RequestorTicketSubCategory subCategory, CancellationToken cancellationToken)
+            {
+                var addTicketSubCategory = new TicketSubCategory
+                {
+                    RequestConcernId = requestConcernId,
+                    SubCategoryId = subCategory.SubCategoryId.Value,
+
+                };
+
+                await _context.TicketSubCategories.AddAsync(addTicketSubCategory);
+
+            }
+
+            private async Task RemoveTicketCategory(int requestConcernId, List<int> ticketCategoryList, CancellationToken cancellationToken)
+            {
+                var allTicketCategory = await _context.TicketCategories
+                    .Where(r => r.RequestConcernId == requestConcernId)
+                    .Select(a => new
+                    {
+                        a.Id,
+
+                    }).ToListAsync();
+
+                var removeTicketCategory = allTicketCategory
+                    .Where(r => !ticketCategoryList.Contains(r.Id));
+
+                foreach (var remove in removeTicketCategory)
+                {
+                    var ticketCategoryExist = await _context.TicketCategories
+                        .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                    _context.TicketCategories.Remove(ticketCategoryExist);
+
+                }
+            }
+
+            private async Task RemoveTicketSubCategory(int requestConcernId, List<int> ticketSubCategoryList, CancellationToken cancellationToken)
+            {
+                var allSubTicketCategory = await _context.TicketSubCategories
+                    .Where(r => r.RequestConcernId == requestConcernId)
+                    .Select(a => new
+                    {
+                        a.Id,
+
+                    }).ToListAsync();
+
+                var removeSubTicketCategory = allSubTicketCategory
+                    .Where(r => !ticketSubCategoryList.Contains(r.Id));
+
+                foreach (var remove in removeSubTicketCategory)
+                {
+                    var ticketSubCategoryExist = await _context.TicketSubCategories
+                        .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                    _context.TicketSubCategories.Remove(ticketSubCategoryExist);
+
+                }
+
+            }
+
 
 
         }

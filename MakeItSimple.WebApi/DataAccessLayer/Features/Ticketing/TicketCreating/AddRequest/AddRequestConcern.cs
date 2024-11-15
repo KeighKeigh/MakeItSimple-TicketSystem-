@@ -406,7 +406,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 return addTicketConcern;
             }
 
-
             private async Task<TicketHistory> AddTicketHistory(User user, TicketConcern ticketConcern, AddRequestConcernCommand command, CancellationToken cancellationToken)
             {
                 var addTicketHistory = new TicketHistory
