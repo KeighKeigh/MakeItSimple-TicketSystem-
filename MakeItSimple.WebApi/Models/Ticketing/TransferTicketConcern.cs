@@ -28,6 +28,8 @@ namespace MakeItSimple.WebApi.Models.Ticketing
         public Guid ? TransferTo { get; set; }
         public virtual User TransferToUser { get; set; }
 
+        public DateTime? TargetDate { get; set; }
+
         public bool IsRejectTransfer { get; set; }
         public DateTime? RejectTransferAt { get; set; }
         public Guid? RejectTransferBy { get; set; }

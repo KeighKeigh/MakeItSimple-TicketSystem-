@@ -29,6 +29,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Added_By, cancellationToken);
 
+                var transferToDetails = await _context.Users
+                    .FirstOrDefaultAsync(t => t.Id == command.Transfer_To, cancellationToken);
+
                 var ticketConcernExist = await _context.TicketConcerns
                     .FirstOrDefaultAsync(x => x.Id == command.TicketConcernId, cancellationToken);
 
@@ -55,7 +58,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                     var approverList = await _context.Approvers
                         .Include(x => x.User)
-                        .Where(x => x.SubUnitId == ticketConcernExist.User.SubUnitId)
+                        .Where(x => x.SubUnitId == transferToDetails.SubUnitId)
                         .ToListAsync();
 
                     if (!approverList.Any())
@@ -114,11 +117,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 if (transferTicketConcern.TransferRemarks != command.TransferRemarks)
                 {
                     transferTicketConcern.TransferRemarks = command.TransferRemarks;
+                    isChange = true;
                 }
 
                 if (transferTicketConcern.Current_Target_Date != command.Current_Target_Date)
                 {
                     transferTicketConcern.Current_Target_Date = command.Current_Target_Date;
+                    isChange = true;
+                }
+
+                if (transferTicketConcern.TransferTo != command.Transfer_To)
+                {
+                    transferTicketConcern.TransferTo = command.Transfer_To;
+                    isChange = true;
                 }
 
 
@@ -139,6 +150,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     TicketConcernId = ticketConcern.Id,
                     TransferRemarks = command.TransferRemarks,
                     TransferBy = command.Transfer_By,
+                    TransferTo = command.Transfer_To,
                     IsTransfer = false,
                     AddedBy = command.Added_By,
                     Current_Target_Date = ticketConcern.TargetDate,

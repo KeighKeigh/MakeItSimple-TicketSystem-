@@ -114,7 +114,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Transfer_Status = x.IsTransfer == false && x.IsRejectTransfer == false ? "For Transfer Approval"
                                     : x.IsTransfer == true && x.IsRejectTransfer == false ? "Transfer Approve"
                                     : x.IsRejectTransfer == true ? "Transfer Reject" : "Unknown",
-
                         Transfer_Remarks = x.TransferRemarks,
                         RejectTransfer_By = x.RejectTransferByUser.Fullname,
                         RejectTransfer_At = x.RejectTransferAt,
@@ -124,9 +123,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Created_At = x.CreatedAt,
                         Modified_By = x.ModifiedByUser.Fullname,
                         Updated_At = x.UpdatedAt,
+                        Approver_Level = x.ApproverTickets
+                        .FirstOrDefault(x => x.UserId == request.UserId).ApproverLevel,
                         TransferAttachments = x.TicketAttachments
-                    .Select(x => new TransferAttachment
-                    {
+                      .Select(x => new TransferAttachment
+                      {
                         TicketAttachmentId = x.Id,
                         Attachment = x.Attachment,
                         FileName = x.FileName,
@@ -134,9 +135,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Added_By = x.AddedByUser.Fullname,
                         Created_At = x.CreatedAt,
                         Modified_By = x.ModifiedByUser.Fullname,
-                        Updated_At = x.UpdatedAt,
+                        Updated_At = x.UpdatedAt
+                      }).ToList(),
 
-                    }).ToList(),
+
+
 
 
                     });

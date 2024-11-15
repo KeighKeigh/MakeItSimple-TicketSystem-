@@ -32,6 +32,8 @@
             public string Modified_By { get; set; }
             public DateTime? Updated_At { get; set; }
 
+            public int? Approver_Level { get; set; }
+
             public List<TransferAttachment> TransferAttachments { get; set; }
 
             public class TransferAttachment

@@ -8,6 +8,7 @@ using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.ApprovalClosing.ApprovalClosingTicket;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.ApprovalTransfer
 {
@@ -25,8 +26,26 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
             public async Task<Result> Handle(ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
+                var dateToday = DateTime.Today;
+
                 var userDetails = await _context.Users
                     .FirstOrDefaultAsync(x => x.Id == command.Transacted_By);
+
+                var allUserList = await _context.UserRoles
+                    .AsNoTracking()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.UserRoleName,
+                        x.Permissions
+
+                    }).ToListAsync();
+
+                var approverPermissionList = allUserList
+                    .Where(x => x.Permissions
+                    .Contains(TicketingConString.Approver))
+                    .Select(x => x.UserRoleName)
+                    .ToList();
 
                 var transferTicketExist = await _context.TransferTicketConcerns
                     .Include(x => x.TicketConcern)
@@ -40,18 +59,42 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                 var transferApprover = await _context.ApproverTicketings
                     .Where(x => x.TransferTicketConcernId == transferTicketExist.Id && x.IsApprove == null)
-                    .FirstOrDefaultAsync();
+                    .ToListAsync();
 
-                if (transferApprover is not null)
+                var ticketHistoryList = await _context.TicketHistories
+                    .Where(x => x.TicketConcernId == transferTicketExist.TicketConcernId
+                     && x.IsApprove == null && x.Request.Contains(TicketingConString.Approval))
+                    .ToListAsync();
+
+                var selectTransferRequestId = transferApprover
+                    .FirstOrDefault(x => x.ApproverLevel == transferApprover.Min(x => x.ApproverLevel));
+
+                if (selectTransferRequestId is not null)
                 {
-                    
-                    if (transferTicketExist.TicketApprover != command.Users)
-                        return Result.Failure(TransferTicketError.ApproverUnAuthorized());
-                    
-                    transferApprover.IsApprove = true;
-                    await UpdateTransferTicket(transferTicketExist,userDetails,command,cancellationToken);
-                    await UpdateTicketHistory(transferTicketExist, userDetails, command, cancellationToken);
 
+                    if (transferTicketExist.TicketApprover != command.Users
+                      || !approverPermissionList.Any(x => x.Contains(command.Role)))
+                        return Result.Failure(TransferTicketError.ApproverUnAuthorized());
+
+                    selectTransferRequestId.IsApprove = true;
+
+                    var userApprovalId = await _context.ApproverTicketings
+                        .Where(x => x.TransferTicketConcernId == selectTransferRequestId.TransferTicketConcernId)
+                        .ToListAsync();
+
+                    var validateUserApprover = userApprovalId
+                        .FirstOrDefault(x => x.ApproverLevel == selectTransferRequestId.ApproverLevel + 1);
+
+                    await ApprovalTicketHistory(ticketHistoryList, userDetails, command, cancellationToken);
+
+                    if(validateUserApprover is not null)
+                    {
+                        await ApprovalTransferNotification(transferTicketExist,userDetails,validateUserApprover,command,cancellationToken);
+                    }
+                    else
+                    {
+                        await UpdateTransferTicket(transferTicketExist, userDetails, command, cancellationToken);
+                    }
                 }
                 else
                 {
@@ -63,25 +106,22 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
             }
 
 
-            private async Task UpdateTicketHistory(TransferTicketConcern transferTicketConcern, User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            private async Task ApprovalTicketHistory(List<TicketHistory> ticketHistory, User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
-                var ticketHistoryApproval = await _context.TicketHistories
-                .Where(x => x.TicketConcernId == transferTicketConcern.TicketConcernId
-                 && x.IsApprove == null && x.Request.Contains(TicketingConString.Approval))
-                .FirstOrDefaultAsync(x => x.Approver_Level != null);
+                var ticketHistoryApproval = ticketHistory
+                    .FirstOrDefault(x => x.Approver_Level != null
+                    && x.Approver_Level == ticketHistory.Min(x => x.Approver_Level));
 
                 ticketHistoryApproval.TransactedBy = command.Transacted_By;
                 ticketHistoryApproval.TransactionDate = DateTime.Now;
                 ticketHistoryApproval.Request = TicketingConString.Approve;
                 ticketHistoryApproval.Status = $"{TicketingConString.TransferApprove} {user.Fullname}";
                 ticketHistoryApproval.IsApprove = true;
-
             }
 
             private async Task UpdateTransferTicket(TransferTicketConcern transferTicketConcern,User user ,ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
                 transferTicketConcern.TicketApprover = null;
-
                 transferTicketConcern.IsTransfer = true;
                 transferTicketConcern.TransferBy = transferTicketConcern.TicketConcern.UserId;
                 transferTicketConcern.TransferAt = DateTime.Now;
@@ -93,16 +133,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 ticketConcernExist.IsTransfer = null;
                 ticketConcernExist.Remarks = transferTicketConcern.TransferRemarks;
                 ticketConcernExist.UserId = transferTicketConcern.TransferTo;
-                ticketConcernExist.TargetDate = command.Target_Date;
+                ticketConcernExist.TargetDate = transferTicketConcern.TargetDate;
 
-                await CreateTicketHistory(transferTicketConcern, user, command, cancellationToken);
+
+                await ApprovedTicketNotificationH(transferTicketConcern, user, command, cancellationToken);
 
             }
 
-            private async Task CreateTicketHistory(TransferTicketConcern transferTicketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            private async Task ApprovedTicketNotificationH(TransferTicketConcern transferTicketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
 
-                var addNewTransferTransactionNotification = new TicketTransactionNotification
+                var addTransferByTransactionNotification = new TicketTransactionNotification
                 {
 
                     Message = $"Ticket concern number {transferTicketConcern.TicketConcernId} has transfer",
@@ -115,7 +156,63 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                 };
 
-                await _context.TicketTransactionNotifications.AddAsync(addNewTransferTransactionNotification);
+                await _context.TicketTransactionNotifications.AddAsync(addTransferByTransactionNotification);
+
+                var addTransferToTransactionNotification = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket concern number {transferTicketConcern.TicketConcernId} has transfer",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = transferTicketConcern.TransferBy.Value,
+                    Modules = PathConString.ConcernTickets,
+                    Modules_Parameter = PathConString.OpenTicket,
+                    PathId = transferTicketConcern.TicketConcernId,
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addTransferToTransactionNotification);
+
+            }
+
+            private async Task ApprovalTransferNotification(TransferTicketConcern transferTicketConcern, User user, ApproverTicketing approverTicketing, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            {
+                transferTicketConcern.TicketApprover = approverTicketing.UserId;
+
+                if(command.Target_Date is not null)
+                {
+                    transferTicketConcern.TargetDate = command.Target_Date;
+                }
+
+                var addNewTicketTransactionNotification = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} is pending for closing approval",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = approverTicketing.UserId.Value,
+                    Modules = PathConString.Approval,
+                    Modules_Parameter = PathConString.ForTransfer,
+                    PathId = transferTicketConcern.TicketConcernId
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
+
+                var addTicketApproveNotification = new TicketTransactionNotification
+                {
+
+                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was approved by {user.Fullname}",
+                    AddedBy = user.Id,
+                    Created_At = DateTime.Now,
+                    ReceiveBy = transferTicketConcern.TicketConcern.UserId.Value,
+                    Modules = PathConString.IssueHandlerConcerns,
+                    Modules_Parameter = PathConString.ForTransfer,
+                    PathId = transferTicketConcern.TicketConcernId
+
+                };
+
+                await _context.TicketTransactionNotifications.AddAsync(addTicketApproveNotification);
 
             }
         }
