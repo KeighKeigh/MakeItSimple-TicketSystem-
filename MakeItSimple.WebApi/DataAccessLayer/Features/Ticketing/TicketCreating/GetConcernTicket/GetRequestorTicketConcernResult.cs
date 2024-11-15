@@ -17,7 +17,6 @@
             public int? BusinessUnitId { get; set; }
             public string BusinessUnit_Code { get; set; }
             public string BusinessUnit_Name { get; set; }
-
             public int? DepartmentId { get; set; }
             public string Department_Code { get; set; }
             public string Department_Name { get; set; }
@@ -38,10 +37,26 @@
             public string FullName { get; set; }
             public int? ChannelId { get; set; }
             public string Channel_Name { get; set; }
-            public int? CategoryId { get; set; }
-            public string Category_Description { get; set; }
-            public int? SubCategoryId { get; set; }
-            public string SubCategory_Description { get; set; }
+
+            public List<GetRequestTicketCategory> GetRequestTicketCategories {  get; set; }
+
+            public class GetRequestTicketCategory
+            {
+                public int? TicketCategoryId {  get; set; }
+                public int? CategoryId { get; set; }
+                public string Category_Description { get; set; }
+
+            }
+
+            public List<GetRequestSubTicketCategory> GetRequestSubTicketCategories { get; set; }
+
+            public class GetRequestSubTicketCategory
+            {
+                public int? TicketSubCategoryId { get; set; }
+                public int? SubCategoryId { get; set; }
+                public string SubCategory_Description { get; set; }
+            }
+
             public string Concern_Status { get; set; }
             public bool? Is_Done { get; set; }
             public string Remarks { get; set; }
@@ -62,9 +77,7 @@
             public List<TicketRequestConcern> TicketRequestConcerns { get; set; }
             public class TicketRequestConcern
             {
-
                 public int? TicketConcernId { get; set; }
-
                 public Guid? UserId { get; set; }
                 public string Issue_Handler { get; set; }
                 public DateTime? Target_Date { get; set; }
@@ -77,17 +90,14 @@
                 public string Modified_By { get; set; }
                 public DateTime? Updated_At { get; set; }
                 public bool Is_Active { get; set; }
-
                 public bool ? OnHold { get; set; }
                 public DateTime ? OnHold_At { get; set; }
                 public string OnHold_Reasons { get; set; }
                 public DateTime? Resume_At { get; set; }
-
                 public DateTime? Closed_At { get; set; }
                 public bool? Is_Transfer { get; set; }
                 public DateTime? Transfer_At { get; set; }
                 public string Transfer_By { get; set; }
-
             }
 
         }

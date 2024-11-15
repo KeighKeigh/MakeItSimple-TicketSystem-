@@ -5,6 +5,7 @@ using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult.GetForClosingTicket;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.GetConcernTicket.GetRequestorTicketConcern;
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket
 {
     public partial class GetOpenTicket
@@ -281,10 +282,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         Location_Name = x.RequestConcern.Location.LocationName,
                         Requestor_By = x.RequestorBy,
                         Requestor_Name = x.RequestorByUser.Fullname,
-                        CategoryId = x.RequestConcern.CategoryId,
-                        Category_Description = x.RequestConcern.Category.CategoryDescription,
-                        SubCategoryId = x.RequestConcern.SubCategoryId,
-                        SubCategory_Description = x.RequestConcern.SubCategory.SubCategoryDescription,
+                        GetOpenTicketCategories = x.RequestConcern.TicketCategories
+                                                .Select(t => new GetOpenTicketResult.GetOpenTicketCategory
+                                                {
+                                                    TicketCategoryId = t.Id,
+                                                    CategoryId = t.CategoryId,
+                                                    Category_Description = t.Category.CategoryDescription,
+
+                                                }).ToList(),
+
+                        GetOpenTicketSubCategories = x.RequestConcern.TicketSubCategories
+                                                .Select(t => new GetOpenTicketResult.GetOpenTicketSubCategory
+                                                {
+                                                    TicketSubCategoryId = t.Id,
+                                                    SubCategoryId = t.SubCategoryId,
+                                                    SubCategory_Description = t.SubCategory.SubCategoryDescription,
+                                                }).ToList(),
+
                         Date_Needed = x.RequestConcern.DateNeeded,
                         Notes = x.RequestConcern.Notes,
                         Contact_Number = x.RequestConcern.ContactNumber,
@@ -307,6 +321,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null ? TicketingConString.NotConfirm
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true && x.OnHold == null ? TicketingConString.Closed
                                         : "Unknown",
+
                         Added_By = x.AddedByUser.Fullname,
                         Created_At = x.CreatedAt,
                         Remarks = x.Remarks,
@@ -325,10 +340,22 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                           ClosingTicketId = x.Id,
                           Remarks = x.RejectRemarks,
                           Resolution = x.Resolution,
-                          CategoryId = x.CategoryId,
-                          Category_Description = x.Category.CategoryDescription,
-                          SubCategoryId = x.SubCategoryId,
-                          SubCategory_Description = x.SubCategory.SubCategoryDescription,
+                          GetForClosingTicketCategories = x.TicketConcern.RequestConcern.TicketCategories
+                                                  .Select(t => new GetOpenTicketResult.GetForClosingTicket.GetForClosingTicketCategory
+                                                  {
+                                                      TicketCategoryId = t.Id,
+                                                      CategoryId = t.CategoryId,
+                                                      Category_Description = t.Category.CategoryDescription,
+
+                                                  }).ToList(),
+
+                          GetForClosingTicketSubCategories = x.TicketConcern.RequestConcern.TicketSubCategories
+                                                  .Select(t => new GetOpenTicketResult.GetForClosingTicket.GetForClosingTicketSubCategory
+                                                  {
+                                                      TicketSubCategoryId = t.Id,
+                                                      SubCategoryId = t.SubCategoryId,
+                                                      SubCategory_Description = t.SubCategory.SubCategoryDescription,
+                                                  }).ToList(),
                           Notes = x.Notes,
                           IsApprove = x.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
                           ApproverLists = x.ApproverTickets
@@ -350,8 +377,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                           }).ToList(),
 
-                      })
-                      .ToList(),
+                      }).ToList(),
+                         
                         GetOnHolds = x.TicketOnHolds
                         .Where(x => x.IsHold == true)
                         .Select(h => new GetOpenTicketResult.GetOnHold

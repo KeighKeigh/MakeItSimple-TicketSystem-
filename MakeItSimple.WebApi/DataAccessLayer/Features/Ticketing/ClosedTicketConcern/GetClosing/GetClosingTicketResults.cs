@@ -14,8 +14,28 @@
             public string Channel_Name { get; set; }
             public Guid? UserId { get; set; }
             public string Fullname { get; set; }
-            public string Concern_Details { get; set; }
-            public string Category_Description { get; set; }
+            //public string Concern_Details { get; set; }
+            //public string Category_Description { get; set; }
+
+            public List<GetClosingTicketCategory> GetClosingTicketCategories { get; set; }
+
+            public class GetClosingTicketCategory
+            {
+                public int? TicketCategoryId { get; set; }
+                public int? CategoryId { get; set; }
+                public string Category_Description { get; set; }
+
+            }
+
+            public List<GetClosingTicketSubCategory> GetClosingTicketSubCategories { get; set; }
+
+            public class GetClosingTicketSubCategory
+            {
+                public int? TicketSubCategoryId { get; set; }
+                public int? SubCategoryId { get; set; }
+                public string SubCategory_Description { get; set; }
+            }
+
             public string SubCategoryDescription { get; set; }
             public int? Delay_Days { get; set; }
             public string Closed_By { get; set; }

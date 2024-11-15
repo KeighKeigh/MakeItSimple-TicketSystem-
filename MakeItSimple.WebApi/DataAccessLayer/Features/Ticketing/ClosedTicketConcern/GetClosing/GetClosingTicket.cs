@@ -6,6 +6,7 @@ using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.GetClosing
 {
@@ -151,8 +152,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         Channel_Name = x.TicketConcern.RequestConcern.Channel.ChannelName,
                         UserId = x.TicketConcern.UserId,
                         Fullname = x.TicketConcern.User.Fullname,
-                        Concern_Details = x.TicketConcern.RequestConcern.Concern,
-                        Category_Description = x.TicketConcern.RequestConcern.Category.CategoryDescription,
+                        GetClosingTicketCategories = x.TicketConcern.RequestConcern.TicketCategories
+                        .Select(t => new GetClosingTicketResults.GetClosingTicketCategory
+                        {
+                            TicketCategoryId = t.Id,
+                            CategoryId = t.CategoryId,
+                            Category_Description = t.Category.CategoryDescription,
+
+                        }).ToList(),
+
+                        GetClosingTicketSubCategories = x.TicketConcern.RequestConcern.TicketSubCategories
+                        .Select(t => new GetClosingTicketResults.GetClosingTicketSubCategory
+                        {
+                            TicketSubCategoryId = t.Id,
+                            SubCategoryId = t.SubCategoryId,
+                            SubCategory_Description = t.SubCategory.SubCategoryDescription,
+                        }).ToList(),
+
                         SubCategoryDescription = x.TicketConcern.RequestConcern.SubCategory.SubCategoryDescription,
                         RejectClosed_By = x.RejectClosedByUser.Fullname,
                         RejectClosed_At = x.RejectClosedAt,

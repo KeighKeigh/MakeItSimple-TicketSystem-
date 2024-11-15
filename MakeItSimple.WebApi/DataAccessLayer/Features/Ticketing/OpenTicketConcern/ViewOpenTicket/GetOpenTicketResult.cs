@@ -31,10 +31,26 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public Guid? Requestor_By { get; set; }
             public string Requestor_Name { get; set; }
 
-            public int ? CategoryId { get; set; }
-            public string Category_Description { get; set; }
-            public int ? SubCategoryId { get; set; }
-            public string SubCategory_Description { get; set; }
+            public List<GetOpenTicketCategory> GetOpenTicketCategories { get; set; }
+
+            public class GetOpenTicketCategory
+            {
+                public int? TicketCategoryId { get; set; }
+                public int? CategoryId { get; set; }
+                public string Category_Description { get; set; }
+
+            }
+
+            public List<GetOpenTicketSubCategory> GetOpenTicketSubCategories { get; set; }
+
+            public class GetOpenTicketSubCategory
+            {
+                public int? TicketSubCategoryId { get; set; }
+                public int? SubCategoryId { get; set; }
+                public string SubCategory_Description { get; set; }
+            }
+
+
             public DateTime? Date_Needed { get; set; }
             public string Notes { get; set; }
             public string Contact_Number { get; set; }
@@ -76,10 +92,26 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             {
                 public int? ClosingTicketId { get; set; }
                 public string Resolution { get; set; }
-                public int? CategoryId { get; set; }
-                public string Category_Description { get; set; }
-                public int? SubCategoryId { get; set; }
-                public string SubCategory_Description { get; set; }
+
+                public List<GetForClosingTicketCategory> GetForClosingTicketCategories { get; set; }
+
+                public class GetForClosingTicketCategory
+                {
+                    public int? TicketCategoryId { get; set; }
+                    public int? CategoryId { get; set; }
+                    public string Category_Description { get; set; }
+
+                }
+
+                public List<GetForClosingTicketSubCategory> GetForClosingTicketSubCategories { get; set; }
+
+                public class GetForClosingTicketSubCategory
+                {
+                    public int? TicketSubCategoryId { get; set; }
+                    public int? SubCategoryId { get; set; }
+                    public string SubCategory_Description { get; set; }
+                }
+
                 public string Notes { get; set; }
                 public string Remarks { get; set; }
                 public bool? IsApprove { get; set; }

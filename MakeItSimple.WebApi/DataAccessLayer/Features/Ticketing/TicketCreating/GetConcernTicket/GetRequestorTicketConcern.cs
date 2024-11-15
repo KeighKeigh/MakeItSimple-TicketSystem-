@@ -44,6 +44,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                      .Include(x => x.TicketConcerns)
                      .ThenInclude(x => x.User)
                      .Include(x => x.BackJob)
+                     .Include(x => x.TicketCategories)
+                     .Include(x => x.TicketSubCategories)
                      .AsSplitQuery()
                      .OrderByDescending(x => x.Id);
 
@@ -79,7 +81,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     .Contains(TicketingConString.Requestor))
                     .Select(x => x.UserRoleName)
                     .ToList();
-
 
                     if (!string.IsNullOrEmpty(request.Search))
                     {
@@ -134,11 +135,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 break;
 
                             case TicketingConString.NotConfirm:
-                                requestConcernsQuery = requestConcernsQuery.Where(x => x.Is_Confirm == null && x.ConcernStatus == TicketingConString.NotConfirm);
+                                requestConcernsQuery = requestConcernsQuery
+                                    .Where(x => x.Is_Confirm == null && x.ConcernStatus == TicketingConString.NotConfirm);
                                 break;
 
                             case TicketingConString.Done:
-                                requestConcernsQuery = requestConcernsQuery.Where(x => x.ConcernStatus == TicketingConString.Done && x.Is_Confirm == true);
+                                requestConcernsQuery = requestConcernsQuery
+                                    .Where(x => x.ConcernStatus == TicketingConString.Done && x.Is_Confirm == true);
                                 break;
                             default:
                                 return new PagedList<GetRequestorTicketConcernResult>(new List<GetRequestorTicketConcernResult>(), 0, request.PageNumber, request.PageSize);
@@ -229,10 +232,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         FullName = g.User.Fullname,
                         ChannelId = g.ChannelId,
                         Channel_Name = g.Channel.ChannelName,
-                        CategoryId = g.CategoryId,
-                        Category_Description = g.Category.CategoryDescription,
-                        SubCategoryId = g.SubCategoryId,
-                        SubCategory_Description = g.SubCategory.SubCategoryDescription,
+                        GetRequestTicketCategories = g.TicketCategories
+                        .Select(t => new GetRequestorTicketConcernResult.GetRequestTicketCategory
+                        {
+                            TicketCategoryId = t.Id,
+                            CategoryId = t.CategoryId,
+                            Category_Description = t.Category.CategoryDescription,
+
+                        }).ToList(),
+
+                        GetRequestSubTicketCategories = g.TicketSubCategories
+                        .Select(t => new GetRequestorTicketConcernResult.GetRequestSubTicketCategory
+                        {
+                            TicketSubCategoryId = t.Id,
+                            SubCategoryId = g.SubCategoryId,
+                            SubCategory_Description = g.SubCategory.SubCategoryDescription,
+                        }).ToList(),
+
                         Concern_Status = g.ConcernStatus,
                         Is_Done = g.IsDone,
                         Remarks = g.Remarks,
@@ -251,7 +267,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         TicketRequestConcerns = g.TicketConcerns
                             .Select(tc => new TicketRequestConcern
                             {
-
                                 TicketConcernId = tc.Id,
                                 UserId = tc.UserId,
                                 Issue_Handler = tc.User.Fullname,
