@@ -83,6 +83,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         public virtual DbSet<TicketCategory> TicketCategories { get; set; }
 
         public virtual DbSet<TicketSubCategory> TicketSubCategories {  get; set; } 
+        public virtual DbSet<TicketTechnician> TicketTechnicians { get; set; }
 
         //Phase 2 
 
@@ -126,6 +127,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
             modelBuilder.ApplyConfiguration(new TicketCommentViewConfiguration());
             modelBuilder.ApplyConfiguration(new TicketTransactionNotificationConfiguration());
             modelBuilder.ApplyConfiguration(new TicketOnHoldConfiguration());
+            modelBuilder.ApplyConfiguration(new TicketTechnicianConfiguration());
+
 
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());

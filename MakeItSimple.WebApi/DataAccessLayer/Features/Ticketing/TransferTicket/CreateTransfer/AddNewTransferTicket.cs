@@ -132,7 +132,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     isChange = true;
                 }
 
-
                 if (isChange)
                 {
                     transferTicketConcern.ModifiedBy = command.Modified_By;

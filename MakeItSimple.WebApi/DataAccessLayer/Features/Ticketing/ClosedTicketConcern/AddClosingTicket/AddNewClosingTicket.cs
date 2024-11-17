@@ -25,6 +25,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
         {
             var ticketCategoryList = new List<int>();
             var ticketSubCategoryList = new List<int>();
+            var ticketTechnicianList = new List<int>();
 
             var userDetails = await _context.Users
                .FirstOrDefaultAsync(x => x.Id == command.Added_By, cancellationToken);
@@ -57,7 +58,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             }
             else
             {
-
                 var approverList = await _context.Approvers
                     .Include(x => x.User)
                     .Where(x => x.SubUnitId == ticketConcernExist.User.SubUnitId)
@@ -86,6 +86,18 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     await AddApproverHistory(ticketConcernExist, approver, command, cancellationToken);
                 }
 
+                foreach (var technician in command.AddClosingTicketTechnicians)
+                {
+                    var ticketTechnicianExist = await _context.TicketTechnicians
+                        .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
+
+                    if (ticketTechnicianExist is not null)
+                        ticketTechnicianList.Add(ticketTechnicianExist.Id);
+
+                    await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
+
+                }
+
                 foreach (var category in command.ClosingTicketCategories)
                 {
                     var ticketCategoryExist = await _context.TicketCategories
@@ -103,7 +115,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     }
 
                 }
-
+               
                 foreach (var subCategory in command.ClosingSubTicketCategories)
                 {
                     var ticketSubCategoryExist = await _context.TicketSubCategories
@@ -119,6 +131,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     }
 
                 }
+
+                if(ticketTechnicianList.Any())
+                    await RemoveTicketTechnician(closingTicketExist.Id,ticketTechnicianList, cancellationToken);
 
                 if (ticketCategoryList.Any())
                     await RemoveTicketCategory(ticketConcernExist.RequestConcernId.Value, ticketCategoryList, cancellationToken);
@@ -160,8 +175,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             {
                 TicketConcernId = ticketConcern.Id,
                 Resolution = command.Resolution,
-                //CategoryId = command.CategoryId,
-                //SubCategoryId = command.SubCategoryId,
                 IsClosing = false,
                 TicketApprover = approver.UserId,
                 AddedBy = command.Added_By,
@@ -457,6 +470,42 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
 
                 _context.TicketSubCategories.Remove(ticketSubCategoryExist);
+
+            }
+
+        }
+
+        private async Task CreateTicketTechnician(int closingTicketId, AddNewClosingTicketCommand.AddClosingTicketTechnician command, CancellationToken cancellationToken)
+        {
+            var addTicketTechnician = new TicketTechnician
+            {
+                ClosingTicketId = closingTicketId,
+                TechnicianBy = command.Technician_By,
+
+            };
+
+            await _context.TicketTechnicians.AddAsync(addTicketTechnician,cancellationToken); 
+        }
+
+        private async Task RemoveTicketTechnician(int closingTicketId,List<int> ticketTechnicianList, CancellationToken cancellationToken)
+        {
+            var allTicketTechnician = await _context.TicketTechnicians
+                .Where(r => r.ClosingTicketId == closingTicketId)
+                .Select(a => new
+                {
+                    a.Id,
+
+                }).ToListAsync();
+
+            var removeTicketTechnician = allTicketTechnician
+                .Where(r => !ticketTechnicianList.Contains(r.Id));
+
+            foreach (var remove in removeTicketTechnician)
+            {
+                var ticketTechnicianExist = await _context.TicketTechnicians
+                    .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
+
+                _context.TicketTechnicians.Remove(ticketTechnicianExist);
 
             }
 

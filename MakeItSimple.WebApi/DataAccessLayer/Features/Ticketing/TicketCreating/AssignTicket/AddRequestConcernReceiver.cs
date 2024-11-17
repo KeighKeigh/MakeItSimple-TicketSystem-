@@ -342,7 +342,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 var addRequestConcern = new RequestConcern
                 {
                     UserId = command.Requestor_By,
-                    Concern = command.Concerns,
+                    Concern = command.Concern,
                     AddedBy = command.Added_By,
                     ConcernStatus = TicketingConString.CurrentlyFixing,
                     CompanyId = user.CompanyId,

@@ -8,7 +8,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
         public class AddRequestConcernReceiverCommand : IRequest<Result>
         {
             public int? TicketConcernId { get; set; }
-            public string Concerns { get; set; }
+            public string Concern { get; set; }
             public int? ChannelId { get; set; }
             public List<RequestorTicketCategory> RequestorTicketCategories { get; set; }
             public class RequestorTicketCategory
