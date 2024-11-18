@@ -14,8 +14,14 @@
             public string Channel_Name { get; set; }
             public Guid? UserId { get; set; }
             public string Fullname { get; set; }
-            //public string Concern_Details { get; set; }
-            //public string Category_Description { get; set; }
+
+            public List<GetClosingTicketTechnician> GetClosingTicketTechnicians { get; set; }
+            public class GetClosingTicketTechnician
+            {
+                public int? TicketTechnicianId { get; set; }
+                public Guid? Technician_By { get; set; }
+                public string Fullname { get; set; }
+            }
 
             public List<GetClosingTicketCategory> GetClosingTicketCategories { get; set; }
 

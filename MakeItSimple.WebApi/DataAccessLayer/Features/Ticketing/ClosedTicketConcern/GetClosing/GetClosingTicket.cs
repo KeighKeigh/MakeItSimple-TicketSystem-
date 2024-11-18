@@ -152,6 +152,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         Channel_Name = x.TicketConcern.RequestConcern.Channel.ChannelName,
                         UserId = x.TicketConcern.UserId,
                         Fullname = x.TicketConcern.User.Fullname,
+                        GetClosingTicketTechnicians = x.ticketTechnicians
+                        .Select(t => new GetClosingTicketResults.GetClosingTicketTechnician
+                        {
+                            TicketTechnicianId = t.Id,
+                            Technician_By = t.TechnicianBy,
+                            Fullname = t.TechnicianByUser.Fullname,
+                            
+                        }).ToList(),
+
                         GetClosingTicketCategories = x.TicketConcern.RequestConcern.TicketCategories
                         .Select(t => new GetClosingTicketResults.GetClosingTicketCategory
                         {

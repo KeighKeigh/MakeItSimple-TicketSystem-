@@ -31,6 +31,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public Guid? Requestor_By { get; set; }
             public string Requestor_Name { get; set; }
 
+
+
             public List<GetOpenTicketCategory> GetOpenTicketCategories { get; set; }
 
             public class GetOpenTicketCategory
@@ -92,6 +94,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             {
                 public int? ClosingTicketId { get; set; }
                 public string Resolution { get; set; }
+                public List<ForClosingTicketTechnician> ForClosingTicketTechnicians { get; set; }
+                public class ForClosingTicketTechnician
+                {
+                    public int? TicketTechnicianId { get; set; }
+                    public Guid? Technician_By { get; set; }
+                    public string Fullname { get; set; }
+                }
 
                 public List<GetForClosingTicketCategory> GetForClosingTicketCategories { get; set; }
 

@@ -86,17 +86,26 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     await AddApproverHistory(ticketConcernExist, approver, command, cancellationToken);
                 }
 
-                foreach (var technician in command.AddClosingTicketTechnicians)
+
+                if(command.AddClosingTicketTechnicians.Any())
                 {
-                    var ticketTechnicianExist = await _context.TicketTechnicians
-                        .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
+                    foreach (var technician in command.AddClosingTicketTechnicians)
+                    {
+                        var ticketTechnicianExist = await _context.TicketTechnicians
+                            .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
 
-                    if (ticketTechnicianExist is not null)
-                        ticketTechnicianList.Add(ticketTechnicianExist.Id);
+                        if (ticketTechnicianExist is not null)
+                            ticketTechnicianList.Add(ticketTechnicianExist.Id);
 
-                    await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
+                        await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
+
+                    }
+
+                    if (ticketTechnicianList.Any())
+                        await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
 
                 }
+
 
                 foreach (var category in command.ClosingTicketCategories)
                 {
@@ -132,9 +141,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
 
                 }
 
-                if(ticketTechnicianList.Any())
-                    await RemoveTicketTechnician(closingTicketExist.Id,ticketTechnicianList, cancellationToken);
-
                 if (ticketCategoryList.Any())
                     await RemoveTicketCategory(ticketConcernExist.RequestConcernId.Value, ticketCategoryList, cancellationToken);
 
@@ -167,7 +173,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             return Result.Success();
 
         }
-
 
         private async Task<ClosingTicket> AddClosingTicket(Approver approver, TicketConcern ticketConcern, AddNewClosingTicketCommand command, CancellationToken cancellationToken)
         {

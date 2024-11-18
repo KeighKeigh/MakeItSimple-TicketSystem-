@@ -340,6 +340,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                           ClosingTicketId = x.Id,
                           Remarks = x.RejectRemarks,
                           Resolution = x.Resolution,
+                          ForClosingTicketTechnicians = x.ticketTechnicians.
+                          Select(t => new GetOpenTicketResult.GetForClosingTicket.ForClosingTicketTechnician
+                          {
+                              TicketTechnicianId = t.Id,
+                              Technician_By = t.TechnicianBy,
+                              Fullname = t.TechnicianByUser.Fullname,
+
+                          }).ToList(),
+
                           GetForClosingTicketCategories = x.TicketConcern.RequestConcern.TicketCategories
                                                   .Select(t => new GetOpenTicketResult.GetForClosingTicket.GetForClosingTicketCategory
                                                   {
