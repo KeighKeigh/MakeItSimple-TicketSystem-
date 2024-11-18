@@ -46,8 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                      .Include(x => x.BackJob)
                      .Include(x => x.TicketCategories)
                      .Include(x => x.TicketSubCategories)
-                     .AsSplitQuery()
-                     .OrderByDescending(x => x.Id);
+                     .AsSplitQuery();
 
 
                 if (requestConcernsQuery.Any())
@@ -293,9 +292,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 Transfer_At = tc.TransferAt,
                                 Transfer_By = tc.TransferByUser.Fullname,
 
-                            }).ToList()
+                            })
+                            .ToList()
 
-                    });
+                    }).OrderBy(x => x.RequestConcernId);
 
                 return await PagedList<GetRequestorTicketConcernResult>.CreateAsync(results, request.PageNumber, request.PageSize);
             }

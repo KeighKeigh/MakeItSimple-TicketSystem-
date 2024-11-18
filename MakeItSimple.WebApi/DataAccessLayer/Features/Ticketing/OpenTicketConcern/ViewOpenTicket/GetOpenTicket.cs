@@ -454,7 +454,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                         Transaction_Date = x.ticketHistories.Max(x => x.TransactionDate).Value,
 
-                    }).OrderByDescending(x => x.TicketConcernId); 
+                    }).OrderBy(x => x.TicketConcernId); 
 
 
                 return await PagedList<GetOpenTicketResult>.CreateAsync(results, request.PageNumber, request.PageSize);

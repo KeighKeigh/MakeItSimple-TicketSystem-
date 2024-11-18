@@ -6,6 +6,7 @@
         {
             public int ClosingTicketId { get; set; }
             public int TicketConcernId { get; set; }
+            public string Concern_Details { get; set; }
             public string Resolution { get; set; }
             public string Notes { get; set; }
             public int? DepartmentId { get; set; }

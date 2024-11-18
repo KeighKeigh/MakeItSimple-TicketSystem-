@@ -95,7 +95,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         if (validateUserApprover is not null)
                         {
 
-
                             await ApprovalClosingNotification(closingTicketExist, userDetails, validateUserApprover, command, cancellationToken);
 
                         }

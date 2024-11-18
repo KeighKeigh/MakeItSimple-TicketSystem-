@@ -28,7 +28,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 var businessUnitList = new List<BusinessUnit>();
 
                 IQueryable<ClosingTicket> closingTicketsQuery = _context.ClosingTickets
-                    .AsNoTracking()
+                    .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)
                     .Include(x => x.RejectClosedByUser)
                     .Include(x => x.ClosedByUser)
@@ -42,7 +42,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     .Include(x => x.TicketConcern)
                     .ThenInclude(x => x.RequestConcern)
                     .Include(x => x.TicketConcern)
-                    .ThenInclude(x => x.RequestorByUser);
+                    .ThenInclude(x => x.RequestorByUser)
+                    .Include(x => x.ticketTechnicians)
+                    .AsSplitQuery();
 
                 if (closingTicketsQuery.Any())
                 {
@@ -144,6 +146,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     {
                         ClosingTicketId = x.Id,
                         TicketConcernId = x.TicketConcernId,
+                        Concern_Details = x.TicketConcern.RequestConcern.Concern,
                         Resolution = x.Resolution,
                         Notes = x.Notes,
                         DepartmentId = x.TicketConcern.User.DepartmentId,
