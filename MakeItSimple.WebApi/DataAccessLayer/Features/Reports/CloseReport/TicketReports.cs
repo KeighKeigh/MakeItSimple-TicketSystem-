@@ -14,7 +14,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
     public partial class TicketReports
     {
 
-
         public class Handler : IRequestHandler<TicketReportsQuery, PagedList<Reports>>
         {
             private readonly MisDbContext _context;
@@ -41,7 +40,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                     .Include(x => x.RequestConcern)
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
-                    .AsSplitQuery();
+                    .AsSplitQuery()
+                    .Where(x => x.RequestConcern.Is_Confirm == true && x.IsClosedApprove == true);
                     
 
 
@@ -62,6 +62,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         case TicketingConString.OnTime:
                             ticketQuery = ticketQuery
                                 .Where(x => x.Closed_At != null && x.TargetDate.Value > x.Closed_At.Value);
+
                             break;
 
                         case TicketingConString.Delay:
@@ -83,27 +84,60 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                 }
 
                 ticketQuery = ticketQuery
-                    .Where(x =>  x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date);
+                        .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date);
 
-                var results = ticketQuery
-                    .Where(x => x.RequestConcern.Is_Confirm == true && x.IsClosedApprove == true)
-                    .Select(x => new Reports
-                    {
-                        Year = x.TargetDate.Value.Date.Year.ToString(),
-                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.TargetDate.Value.Date.Month),
-                        Start_Date = $"{x.TargetDate.Value.Date.Month}-01-{x.TargetDate.Value.Date.Year}",
-                        End_Date = $"{x.TargetDate.Value.Date.Month}-{DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month)}-{x.TargetDate.Value.Date.Year}",
-                        Personnel = x.User.Fullname,
-                        Ticket_Number = x.Id,
-                        Description = x.RequestConcern.Concern,
-                        Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
-                        Actual =  $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
-                        Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = x.TargetDate > x.Closed_At ? $"100 %" : "50 %",
-                        Status = TicketingConString.Closed,
-                        Remarks =  x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
-                        Category = x.RequestConcern.Channel.ChannelName,
-                    });
+                var closingTicketTechnician = _context.TicketTechnicians
+                        .AsNoTrackingWithIdentityResolution()
+                        .Include(x => x.TechnicianByUser)
+                        .Include(x => x.ClosingTicket)
+                        .ThenInclude(x => x.TicketConcern)
+                        .AsSplitQuery()
+                        .Select(x => new
+                        {
+                            x.ClosingTicket.TicketConcern.TargetDate.Value.Year,
+                            x.ClosingTicket.TicketConcern.TargetDate.Value.Month,
+                            x.ClosingTicket.TicketConcern.TargetDate,
+                            ClosedAt = x.ClosingTicket.TicketConcern.Closed_At,
+                            TechnicianName = x.TechnicianByUser.Fullname,
+                            TicketId = x.ClosingTicket.TicketConcernId,
+                            ConcernDescription = x.ClosingTicket.TicketConcern.RequestConcern.Concern,
+                            x.ClosingTicket.TicketConcern.RequestConcern.Channel.ChannelName
+                        });
+
+                var closingTicket = ticketQuery
+                        .Select(x => new
+                        {
+                            x.TargetDate.Value.Year,
+                            x.TargetDate.Value.Month,
+                            x.TargetDate,
+                            ClosedAt = x.Closed_At,
+                            TechnicianName = x.User.Fullname,
+                            TicketId = x.Id,
+                            ConcernDescription = x.RequestConcern.Concern,
+                            x.RequestConcern.Channel.ChannelName
+                        });
+
+                var combinedTickets = closingTicket
+                    .Concat(closingTicketTechnician);
+
+                var results = combinedTickets.Select(x => new Reports
+                {
+                    Year = x.Year.ToString(),
+                    Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.Month),
+                    Start_Date = $"{x.Month}-01-{x.Year}",
+                    End_Date = $"{x.Month}-{DateTime.DaysInMonth(x.Year, x.Month)}-{x.Year}",
+                    Personnel = x.TechnicianName,
+                    Ticket_Number = x.TicketId,
+                    Description = x.ConcernDescription,
+                    Target_Date = x.TargetDate.Value.ToString("MM-dd-yyyy"),
+                    Actual = x.ClosedAt.HasValue ? x.ClosedAt.Value.ToString("MM-dd-yyyy") : "N/A",
+                    Varience = EF.Functions.DateDiffDay(x.TargetDate.Value, x.ClosedAt.Value),
+                    Efficeincy = x.ClosedAt.Value.Date <= x.TargetDate.Value.Date ? "100 %" : "50 %",
+                    Status = TicketingConString.Closed,
+                    Remarks = x.ClosedAt.Value.Date <= x.TargetDate.Value.Date ? TicketingConString.OnTime : TicketingConString.Delay,
+                    Category = x.ChannelName
+
+                }).OrderBy(x => x.Ticket_Number); 
 
                 return await PagedList<Reports>.CreateAsync(results, request.PageNumber, request.PageSize);
             }

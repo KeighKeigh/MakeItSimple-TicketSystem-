@@ -3,7 +3,9 @@ using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using System.Globalization;
+using System.Linq;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
 {
@@ -22,7 +24,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
             public async Task<Unit> Handle(ClosingTicketExportCommand request, CancellationToken cancellationToken)
             {
 
-                var closing = await _context.TicketConcerns
+                var closingTicketTechnician = _context.TicketTechnicians
+                        .AsNoTrackingWithIdentityResolution()
+                        .Include(x => x.TechnicianByUser)
+                        .Include(x => x.ClosingTicket)
+                        .ThenInclude(x => x.TicketConcern)
+                        .AsSplitQuery()
+                        .Where(x => x.ClosingTicket.TicketConcern.Closed_At.Value.Date >= request.Date_From.Value.Date && x.ClosingTicket.TicketConcern.Closed_At.Value.Date <= request.Date_To.Value.Date)
+                        .Select(x => new
+                        {
+                           Unit = x.TechnicianByUser.UnitId,
+                           UserId =  x.TechnicianBy,
+                            x.ClosingTicket.TicketConcern.TargetDate.Value.Year,
+                            x.ClosingTicket.TicketConcern.TargetDate.Value.Month,
+                            x.ClosingTicket.TicketConcern.TargetDate,
+                            ClosedAt = x.ClosingTicket.TicketConcern.Closed_At,
+                            TechnicianName = x.TechnicianByUser.Fullname,
+                            TicketId = x.ClosingTicket.TicketConcernId,
+                            ConcernDescription = x.ClosingTicket.TicketConcern.RequestConcern.Concern,
+                            x.ClosingTicket.TicketConcern.RequestConcern.Channel.ChannelName
+                        });
+
+
+
+                var closingTicket =  _context.TicketConcerns
                     .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)
                     .Include(x => x.ModifiedByUser)
@@ -36,29 +61,48 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
                     .AsSplitQuery()
-                    .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date)
                     .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
-                    .Select(x => new ClosingTicketExportResult
+                    .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date)
+                    .Select(x => new
                     {
                         Unit = x.User.UnitId,
+                        x.UserId,
+                        x.TargetDate.Value.Year,
+                        x.TargetDate.Value.Month,
+                        x.TargetDate,
+                        ClosedAt = x.Closed_At,
+                        TechnicianName = x.User.Fullname,
+                        TicketId = x.Id,
+                        ConcernDescription = x.RequestConcern.Concern,
+                        x.RequestConcern.Channel.ChannelName
+                    });
+
+                var combineTicket = closingTicket
+                    .Concat(closingTicketTechnician);
+
+                var closing = await combineTicket
+                    .Select(x => new ClosingTicketExportResult
+                    {
+                        Unit = x.Unit,
                         UserId = x.UserId,
-                        Year = x.TargetDate.Value.Date.Year.ToString(),
-                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.TargetDate.Value.Date.Month),
-                        Start_Date = $"{x.TargetDate.Value.Date.Month}-01-{x.TargetDate.Value.Date.Year}",
-                        End_Date = $"{x.TargetDate.Value.Date.Month}-{DateTime.DaysInMonth(x.TargetDate.Value.Date.Year, x.TargetDate.Value.Date.Month)}-{x.TargetDate.Value.Date.Year}",
-                        Personnel = x.User.Fullname,
-                        Ticket_Number = x.Id,
-                        Description = x.RequestConcern.Concern,
-                        Target_Date_DateTime = x.TargetDate.Value.Date,
-                        Actual_Date_DateTime = x.Closed_At.Value.Date,
-                        Target_Date = $"{x.TargetDate.Value.Date.Month}-{x.TargetDate.Value.Date.Day}-{x.TargetDate.Value.Date.Year}",
-                        Actual = $"{x.Closed_At.Value.Date.Month}-{x.Closed_At.Value.Date.Day}-{x.Closed_At.Value.Date.Year}",
-                        Varience = EF.Functions.DateDiffDay(x.TargetDate.Value.Date, x.Closed_At.Value.Date),
-                        Efficeincy = x.TargetDate > x.Closed_At ? $"100%" : "50%",
-                        Remarks = x.TargetDate.Value > x.Closed_At.Value ? TicketingConString.OnTime : TicketingConString.Delay,
-                        Category = x.RequestConcern.Channel.ChannelName,
+                        Year = x.Year.ToString(),
+                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.Month),
+                        Start_Date = $"{x.Month}-01-{x.Year}",
+                        End_Date = $"{x.Month}-{DateTime.DaysInMonth(x.Year, x.Month)}-{x.Year}",
+                        Personnel = x.TechnicianName,
+                        Ticket_Number = x.TicketId,
+                        Description = x.ConcernDescription,
+                        Target_Date = x.TargetDate.Value.ToString("MM-dd-yyyy"),
+                        Actual = x.ClosedAt.HasValue ? x.ClosedAt.Value.ToString("MM-dd-yyyy") : "N/A",
+                        Varience = EF.Functions.DateDiffDay(x.TargetDate.Value, x.ClosedAt.Value),
+                        Efficeincy = x.ClosedAt.Value.Date <= x.TargetDate.Value.Date ? "100 %" : "50 %",
+                        Status = TicketingConString.Closed,
+                        Remarks = x.ClosedAt.Value.Date <= x.TargetDate.Value.Date ? TicketingConString.OnTime : TicketingConString.Delay,
+                        Category = x.ChannelName
 
                     }).ToListAsync();
+
+
 
 
                 if (request.Unit is not null)
