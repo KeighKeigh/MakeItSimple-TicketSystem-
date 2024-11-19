@@ -45,8 +45,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                             x.ClosingTicket.TicketConcern.RequestConcern.Channel.ChannelName
                         });
 
-
-
                 var closingTicket =  _context.TicketConcerns
                     .AsNoTrackingWithIdentityResolution()
                     .Include(x => x.AddedByUser)

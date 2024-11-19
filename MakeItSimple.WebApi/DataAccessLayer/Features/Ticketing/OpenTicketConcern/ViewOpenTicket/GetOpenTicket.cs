@@ -107,13 +107,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                     .TransferBy == request.UserId);
                                 break;
 
-                            case TicketingConString.TransferApproval:
-                                ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.OnHold == null)
-                                    .Where(x => x.TransferTicketConcerns
-                                    .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
-                                    .TransferTo == request.UserId);
-                                break;
+                            //case TicketingConString.TransferApproval:
+                            //    ticketConcernQuery = ticketConcernQuery
+                            //        .Where(x => x.OnHold == null)
+                            //        .Where(x => x.TransferTicketConcerns
+                            //        .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
+                            //        .TransferTo == request.UserId);
+                            //    break;
 
                             case TicketingConString.OnHold:
                                 ticketConcernQuery = ticketConcernQuery
@@ -164,13 +164,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                     .TransferBy == request.UserId);
                                 break;
 
-                            case TicketingConString.TransferApproval:
-                                ticketConcernQuery = ticketConcernQuery
-                                    .Where(x => x.OnHold == null)
-                                    .Where(x => x.TransferTicketConcerns
-                                    .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
-                                    .TransferTo == request.UserId);
-                                break;
+                            //case TicketingConString.TransferApproval:
+                            //    ticketConcernQuery = ticketConcernQuery
+                            //        .Where(x => x.OnHold == null)
+                            //        .Where(x => x.TransferTicketConcerns
+                            //        .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
+                            //        .TransferTo == request.UserId);
+                            //    break;
 
                             case TicketingConString.OnHold:
                                 ticketConcernQuery = ticketConcernQuery
@@ -314,8 +314,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                         : x.IsApprove == true != false && x.IsTransfer != false && x.IsClosedApprove == null && x.OnHold == null ? TicketingConString.OpenTicket
                                         : x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
                                         .TransferBy == request.UserId ? TicketingConString.ForTransfer
-                                        : x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
-                                        .TransferTo == request.UserId ? TicketingConString.TransferApproval
+                                        //: x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
+                                        //.TransferTo == request.UserId ? TicketingConString.TransferApproval
                                         : x.OnHold == true && x.OnHold == true ? TicketingConString.OnHold
                                         : x.IsClosedApprove == false && x.OnHold == null ? TicketingConString.ForClosing
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null ? TicketingConString.NotConfirm
@@ -419,6 +419,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             Transfer_Remarks = x.TransferRemarks,
                             Transfer_To = x.TransferTo,
                             Transfer_To_Name = x.TransferToUser.Fullname,
+                            Current_Target_Date = x.Current_Target_Date,
                             IsApprove = x.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
                             GetAttachmentForTransferTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.GetForTransferTicket.GetAttachmentForTransferTicket
                             {

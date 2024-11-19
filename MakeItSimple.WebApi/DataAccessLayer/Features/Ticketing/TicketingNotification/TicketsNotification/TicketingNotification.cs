@@ -31,15 +31,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 var doneNotif = new int();
                 var receiverForApprovalNotif = new int();
                 var allTicketNotif = new int();
-                var pendingTicketNotif = new int();
                 var openTicketNotif = new int();
                 var forTransferNotif = new int();
-                var transferApprovalNotif = new int();
+                //var transferApprovalNotif = new int();
                 var forCloseNotif = new int();
                 var onHoldNotif = new int();
                 var notCloseConfirmCloseNotif = new int();
                 var closedNotif = new int();
                 var forApprovalClosingNotif = new int();
+                var forApprovalTransferNotif = new int();
 
                 var allUserList = await _context.UserRoles
                     .AsNoTracking()
@@ -144,11 +144,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 if (requestorPermissionList.Any(x => x.Contains(request.Role)))
                 {
 
-                    var transferApprovalList = await _context.TransferTicketConcerns
-                        .AsNoTracking()
-                        .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
-                        .Select(t => t.TicketConcernId)
-                        .ToListAsync();
+                    //var transferApprovalList = await _context.TransferTicketConcerns
+                    //    .AsNoTracking()
+                    //    .Where(t => t.IsTransfer == false && t.TransferTo == request.UserId)
+                    //    .Select(t => t.TicketConcernId)
+                    //    .ToListAsync();
 
                     requestConcernsQuery = requestConcernsQuery
                         .Where(x => x.UserId == request.UserId)
@@ -173,7 +173,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         .Count();
 
                     ticketConcernQuery = ticketConcernQuery
-                        .Where(x => x.IsApprove == true && x.UserId == request.UserId || transferApprovalList.Contains(x.Id) && ticketConcernQuery.Any())
+                        .Where(x => x.IsApprove == true && x.UserId == request.UserId /*|| transferApprovalList.Contains(x.Id)*/ && ticketConcernQuery.Any())
                         .ToList();
 
                     allTicketNotif = ticketConcernQuery.Count();
@@ -187,9 +187,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                          .Where(x => x.TransferBy == request.UserId)
                          .Count();
 
-                    transferApprovalNotif = transferQuery
-                        .Where(t => t.TransferTo == request.UserId)
-                        .Count();
+                    //transferApprovalNotif = transferQuery
+                    //    .Where(t => t.TransferTo == request.UserId)
+                    //    .Count();
 
                     forCloseNotif = ticketConcernQuery
                         .Where(x => x.IsClosedApprove == false && x.OnHold == null)
@@ -252,6 +252,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                               .Count();
                     }
 
+                    if (transferQuery.Any())
+                    {
+
+                        var userRequestIdApprovalList = approverTransactList
+                            .Select(x => x.TransferTicketConcernId)
+                            .ToList();
+
+                        var userIdsInApprovalList = approverTransactList
+                            .Select(approval => approval.UserId)
+                            .ToList();
+
+                        forApprovalTransferNotif = transferQuery
+                              .Where(x => userIdsInApprovalList.Contains(x.TicketApprover)
+                              && userRequestIdApprovalList.Contains(x.Id))
+                              .Count();
+                    }
+
                 }
 
 
@@ -299,19 +316,40 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     AllTicketNotif = allTicketNotif,
                     OpenTicketNotif = openTicketNotif,
                     ForTransferNotif = forTransferNotif,
-                    TransferApprovalNotif = transferApprovalNotif,
+                    //TransferApprovalNotif = transferApprovalNotif,
                     OnHold = onHoldNotif,
                     ForCloseNotif = forCloseNotif,
                     NotConfirmCloseNotif = notCloseConfirmCloseNotif,
                     ClosedNotif = closedNotif,
+                    ForApprovalTransferNotif = forApprovalTransferNotif,
                     ForApprovalClosingNotif = forApprovalClosingNotif,
 
                 };
 
-                var confirmList = ticketConcernQuery
-                    .Where(x => x.UserId == request.UserId
-                    && x.RequestConcern.Is_Confirm == null
-                    && x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm)
+
+
+                var ticketConcernList = await _context.TicketConcerns
+                    .AsNoTrackingWithIdentityResolution()
+                    .AsSplitQuery()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        RequestConcern = new
+                        {
+                            x.RequestConcern.Is_Confirm,
+                            x.RequestConcern.ConcernStatus
+                        },
+                        x.RequestConcernId,
+                        x.User,
+                        x.UserId,
+                        x.IsActive,
+                        x.Closed_At,
+
+                    }).ToListAsync();
+
+                var confirmList = ticketConcernList
+                    .Where(x => x.RequestConcern.Is_Confirm == null
+                    && (x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm  || x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm))
                     .ToList();
 
                 foreach (var confirm in confirmList)
@@ -330,7 +368,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
 
                     var hourConvert = daysClose + confirm.Closed_At.Value.Hour - DateTime.Now.Hour;
 
-                    if (hourConvert >= hoursDifference)
+                    DayOfWeek todayWeek = DateTime.Now.DayOfWeek;
+                    DayOfWeek exceptSat = DayOfWeek.Saturday;
+                    DayOfWeek exceptSun = DayOfWeek.Sunday;
+
+                    if (hourConvert >= hoursDifference && todayWeek != exceptSat &&  todayWeek != exceptSun)
                     {
                         var requestConcern = await _context.RequestConcerns
                             .FirstOrDefaultAsync(x => x.Id == confirm.RequestConcernId);

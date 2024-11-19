@@ -100,7 +100,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 
         }
 
-        protected override async void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
@@ -129,16 +129,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
             modelBuilder.ApplyConfiguration(new TicketOnHoldConfiguration());
             modelBuilder.ApplyConfiguration(new TicketTechnicianConfiguration());
 
-
-
             modelBuilder.ApplyConfiguration(new FormConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new FormQuestionConfiguration());
             modelBuilder.ApplyConfiguration(new FormCheckBoxConfiguration());
             modelBuilder.ApplyConfiguration(new FormDropdownConfiguration());
-
-
-
 
         }
 

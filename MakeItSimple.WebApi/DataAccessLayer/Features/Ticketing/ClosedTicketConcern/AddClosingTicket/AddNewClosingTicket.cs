@@ -38,7 +38,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             if (ticketConcernExist is null)       
                 return Result.Failure(ClosingTicketError.TicketConcernIdNotExist());
             
-
             var closingTicketExist = await _context.ClosingTickets
                 .Include(x => x.TicketConcern)
                 .ThenInclude(x => x.RequestorByUser)

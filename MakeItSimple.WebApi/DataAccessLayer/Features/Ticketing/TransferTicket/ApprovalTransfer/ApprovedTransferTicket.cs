@@ -103,7 +103,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 return Result.Success();
             }
 
-
             private async Task ApprovalTicketHistory(List<TicketHistory> ticketHistory, User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
                 var ticketHistoryApproval = ticketHistory
@@ -133,12 +132,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 ticketConcernExist.UserId = transferTicketConcern.TransferTo;
                 ticketConcernExist.TargetDate = transferTicketConcern.TargetDate;
 
-
-                await ApprovedTicketNotificationH(transferTicketConcern, user, command, cancellationToken);
+                await ApprovedTicketNotification(transferTicketConcern, user, command, cancellationToken);
 
             }
 
-            private async Task ApprovedTicketNotificationH(TransferTicketConcern transferTicketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            private async Task ApprovedTicketNotification(TransferTicketConcern transferTicketConcern,User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
 
                 var addTransferByTransactionNotification = new TicketTransactionNotification
@@ -177,15 +175,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
             {
                 transferTicketConcern.TicketApprover = approverTicketing.UserId;
 
-                if(command.Target_Date is not null)
-                {
+                if(transferTicketConcern.TargetDate != command.Target_Date)
                     transferTicketConcern.TargetDate = command.Target_Date;
-                }
 
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} is pending for closing approval",
+                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was approved by {user.Fullname}",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
                     ReceiveBy = approverTicketing.UserId.Value,
@@ -200,12 +196,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 var addTicketApproveNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was approved by {user.Fullname}",
+                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was Transfer by {transferTicketConcern.TransferByUser.Fullname}",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = transferTicketConcern.TicketConcern.UserId.Value,
+                    ReceiveBy = transferTicketConcern.TransferTo.Value,
                     Modules = PathConString.IssueHandlerConcerns,
-                    Modules_Parameter = PathConString.ForTransfer,
+                    Modules_Parameter = PathConString.OpenTicket,
                     PathId = transferTicketConcern.TicketConcernId
 
                 };

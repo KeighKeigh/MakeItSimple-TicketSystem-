@@ -120,12 +120,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     isChange = true;
                 }
 
-                if (transferTicketConcern.Current_Target_Date != command.Current_Target_Date)
-                {
-                    transferTicketConcern.Current_Target_Date = command.Current_Target_Date;
-                    isChange = true;
-                }
-
                 if (transferTicketConcern.TransferTo != command.Transfer_To)
                 {
                     transferTicketConcern.TransferTo = command.Transfer_To;

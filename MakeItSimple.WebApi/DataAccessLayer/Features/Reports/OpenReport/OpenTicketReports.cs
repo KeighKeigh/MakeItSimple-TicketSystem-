@@ -79,7 +79,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport
 
                     });
 
-
                 return await PagedList<OpenTicketReportsResult>.CreateAsync(results, request.PageNumber, request.PageSize);
             }
 

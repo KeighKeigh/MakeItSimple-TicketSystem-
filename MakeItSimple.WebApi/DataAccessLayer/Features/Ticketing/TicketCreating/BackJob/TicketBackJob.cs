@@ -20,6 +20,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             public async Task<Result> Handle(TicketBackJobQuery request, CancellationToken cancellationToken)
             {
+                int week = 7;
+                var dateToday = DateTime.Today;
 
                 var result = await _context.TicketConcerns
                     .AsNoTrackingWithIdentityResolution()
@@ -30,10 +32,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     .Select(r => new TicketBackJobResult
                     {
                         TicketConcernId = r.Id,
+                        Days_Closed = EF.Functions.DateDiffDay(r.Closed_At.Value.Date,dateToday),
                         Concern = r.RequestConcern.Concern,
 
                     }).ToListAsync();
 
+                result = result
+                    .Where(r => r.Days_Closed <= week)
+                    .ToList();
 
                 if(!string.IsNullOrEmpty(request.Search))
                 {
@@ -42,7 +48,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         .ToList();
 
                 }
-
 
                 return Result.Success(result);
             }

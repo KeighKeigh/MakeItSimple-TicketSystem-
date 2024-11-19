@@ -47,11 +47,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                         }).ToListAsync();
 
-                    var issueHandlerPermissionList = allUserList
+                    var approverPermissionList = allUserList
                         .Where(x => x.Permissions
-                        .Contains(TicketingConString.IssueHandler))
+                        .Contains(TicketingConString.Approver))
                         .Select(x => x.UserRoleName)
                         .ToList();
+
 
                     if (!string.IsNullOrEmpty(request.Search))
                     {
@@ -79,9 +80,40 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
                     if(!string.IsNullOrEmpty(request.UserType))
                     {
+                        var filterApproval = transferTicketQuery.Select(x => x.Id);
+
                         if (request.UserType == TicketingConString.Approver)
                         {
-                            transferTicketQuery = transferTicketQuery.Where(x => x.TransferTo == request.UserId);
+                            if (approverPermissionList.Any(x => x.Contains(request.Role)))
+                            {
+
+                                var userApprover = await _context.Users
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+
+                                var approverTransactList = await _context.ApproverTicketings
+                                    .AsNoTracking()
+                                    .Where(x => x.UserId == userApprover.Id)
+                                    .Where(x => x.IsApprove == null)
+                                    .Select(x => new
+                                    {
+                                        x.ApproverLevel,
+                                        x.IsApprove,
+                                        x.TransferTicketConcernId,
+                                        x.UserId,
+
+                                    })
+                                    .ToListAsync();
+
+                                var userRequestIdApprovalList = approverTransactList.Select(x => x.TransferTicketConcernId);
+                                var userIdsInApprovalList = approverTransactList.Select(approval => approval.UserId);
+
+                                transferTicketQuery = transferTicketQuery
+                                    .Where(x => userIdsInApprovalList.Contains(x.TicketApprover)
+                                    && userRequestIdApprovalList.Contains(x.Id));
+
+                            }
+
                         }
                         else if (request.UserType == TicketingConString.IssueHandler)
                         {
@@ -98,16 +130,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     {
                         TicketConcernId = x.TicketConcernId,
                         TransferTicketId = x.Id,
-                        Department_Code = x.TicketConcern.User.Department.DepartmentCode,
-                        Department_Name = x.TicketConcern.User.Department.DepartmentName,
                         ChannelId = x.TicketConcern.RequestConcern.ChannelId,
                         Channel_Name = x.TicketConcern.RequestConcern.Channel.ChannelName,
                         UserId = x.TicketConcern.UserId,
                         Fullname = x.TicketConcern.User.Fullname,
                         Concern_Details = x.TicketConcern.RequestConcern.Concern,
-                        Category_Description = x.TicketConcern.RequestConcern.Category.CategoryDescription,
-                        SubCategory_Description = x.TicketConcern.RequestConcern.SubCategory.SubCategoryDescription,
-                        Target_Date = x.TicketConcern.TargetDate,
+                        GetTransferTicketCategories = x.TicketConcern.RequestConcern.TicketCategories
+                        .Select(tc => new GetTransferTicketResult.GetTransferTicketCategory
+                        {
+                            TicketCategoryId = tc.Id,
+                            CategoryId = tc.CategoryId,
+                            Category_Description = tc.Category.CategoryDescription,
+
+                        }).ToList(),
+                        GetTransferTicketSubCategories = x.TicketConcern.RequestConcern.TicketSubCategories
+                        .Select(tc => new GetTransferTicketResult.GetTransferTicketSubCategory
+                        {
+                            TicketSubCategoryId = tc.Id,
+                            SubCategoryId = tc.SubCategoryId,
+                            SubCategory_Description = tc.SubCategory.SubCategoryDescription,
+
+                        }).ToList(),
+
+                        Current_Target_Date = x.Current_Target_Date.Value.Date,
+                        Target_Date = x.TargetDate.Value.Date,    
                         IsActive = x.IsActive,
                         Transfer_By = x.TransferByUser.Fullname,
                         Transfer_At = x.TransferAt,
@@ -137,10 +183,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Modified_By = x.ModifiedByUser.Fullname,
                         Updated_At = x.UpdatedAt
                       }).ToList(),
-
-
-
-
 
                     });
 
