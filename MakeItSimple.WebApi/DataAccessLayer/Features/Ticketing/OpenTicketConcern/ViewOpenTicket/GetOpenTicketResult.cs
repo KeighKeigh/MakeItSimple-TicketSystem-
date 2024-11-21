@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.Models.Ticketing;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket
 {
@@ -86,8 +87,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
             public List<GetForClosingTicket> GetForClosingTickets { get; set; }
             public List<GetForTransferTicket> GetForTransferTickets { get; set; }
 
-            public List<TransferApprovalTicket> TransferApprovalTickets { get; set; }
+            //public List<TransferApprovalTicket> TransferApprovalTickets { get; set; }
 
+            public List<GetForOnHold> GetForOnHolds { get; set; }
             public List<GetOnHold> GetOnHolds { get; set; }
 
             public class GetForClosingTicket
@@ -175,22 +177,43 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
             }
 
-            public class TransferApprovalTicket
+            //public class TransferApprovalTicket
+            //{
+            //    public int? TransferTicketConcernId { get; set; }
+            //    public Guid? Transfer_By { get; set; }
+            //    public string Transfer_By_Name { get; set; }
+            //    public string Transfer_Remarks { get; set; }
+            //    public bool? IsApprove { get; set; }
+
+            //    public List<GetAttachmentTransferApprovalTicket> GetAttachmentTransferApprovalTickets { get; set; }
+            //    public class GetAttachmentTransferApprovalTicket
+            //    {
+            //        public int? TicketAttachmentId { get; set; }
+            //        public string Attachment { get; set; }
+            //        public string FileName { get; set; }
+            //        public decimal? FileSize { get; set; }
+            //    }
+
+            //}
+            public class GetForOnHold
             {
-                public int? TransferTicketConcernId { get; set; }
-                public Guid? Transfer_By { get; set; }
-                public string Transfer_By_Name { get; set; }
-                public string Transfer_Remarks { get; set; }
+                public int Id { get; set; }
+                public string Reason { get; set; }
+                public string AddedBy { get; set; }
+                public DateTime CreatedAt { get; set; }
+                public bool? IsHold { get; set; }
+                public DateTime? ResumeAt { get; set; }
                 public bool? IsApprove { get; set; }
 
-                public List<GetAttachmentTransferApprovalTicket> GetAttachmentTransferApprovalTickets { get; set; }
-                public class GetAttachmentTransferApprovalTicket
+                public List<GetAttachmentForOnHoldOpenTicket> GetAttachmentForOnHoldOpenTickets { get; set; }
+                public class GetAttachmentForOnHoldOpenTicket
                 {
                     public int? TicketAttachmentId { get; set; }
                     public string Attachment { get; set; }
                     public string FileName { get; set; }
                     public decimal? FileSize { get; set; }
                 }
+
 
             }
 
@@ -202,16 +225,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                 public DateTime CreatedAt { get; set; }
                 public bool? IsHold { get; set; }
                 public DateTime? ResumeAt { get; set; }
+                public bool? IsApprove { get; set; }
 
-                public List<GetAttachmentForOnHoldTicket> GetAttachmentForOnHoldTickets { get; set; }
-                public class GetAttachmentForOnHoldTicket
+                public List<GetAttachmentOnHoldOpenTicket> GetAttachmentOnHoldOpenTickets { get; set; }
+                public class GetAttachmentOnHoldOpenTicket
                 {
                     public int? TicketAttachmentId { get; set; }
                     public string Attachment { get; set; }
                     public string FileName { get; set; }
                     public decimal? FileSize { get; set; }
                 }
-
 
 
             }

@@ -37,11 +37,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
-
-
             private async Task<TicketOnHold> UpdateOnHold(TicketOnHold ticketOnHold, ResumeOnHoldTicketCommand command, CancellationToken cancellationToken)
             {
-                ticketOnHold.IsHold = null;
                 ticketOnHold.ResumeAt = DateTime.Now;
 
                 var ticketConcern = await _context.TicketConcerns
@@ -87,7 +84,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 };
 
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionNotification);
-
             }
 
 

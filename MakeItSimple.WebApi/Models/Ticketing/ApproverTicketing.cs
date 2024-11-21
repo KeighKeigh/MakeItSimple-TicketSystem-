@@ -27,6 +27,9 @@ namespace MakeItSimple.WebApi.Models.Ticketing
         public int ? ClosingTicketId { get; set; }
         public virtual ClosingTicket ClosingTicket { get; set; }
 
+        public int ? TicketOnHoldId { get; set; }
+        public virtual TicketOnHold TicketOnHold { get; set; }
+
 
 
     }

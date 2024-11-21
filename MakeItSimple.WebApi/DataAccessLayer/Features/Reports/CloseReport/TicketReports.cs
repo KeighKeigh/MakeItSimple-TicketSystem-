@@ -41,9 +41,28 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
                     .AsSplitQuery()
-                    .Where(x => x.RequestConcern.Is_Confirm == true && x.IsClosedApprove == true);
-                    
+                    .Where(x => x.IsClosedApprove == true && x.ClosingTickets.FirstOrDefault(x => x.IsClosing == true).IsActive == true)
+                    .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date);
 
+                var closingTicketTechnician = _context.TicketTechnicians
+                      .AsNoTrackingWithIdentityResolution()
+                      .Include(x => x.TechnicianByUser)
+                      .Include(x => x.ClosingTicket)
+                      .ThenInclude(x => x.TicketConcern)
+                      .AsSplitQuery()
+                      .Where(x => x.ClosingTicket.TicketConcern.IsClosedApprove == true && x.ClosingTicket.IsActive == true && x.ClosingTicket.IsClosing == true)
+                      .Where(x => x.ClosingTicket.TicketConcern.Closed_At.Value.Date >= request.Date_From.Value.Date && x.ClosingTicket.TicketConcern.Closed_At.Value.Date <= request.Date_To.Value.Date)
+                      .Select(x => new
+                      {
+                          x.ClosingTicket.TicketConcern.TargetDate.Value.Year,
+                          x.ClosingTicket.TicketConcern.TargetDate.Value.Month,
+                          x.ClosingTicket.TicketConcern.TargetDate,
+                          ClosedAt = x.ClosingTicket.TicketConcern.Closed_At,
+                          TechnicianName = x.TechnicianByUser.Fullname,
+                          TicketId = x.ClosingTicket.TicketConcernId,
+                          ConcernDescription = x.ClosingTicket.TicketConcern.RequestConcern.Concern,
+                          x.ClosingTicket.TicketConcern.RequestConcern.Channel.ChannelName
+                      });
 
                 if (request.Unit is not null)
                 {
@@ -82,27 +101,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         .Where(x => x.Id.ToString().Contains(request.Search)
                         || x.User.Fullname.Contains(request.Search));
                 }
-
-                ticketQuery = ticketQuery
-                        .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date);
-
-                var closingTicketTechnician = _context.TicketTechnicians
-                        .AsNoTrackingWithIdentityResolution()
-                        .Include(x => x.TechnicianByUser)
-                        .Include(x => x.ClosingTicket)
-                        .ThenInclude(x => x.TicketConcern)
-                        .AsSplitQuery()
-                        .Select(x => new
-                        {
-                            x.ClosingTicket.TicketConcern.TargetDate.Value.Year,
-                            x.ClosingTicket.TicketConcern.TargetDate.Value.Month,
-                            x.ClosingTicket.TicketConcern.TargetDate,
-                            ClosedAt = x.ClosingTicket.TicketConcern.Closed_At,
-                            TechnicianName = x.TechnicianByUser.Fullname,
-                            TicketId = x.ClosingTicket.TicketConcernId,
-                            ConcernDescription = x.ClosingTicket.TicketConcern.RequestConcern.Concern,
-                            x.ClosingTicket.TicketConcern.RequestConcern.Channel.ChannelName
-                        });
 
                 var closingTicket = ticketQuery
                         .Select(x => new

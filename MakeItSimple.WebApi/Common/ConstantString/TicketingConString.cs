@@ -56,6 +56,11 @@ namespace MakeItSimple.WebApi.Common.ConstantString
 
         public const string OnHoldRequest = "Ticket was on-hold";
 
+        public const string OnHoldForApproval = "Ticket on-hold pending approval from";
+        public const string OnHoldApproved = "Ticket on-hold request approved by";
+        public const string OnHoldCancel = "Ticket on-hold request canceled";
+        public const string OnHoldReject = "Ticket on-hold request rejected by";
+
         // Concern Status 
         public const string ConcernAssign = "Assign";
         public const string Reject = "Rejected";
@@ -75,6 +80,7 @@ namespace MakeItSimple.WebApi.Common.ConstantString
         public const string ForClosing = "For Closing Ticket";
         public const string ForTransfer = "For Transfer";
         public const string OpenTicket = "Open Ticket";
+        public const string ForOnHold = "For On-Hold";
         public const string OnHold = "On-Hold";
         public const string Resume = "Ticket was resume";
         public const string PendingRequest = "Pending Request";

@@ -15,7 +15,7 @@
             public int ForTransferNotif { get; set; }
             //public int TransferApprovalNotif { get; set; }
             public int ForCloseNotif { get; set; }
-
+            public int ForOnHoldNotif { get; set; }
             public int OnHold { get; set; }
 
             public int NotConfirmCloseNotif { get; set; }

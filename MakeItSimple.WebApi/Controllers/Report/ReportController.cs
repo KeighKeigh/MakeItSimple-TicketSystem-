@@ -8,6 +8,8 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport.Ti
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport.OpenTicketReports;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.TransferReport.TransferTicketReports;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OnHoldReport.OnHoldTicketReport;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport.AllTicketReports;
 
 namespace MakeItSimple.WebApi.Controllers.Report
 {
@@ -20,6 +22,47 @@ namespace MakeItSimple.WebApi.Controllers.Report
         public ReportController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("all-tickets")]
+        public async Task<IActionResult> AllTicketReports([FromQuery] AllTicketReportsQuery query)
+        {
+            try
+            {
+
+                var reports = await _mediator.Send(query);
+
+                Response.AddPaginationHeader(
+
+                reports.CurrentPage,
+                reports.PageSize,
+                reports.TotalCount,
+                reports.TotalPages,
+                reports.HasPreviousPage,
+                reports.HasNextPage
+
+                );
+
+                var result = new
+                {
+                    reports,
+                    reports.CurrentPage,
+                    reports.PageSize,
+                    reports.TotalCount,
+                    reports.TotalPages,
+                    reports.HasPreviousPage,
+                    reports.HasNextPage
+                };
+
+                var successResult = Result.Success(result);
+
+                return Ok(successResult);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+
         }
 
         [HttpGet("closing")]

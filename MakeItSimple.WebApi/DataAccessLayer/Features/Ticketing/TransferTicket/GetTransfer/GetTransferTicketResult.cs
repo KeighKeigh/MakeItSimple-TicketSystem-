@@ -24,7 +24,6 @@
             }
 
             public List<GetTransferTicketSubCategory> GetTransferTicketSubCategories { get; set; }
-
             public class GetTransferTicketSubCategory
             {
                 public int? TicketSubCategoryId { get; set; }

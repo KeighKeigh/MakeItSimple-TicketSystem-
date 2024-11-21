@@ -115,6 +115,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             //        .TransferTo == request.UserId);
                             //    break;
 
+                            case TicketingConString.ForOnHold:
+                                ticketConcernQuery = ticketConcernQuery
+                                    .Where(x => x.OnHold == false);
+                                break;
+
                             case TicketingConString.OnHold:
                                 ticketConcernQuery = ticketConcernQuery
                                     .Where(x => x.OnHold == true);
@@ -171,6 +176,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             //        .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
                             //        .TransferTo == request.UserId);
                             //    break;
+                            case TicketingConString.ForOnHold:
+                                ticketConcernQuery = ticketConcernQuery
+                                    .Where(x => x.OnHold == false);
+                                break;
 
                             case TicketingConString.OnHold:
                                 ticketConcernQuery = ticketConcernQuery
@@ -316,7 +325,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                         .TransferBy == request.UserId ? TicketingConString.ForTransfer
                                         //: x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
                                         //.TransferTo == request.UserId ? TicketingConString.TransferApproval
-                                        : x.OnHold == true && x.OnHold == true ? TicketingConString.OnHold
+                                        : x.OnHold == false ? TicketingConString.ForOnHold
+                                        : x.OnHold == true ? TicketingConString.OnHold
                                         : x.IsClosedApprove == false && x.OnHold == null ? TicketingConString.ForClosing
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == null && x.OnHold == null ? TicketingConString.NotConfirm
                                         : x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true && x.OnHold == null ? TicketingConString.Closed
@@ -387,7 +397,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                           }).ToList(),
 
                       }).ToList(),
-                         
+
+                        GetForOnHolds = x.TicketOnHolds
+                        .Where(x => x.IsHold == false)
+                        .Select(h => new GetOpenTicketResult.GetForOnHold
+                        {
+                            Id = h.Id,
+                            Reason = h.Reason,
+                            AddedBy = h.AddedByUser.Fullname,
+                            CreatedAt = h.CreatedAt,
+                            IsHold = h.IsHold,
+                            ResumeAt = h.ResumeAt,
+                            IsApprove = h.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
+                            GetAttachmentForOnHoldOpenTickets = h.TicketAttachments
+                            .Select(t => new GetOpenTicketResult.GetForOnHold.GetAttachmentForOnHoldOpenTicket
+                            {
+                                TicketAttachmentId = t.Id,
+                                Attachment = t.Attachment,
+                                FileName = t.FileName,
+                                FileSize = t.FileSize,
+
+                            }).ToList(),
+
+                        }).ToList(),
+
                         GetOnHolds = x.TicketOnHolds
                         .Where(x => x.IsHold == true)
                         .Select(h => new GetOpenTicketResult.GetOnHold
@@ -398,9 +431,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             CreatedAt = h.CreatedAt,
                             IsHold = h.IsHold,
                             ResumeAt = h.ResumeAt,
-                            GetAttachmentForOnHoldTickets = h.TicketAttachments
-
-                            .Select(t => new GetOpenTicketResult.GetOnHold.GetAttachmentForOnHoldTicket
+                            IsApprove = h.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
+                            GetAttachmentOnHoldOpenTickets = h.TicketAttachments
+                            .Select(t => new GetOpenTicketResult.GetOnHold.GetAttachmentOnHoldOpenTicket
                             {
                                 TicketAttachmentId = t.Id,
                                 Attachment = t.Attachment,
@@ -433,25 +466,25 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         })
                         .ToList(),
 
-                        TransferApprovalTickets = x.TransferTicketConcerns
-                        .Where(x => x.IsActive == true && x.IsTransfer == false && x.TransferTo == request.UserId)
-                        .Select(a =>  new GetOpenTicketResult.TransferApprovalTicket
-                        {
-                            TransferTicketConcernId = a.Id,
-                            Transfer_Remarks = a.TransferRemarks,
-                            Transfer_By = a.TransferBy,
-                            Transfer_By_Name = a.TransferByUser.Fullname,
-                            IsApprove = a.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
-                            GetAttachmentTransferApprovalTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.TransferApprovalTicket.GetAttachmentTransferApprovalTicket
-                            {
-                                TicketAttachmentId = x.Id,
-                                Attachment = x.Attachment,
-                                FileName = x.FileName,
-                                FileSize = x.FileSize,
+                        //TransferApprovalTickets = x.TransferTicketConcerns
+                        //.Where(x => x.IsActive == true && x.IsTransfer == false && x.TransferTo == request.UserId)
+                        //.Select(a =>  new GetOpenTicketResult.TransferApprovalTicket
+                        //{
+                        //    TransferTicketConcernId = a.Id,
+                        //    Transfer_Remarks = a.TransferRemarks,
+                        //    Transfer_By = a.TransferBy,
+                        //    Transfer_By_Name = a.TransferByUser.Fullname,
+                        //    IsApprove = a.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
+                        //    GetAttachmentTransferApprovalTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.TransferApprovalTicket.GetAttachmentTransferApprovalTicket
+                        //    {
+                        //        TicketAttachmentId = x.Id,
+                        //        Attachment = x.Attachment,
+                        //        FileName = x.FileName,
+                        //        FileSize = x.FileSize,
 
-                            }).ToList(),
+                        //    }).ToList(),
 
-                        }).ToList(),
+                        //}).ToList(),
 
                         Transaction_Date = x.ticketHistories.Max(x => x.TransactionDate).Value,
 

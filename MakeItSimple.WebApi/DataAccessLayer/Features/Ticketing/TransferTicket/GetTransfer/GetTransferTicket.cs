@@ -159,7 +159,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Transfer_At = x.TransferAt,
                         Transfer_Status = x.IsTransfer == false && x.IsRejectTransfer == false ? "For Transfer Approval"
                                     : x.IsTransfer == true && x.IsRejectTransfer == false ? "Transfer Approve"
-                                    : x.IsRejectTransfer == true ? "Transfer Reject" : "Unknown",
+                                    : x.IsRejectTransfer == true ? "Transfer Rejected" : "Unknown",
                         Transfer_Remarks = x.TransferRemarks,
                         RejectTransfer_By = x.RejectTransferByUser.Fullname,
                         RejectTransfer_At = x.RejectTransferAt,

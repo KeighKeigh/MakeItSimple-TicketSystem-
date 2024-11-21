@@ -145,8 +145,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     Message = $"Ticket concern number {transferTicketConcern.TicketConcernId} has transfer",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = transferTicketConcern.TransferBy.Value,
-                    Modules = PathConString.ConcernTickets,
+                    ReceiveBy = transferTicketConcern.AddedBy.Value,
+                    Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.ForTransfer,
                     PathId = transferTicketConcern.TicketConcernId ,
 
@@ -160,8 +160,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                     Message = $"Ticket concern number {transferTicketConcern.TicketConcernId} has transfer",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = transferTicketConcern.TransferBy.Value,
-                    Modules = PathConString.ConcernTickets,
+                    ReceiveBy = transferTicketConcern.TransferTo.Value,
+                    Modules = PathConString.IssueHandlerConcerns,
                     Modules_Parameter = PathConString.OpenTicket,
                     PathId = transferTicketConcern.TicketConcernId,
 
@@ -196,12 +196,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 var addTicketApproveNotification = new TicketTransactionNotification
                 {
 
-                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was Transfer by {transferTicketConcern.TransferByUser.Fullname}",
+                    Message = $"Ticket number {transferTicketConcern.TicketConcernId} was approved by {user.Fullname}",
                     AddedBy = user.Id,
                     Created_At = DateTime.Now,
-                    ReceiveBy = transferTicketConcern.TransferTo.Value,
+                    ReceiveBy = transferTicketConcern.TransferBy.Value,
                     Modules = PathConString.IssueHandlerConcerns,
-                    Modules_Parameter = PathConString.OpenTicket,
+                    Modules_Parameter = PathConString.ForTransfer,
                     PathId = transferTicketConcern.TicketConcernId
 
                 };

@@ -24,6 +24,8 @@ namespace MakeItSimple.WebApi.Common.ConstantString
 
         public const string OpenTicket = "Open Ticket";
         public const string ForTransfer = "For Transfer";
+        public const string ForOnHold = "For On-Hold";
+        public const string OnHold = "On-Hold";
         public const string ForClosingTicket = "For Closing Ticket";
         public const string Closed = "Closed";
 

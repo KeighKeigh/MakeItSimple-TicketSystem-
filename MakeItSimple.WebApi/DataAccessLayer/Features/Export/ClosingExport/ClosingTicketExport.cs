@@ -30,6 +30,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         .Include(x => x.ClosingTicket)
                         .ThenInclude(x => x.TicketConcern)
                         .AsSplitQuery()
+                        .Where(x => x.ClosingTicket.TicketConcern.IsClosedApprove == true && x.ClosingTicket.IsActive == true && x.ClosingTicket.IsClosing == true)
                         .Where(x => x.ClosingTicket.TicketConcern.Closed_At.Value.Date >= request.Date_From.Value.Date && x.ClosingTicket.TicketConcern.Closed_At.Value.Date <= request.Date_To.Value.Date)
                         .Select(x => new
                         {
@@ -59,7 +60,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     .Include(x => x.RequestConcern)
                     .ThenInclude(x => x.Channel)
                     .AsSplitQuery()
-                    .Where(x => x.IsClosedApprove == true && x.RequestConcern.Is_Confirm == true)
+                    .Where(x => x.IsClosedApprove == true && x.ClosingTickets.FirstOrDefault(x => x.IsClosing == true).IsActive == true)
                     .Where(x => x.Closed_At.Value.Date >= request.Date_From.Value.Date && x.Closed_At.Value.Date <= request.Date_To.Value.Date)
                     .Select(x => new
                     {
@@ -99,8 +100,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         Category = x.ChannelName
 
                     }).ToListAsync();
-
-
 
 
                 if (request.Unit is not null)
