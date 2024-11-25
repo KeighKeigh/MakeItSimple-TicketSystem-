@@ -346,7 +346,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                     combineTicketReports.Add(list);
                 }
 
-
                 var results = combineTicketReports
                     .OrderBy(x => x.Transaction_Date.Value.Date)
                     .ThenBy(x => x.TicketConcernId)

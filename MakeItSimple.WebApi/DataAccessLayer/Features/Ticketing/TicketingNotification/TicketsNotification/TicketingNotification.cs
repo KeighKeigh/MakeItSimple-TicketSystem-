@@ -41,6 +41,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 var closedNotif = new int();
                 var forApprovalClosingNotif = new int();
                 var forApprovalTransferNotif = new int();
+                var forApprovalOnHoldNotif = new int();
 
                 var allUserList = await _context.UserRoles
                     .AsNoTracking()
@@ -108,6 +109,18 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                         x.OnHold,
 
                     }).ToListAsync();
+
+                var onHoldQuery = await _context.TicketOnHolds
+                    .AsNoTrackingWithIdentityResolution()
+                   .AsSplitQuery()
+                   .Where(x => x.IsActive)
+                   .Select(x => new
+                   {
+                       x.Id,
+                       x.TicketApprover,
+                       x.TicketConcernId,
+
+                   }).ToListAsync();
 
                 var transferQuery = await _context.TransferTicketConcerns
                 .AsNoTrackingWithIdentityResolution()
@@ -235,6 +248,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                             x.IsApprove,
                             x.TransferTicketConcernId,
                             x.ClosingTicketId,
+                            x.TicketOnHoldId,
                             x.UserId,
 
                         }).ToListAsync();
@@ -273,6 +287,24 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                               && userRequestIdApprovalList.Contains(x.Id))
                               .Count();
                     }
+
+                    if (onHoldQuery.Any())
+                    {
+
+                        var userRequestIdApprovalList = approverTransactList
+                            .Select(x => x.TicketOnHoldId)
+                            .ToList();
+
+                        var userIdsInApprovalList = approverTransactList
+                            .Select(approval => approval.UserId)
+                            .ToList();
+
+                        forApprovalOnHoldNotif = onHoldQuery
+                              .Where(x => userIdsInApprovalList.Contains(x.TicketApprover)
+                              && userRequestIdApprovalList.Contains(x.Id))
+                              .Count();
+                    }
+
 
                 }
 
@@ -327,6 +359,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     ForCloseNotif = forCloseNotif,
                     NotConfirmCloseNotif = notCloseConfirmCloseNotif,
                     ClosedNotif = closedNotif,
+                    ForApprovalOnHoldNotif = forApprovalOnHoldNotif,
                     ForApprovalTransferNotif = forApprovalTransferNotif,
                     ForApprovalClosingNotif = forApprovalClosingNotif,
 

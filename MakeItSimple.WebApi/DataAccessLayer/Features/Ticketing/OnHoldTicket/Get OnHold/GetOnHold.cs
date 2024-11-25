@@ -26,13 +26,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ge
             {
                 IQueryable<TicketOnHold> onHoldQuery = _context.TicketOnHolds
                     .AsNoTrackingWithIdentityResolution()
+                    .Include(x => x.AddedByUser)
                     .Include(x => x.TicketConcern)
                     .ThenInclude(x => x.RequestConcern)
-                    .Include(x => x.AddedByUser)
-                    .Include(x => x.ApproverTickets)
+                    .ThenInclude(x => x.TicketCategories)
+                    .Include(x => x.TicketConcern)
+                    .ThenInclude(x => x.RequestConcern)
+                    .ThenInclude(x => x.TicketSubCategories)
                     .Include(x => x.TicketAttachments)
-                    .AsSplitQuery()
-                    .Where(x => x.IsActive);
+                    .Include(x => x.ApproverTickets)
+                    .Include(x => x.RejectOnHoldByUser)
+                    .AsSplitQuery();
 
                 if(onHoldQuery.Any())
                 {
@@ -75,31 +79,40 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ge
                     if (!string.IsNullOrEmpty(request.UserType))
                     {
                         var filterApproval = onHoldQuery.Select(x => x.Id);
-                        if (approverPermissionList.Any(x => x.Contains(request.Role)))
+
+                        if (request.UserType.Equals(TicketingConString.Approver))
                         {
-                            var userApprover = await _context.Users
-                                .AsNoTracking()
-                                .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+                            if (approverPermissionList.Any(x => x.Contains(request.Role)))
+                            {
+                                var userApprover = await _context.Users
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
-                            var approverTransactList = await _context.ApproverTicketings
-                                .AsNoTracking()
-                                .Where(x => x.UserId == userApprover.Id)
-                                .Where(x => x.IsApprove == null)
-                                .Select(x => new
-                                {
-                                    x.ApproverLevel,
-                                    x.IsApprove,
-                                    x.TicketOnHoldId,
-                                    x.UserId,
+                                var approverTransactList = await _context.ApproverTicketings
+                                    .AsNoTracking()
+                                    .Where(x => x.UserId == userApprover.Id)
+                                    .Where(x => x.IsApprove == null)
+                                    .Select(x => new
+                                    {
+                                        x.ApproverLevel,
+                                        x.IsApprove,
+                                        x.TicketOnHoldId,
+                                        x.UserId,
 
-                                }).ToListAsync();
+                                    }).ToListAsync();
 
-                            var userRequestIdApprovalList = approverTransactList.Select(x => x.TicketOnHoldId);
-                            var userIdsInApprovalList = approverTransactList.Select(approval => approval.UserId);
+                                var userRequestIdApprovalList = approverTransactList.Select(x => x.TicketOnHoldId);
+                                var userIdsInApprovalList = approverTransactList.Select(approval => approval.UserId);
 
-                            onHoldQuery = onHoldQuery
-                                .Where(x => userIdsInApprovalList.Contains(x.TicketApprover)
-                                && userRequestIdApprovalList.Contains(x.Id));
+                                onHoldQuery = onHoldQuery
+                                    .Where(x => userIdsInApprovalList.Contains(x.TicketApprover)
+                                    && userRequestIdApprovalList.Contains(x.Id));
+
+                            }
+                            else
+                            {
+                                return new PagedList<GetOnHoldReports>(new List<GetOnHoldReports>(), 0, request.PageNumber, request.PageSize);
+                            }
 
                         }
                         else if (request.UserType.Equals(TicketingConString.IssueHandler))
@@ -110,11 +123,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ge
                         {
                             return new PagedList<GetOnHoldReports>(new List<GetOnHoldReports>(), 0, request.PageNumber, request.PageSize);
                         }
-
                     }
                 }
 
                 var results = onHoldQuery
+                    .Where(x => x.IsActive)
+                   .OrderBy(x => x.Id)
                    .Select(x => new GetOnHoldReports
                    {
                        TicketConcernId = x.TicketConcernId,

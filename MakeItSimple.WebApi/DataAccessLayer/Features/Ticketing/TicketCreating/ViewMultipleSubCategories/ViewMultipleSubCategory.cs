@@ -16,19 +16,20 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             public int CategoryId { get; set; }
             public string Category_Description { get; set; }
 
-            public List<ViewMultipleSubCategoryResult> ViewMultipleSubCategoryResults { get; set; }
+            public int SubCategoryId { get; set; }
+            public string Sub_Category_Description { get; set; }
 
-            public record ViewMultipleSubCategoryResult
-            {
-                public int SubCategoryId { get; set; }
-                public string Sub_Category_Description { get; set; }
+            //public List<ViewMultipleSubCategoryResult> ViewMultipleSubCategoryResults { get; set; }
 
-            }
+            //public record ViewMultipleSubCategoryResult
+            //{
+            //    public int SubCategoryId { get; set; }
+            //    public string Sub_Category_Description { get; set; }
+
+            //}
 
 
         }
-
-        
 
         public class ViewMultipleSubCategoryQuery : IRequest<Result>
         {
@@ -47,32 +48,42 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             public async Task<Result> Handle(ViewMultipleSubCategoryQuery request, CancellationToken cancellationToken)
             {
-                var subCategoryList = new Dictionary<int, List<SubCategory>>();
+                var subCategoryList = new Dictionary<int, List<ViewMultipleCategoryResult>>();
 
                 foreach(var category in request.CategoryId)
                 {
                     var categoriesList = await _context.SubCategories
                         .Include(s => s.Category)
                         .Where(s => s.CategoryId == category)
-                        .ToListAsync();
+                        .Select(x => new ViewMultipleCategoryResult
+                        {
+                            CategoryId = x.CategoryId,
+                            Category_Description = x.Category.CategoryDescription,
+                            SubCategoryId = x.Id,
+                            Sub_Category_Description = x.SubCategoryDescription
+
+
+                        }).ToListAsync();
+
 
                     subCategoryList.Add(category, categoriesList);
 
                 }
 
-                var result = subCategoryList
-                     .Select(r => new ViewMultipleCategoryResult
-                     {
-                         CategoryId = r.Key,
-                         Category_Description = r.Value.First().Category.CategoryDescription,
-                         ViewMultipleSubCategoryResults = r.Value.Select(v => new ViewMultipleCategoryResult.ViewMultipleSubCategoryResult
-                         {
-                             SubCategoryId = v.Id,
-                             Sub_Category_Description = v.SubCategoryDescription,
+                var result = subCategoryList.ToList();
+                     //.Select(r => new ViewMultipleCategoryResult
+                     //{
+                     //    //CategoryId = r.Key,
+                     //    //Category_Description = r.Value.First().Category.CategoryDescription,
 
-                         }).ToList(),
+                     //    //ViewMultipleSubCategoryResults = r.Value.Select(v => new ViewMultipleCategoryResult.ViewMultipleSubCategoryResult
+                     //    //{
+                     //    //    SubCategoryId = v.Id,
+                     //    //    Sub_Category_Description = v.SubCategoryDescription,
 
-                     }).ToList();
+                     //    //}).ToList(),
+
+                     //}).ToList();
 
                 return Result.Success(result);
             }

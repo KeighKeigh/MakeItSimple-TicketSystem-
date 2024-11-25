@@ -49,7 +49,7 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
         }
 
         [HttpPut("approval")]
-        public async Task<IActionResult> ApprovalOnHold([FromForm] ApprovalOnHoldCommand command)
+        public async Task<IActionResult> ApprovalOnHold([FromBody] ApprovalOnHoldCommand command)
         {
             try
             {

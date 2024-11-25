@@ -65,7 +65,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                     var approverUser = approverList
                         .First(x => x.ApproverLevel == approverList.Min(x => x.ApproverLevel));
 
-                    var addOnHold = await CreateOnHold(ticketConcernExist,command, cancellationToken);
+                    var addOnHold = await CreateOnHold(approverUser,ticketConcernExist,command, cancellationToken);
                     onHoldConcern.Add(addOnHold);
                     onHoldExist = addOnHold;
 
@@ -100,7 +100,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
             {
                 var addApprover = new ApproverTicketing
                 {
-                    TicketConcernId = ticketConcern.Id,
+                    TicketConcernId = command.TicketConcernId,
                     TicketOnHoldId = ticketOnHold.Id,
                     UserId = approver.UserId,
                     ApproverLevel = approver.ApproverLevel,
@@ -114,7 +114,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
 
             }
 
-            private async Task<TicketOnHold> CreateOnHold(TicketConcern ticketConcern, CreateOnHoldTicketCommand command , CancellationToken cancellationToken)
+            private async Task<TicketOnHold> CreateOnHold(Approver approver,TicketConcern ticketConcern, CreateOnHoldTicketCommand command , CancellationToken cancellationToken)
             {
                 ticketConcern.OnHold = false;
 
@@ -123,15 +123,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                    TicketConcernId = command.TicketConcernId,
                    Reason = command.Reason,
                    AddedBy = command.Added_By,
-                   IsHold = false,
+                   IsHold = false, 
+                   TicketApprover = approver.UserId,
 
                 };
 
                 await _context.TicketOnHolds.AddAsync(addOnHold);
 
-                await _context.SaveChangesAsync(cancellationToken);
-
-            
+                await _context.SaveChangesAsync(cancellationToken); 
                 return addOnHold;
 
             }
@@ -177,14 +176,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
 
             private async Task<TicketTransactionNotification> TransactionNotification(TicketOnHold onHoldTicket,TicketConcern ticketConcern, CreateOnHoldTicketCommand command, CancellationToken cancellationToken)
             {
-                var addNewTicketTransactionNotification = new TicketTransactionNotification
+                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
 
                     Message = $"Ticket number {command.TicketConcernId} is pending for on-hold approval",
                     AddedBy = command.Added_By.Value,
                     Created_At = DateTime.Now,
                     Modules = PathConString.Approval,
-                    Modules_Parameter = PathConString.ForTransfer,
+                    Modules_Parameter = PathConString.ForOnHold,
                     ReceiveBy = onHoldTicket.TicketApprover.Value,
                     PathId = command.TicketConcernId,
 

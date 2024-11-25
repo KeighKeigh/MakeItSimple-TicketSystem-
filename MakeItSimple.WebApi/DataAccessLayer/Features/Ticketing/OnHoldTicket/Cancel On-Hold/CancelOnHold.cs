@@ -11,7 +11,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ca
 {
     public partial class CancelOnHold
     {
-
         public class Handler : IRequestHandler<CancelOnHoldCommand, Result>
         {
             private readonly MisDbContext _context;
@@ -40,7 +39,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ca
                 var ticketConcernExist = await _context.TicketConcerns
                     .FirstOrDefaultAsync(x => x.Id == onHoldTicketExist.TicketConcernId);
 
-                ticketConcernExist.IsTransfer = null;
+                ticketConcernExist.OnHold = null;
 
                 var approverList = await _context.ApproverTicketings
                     .Where(x => x.TicketOnHoldId == command.OnHoldTicketId)

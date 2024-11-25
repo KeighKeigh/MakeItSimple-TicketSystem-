@@ -82,7 +82,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Re
                 var ticketConcernExist = await _context.TicketConcerns
                     .FirstOrDefaultAsync(x => x.Id == ticketOnHold.TicketConcernId);
 
-                ticketConcernExist.IsTransfer = null;
+                ticketConcernExist.OnHold = null;
                 ticketConcernExist.Remarks = command.Reject_Remarks;
 
                 foreach (var approverUserId in approverTicketing)

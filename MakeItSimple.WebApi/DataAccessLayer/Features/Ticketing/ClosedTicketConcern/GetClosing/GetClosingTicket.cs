@@ -57,8 +57,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                             x.UserRoleName,
                             x.Permissions
 
-                        })
-                        .ToListAsync();
+                        }).ToListAsync();
 
                     var receiverPermissionList = allUserList
                         .Where(x => x.Permissions
@@ -114,8 +113,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                                         x.ClosingTicketId,
                                         x.UserId,
 
-                                    })
-                                    .ToListAsync();
+                                    }).ToListAsync();
 
                                 var userRequestIdApprovalList = approverTransactList.Select(x => x.ClosingTicketId);
                                 var userIdsInApprovalList = approverTransactList.Select(approval => approval.UserId);
@@ -135,9 +133,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         {
                             return new PagedList<GetClosingTicketResults>(new List<GetClosingTicketResults>(), 0, request.PageNumber, request.PageSize);
                         }
-
                     }
-
                 }
 
                 var results = closingTicketsQuery

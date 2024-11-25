@@ -210,8 +210,6 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                     }
                 }
 
-
-
                 var results = await _mediator.Send(command);
                 if (results.IsFailure)
                 {

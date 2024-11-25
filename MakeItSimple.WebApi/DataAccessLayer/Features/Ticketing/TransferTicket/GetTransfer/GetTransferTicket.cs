@@ -4,6 +4,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Get_OnHold.GetOnHold;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.GetTransfer.GetTransferTicket.GetTransferTicketResult;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.GetTransfer
@@ -113,11 +114,15 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                                     && userRequestIdApprovalList.Contains(x.Id));
 
                             }
+                            else if (request.UserType == TicketingConString.IssueHandler)
+                            {
+                                transferTicketQuery = transferTicketQuery.Where(x => x.AddedByUser.Id == request.UserId);
+                            }
+                            else
+                            {
+                                return new PagedList<GetTransferTicketResult>(new List<GetTransferTicketResult>(), 0, request.PageNumber, request.PageSize);
+                            }
 
-                        }
-                        else if (request.UserType == TicketingConString.IssueHandler)
-                        {
-                            transferTicketQuery = transferTicketQuery.Where(x => x.AddedByUser.Id == request.UserId);
                         }
 
                     }

@@ -107,14 +107,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                     .TransferBy == request.UserId);
                                 break;
 
-                            //case TicketingConString.TransferApproval:
-                            //    ticketConcernQuery = ticketConcernQuery
-                            //        .Where(x => x.OnHold == null)
-                            //        .Where(x => x.TransferTicketConcerns
-                            //        .FirstOrDefault(x => x.IsActive == true && x.IsTransfer == false)
-                            //        .TransferTo == request.UserId);
-                            //    break;
-
                             case TicketingConString.ForOnHold:
                                 ticketConcernQuery = ticketConcernQuery
                                     .Where(x => x.OnHold == false);
@@ -218,12 +210,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
 
                         if (request.UserType == TicketingConString.IssueHandler)
                         {
-                            var transferApprovalList = _context.TransferTicketConcerns
-                                .AsNoTracking()
-                                .Where(t => t.IsTransfer == false && t.IsActive == true && t.TransferTo == request.UserId)
-                                .Select(t => t.TicketConcernId);
+                            //var transferApprovalList = _context.TransferTicketConcerns
+                            //    .AsNoTracking()
+                            //    .Where(t => t.IsTransfer == false && t.IsActive == true && t.TransferTo == request.UserId)
+                            //    .Select(t => t.TicketConcernId);
 
-                            ticketConcernQuery = ticketConcernQuery.Where(x => x.UserId == request.UserId || transferApprovalList.Contains(x.Id));
+                            ticketConcernQuery = ticketConcernQuery.Where(x => x.UserId == request.UserId);
                         }
                         else if (request.UserType == TicketingConString.Receiver)
                         {
@@ -399,7 +391,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                       }).ToList(),
 
                         GetForOnHolds = x.TicketOnHolds
-                        .Where(x => x.IsHold == false)
+                        .Where(x => x.IsHold == false && x.IsActive)
                         .Select(h => new GetOpenTicketResult.GetForOnHold
                         {
                             Id = h.Id,
@@ -422,7 +414,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         }).ToList(),
 
                         GetOnHolds = x.TicketOnHolds
-                        .Where(x => x.IsHold == true)
+                        .Where(x => x.IsHold == true && x.IsActive)
                         .Select(h => new GetOpenTicketResult.GetOnHold
                         {
                             Id = h.Id,
