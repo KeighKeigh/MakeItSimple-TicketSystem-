@@ -62,7 +62,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                             SubCategoryId = x.Id,
                             Sub_Category_Description = x.SubCategoryDescription
 
-
                         }).ToListAsync();
 
 
@@ -71,19 +70,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 }
 
                 var result = subCategoryList.ToList();
-                     //.Select(r => new ViewMultipleCategoryResult
-                     //{
-                     //    //CategoryId = r.Key,
-                     //    //Category_Description = r.Value.First().Category.CategoryDescription,
-
-                     //    //ViewMultipleSubCategoryResults = r.Value.Select(v => new ViewMultipleCategoryResult.ViewMultipleSubCategoryResult
-                     //    //{
-                     //    //    SubCategoryId = v.Id,
-                     //    //    Sub_Category_Description = v.SubCategoryDescription,
-
-                     //    //}).ToList(),
-
-                     //}).ToList();
 
                 return Result.Success(result);
             }
