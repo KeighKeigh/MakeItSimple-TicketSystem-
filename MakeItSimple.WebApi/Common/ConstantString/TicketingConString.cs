@@ -101,6 +101,17 @@ namespace MakeItSimple.WebApi.Common.ConstantString
         public const string OnTime = "On-Time";
         public const string Delay = "Delay";
 
+        //
+
+        public const string Today = "Today";
+        public const string Yesterday = "Yesterday";
+        public const string ThreeDays = "ThreeDays";
+        public const string Week = "Week";
+        public const string TwoWeeks = "TwoWeeks";
+        public const string Month = "Month";
+        public const string SixMonths = "SixMonths";
+        public const string Year = "Year";
+
         // Attachment
 
         public const string AttachmentPath = @"C:\inetpub\vhosts\rdfmis.com\httpdocs\MIS_Assets\Tickets";

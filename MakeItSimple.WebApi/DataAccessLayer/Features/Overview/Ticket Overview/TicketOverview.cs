@@ -3,12 +3,7 @@ using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
-using Microsoft.CodeAnalysis.Classification;
 using Microsoft.EntityFrameworkCore;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport.AllTicketReports;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult.GetForClosingTicket;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket;
-using DocumentFormat.OpenXml.Bibliography;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
 {
@@ -79,6 +74,58 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
                     ticketConcernQuery = ticketConcernQuery
                         .Where(x => x.Id.ToString().Contains(request.Search));
 
+
+                if(!string.IsNullOrEmpty(request.BackDate))
+                {
+                    switch (request.BackDate)
+                    {
+
+                        case TicketingConString.Today:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value.Equals(dateToday));
+                            break;
+
+                        case TicketingConString.Yesterday:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractDays(dateToday,1));
+                            break;
+
+                        case TicketingConString.ThreeDays:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractDays(dateToday,3));
+                            break;
+
+                        case TicketingConString.Week:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractWeeks(dateToday,1));
+                            break;
+
+                        case TicketingConString.TwoWeeks:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractWeeks(dateToday, 2));
+                            break;
+
+                        case TicketingConString.Month:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractMonth(dateToday, 1));
+                            break;
+
+                        case TicketingConString.SixMonths:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractMonth(dateToday, 6));
+                            break;
+
+                        case TicketingConString.Year:
+                            ticketConcernQuery = ticketConcernQuery
+                                .Where(x => x.ticketHistories.Max(x => x.TransactionDate).Value <= SubtractYear(dateToday, 1));
+                            break;
+
+                        default:
+                            return new PagedList<TicketOverviewRecord>(new List<TicketOverviewRecord>(), 0, request.PageNumber, request.PageSize);
+                    }
+
+                }
+
                 if(!string.IsNullOrEmpty(request.UserType))
                 {
                     if(TicketingConString.Approver.Equals(request.UserType))
@@ -114,6 +161,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
                             ticketConcernQuery = ticketConcernQuery
                                 .Where(x => receiverList.Contains(x.RequestorByUser.BusinessUnitId));
                         }
+
                     }
                     else if(TicketingConString.IssueHandler.Equals(request.UserType))
                     {
@@ -124,9 +172,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
                     {
                         ticketConcernQuery = ticketConcernQuery
                                   .Where(x => x.RequestorBy == request.UserId);
-
                     }
-
                     else
                     {
                         return new PagedList<TicketOverviewRecord>(new List<TicketOverviewRecord>(), 0, request.PageNumber, request.PageSize);
@@ -170,6 +216,28 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
 
                 return PagedList<TicketOverviewRecord>.Create(results, request.PageNumber, request.PageSize);
             }
+
+            private static DateTime SubtractDays(DateTime date, int days)
+            {
+                return date.AddDays(-1 * (- days));
+            }
+
+
+            private static DateTime SubtractWeeks(DateTime date, int weeks)
+            {
+                return date.AddDays(-7 * (- weeks));
+            }
+
+            private static DateTime SubtractMonth(DateTime date, int month)
+            {
+                return date.AddMonths(-1 * (-month));
+            }
+
+            private static DateTime SubtractYear(DateTime date, int years)
+            {
+                return date.AddYears(-1 * (-years));
+            }
+
         }
     }
 }

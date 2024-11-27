@@ -153,8 +153,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         Remarks = ct.OnHoldRemarks,
                     }).ToListAsync();
 
-
-
                 var closingTicketQuery = await _context.ClosingTickets
                     .AsNoTrackingWithIdentityResolution()
                     .Include(c => c.TicketConcern)

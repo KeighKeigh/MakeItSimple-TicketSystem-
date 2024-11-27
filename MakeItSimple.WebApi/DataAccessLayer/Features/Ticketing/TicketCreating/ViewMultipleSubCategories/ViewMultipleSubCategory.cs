@@ -37,6 +37,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             public async Task<Result> Handle(ViewMultipleSubCategoryQuery request, CancellationToken cancellationToken)
             {
+
                 //var subCategoryList = new Dictionary<int, List<ViewMultipleCategoryResult>>();
 
                 //foreach(var category in request.CategoryId)
@@ -56,7 +57,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 //    subCategoryList.Add(category, categoriesList);
 
                 //}
-
 
                 var result = await _context.SubCategories
                     .Include(s => s.Category)

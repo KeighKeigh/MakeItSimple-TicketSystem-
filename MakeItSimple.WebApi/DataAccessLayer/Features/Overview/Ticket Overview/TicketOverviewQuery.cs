@@ -11,6 +11,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Overview.Ticket_Overview
             public string Role {  get; set; }
             public string UserType { get; set; }
             public string Search { get; set; }
+            public string BackDate { get; set; }
 
         }
     }
