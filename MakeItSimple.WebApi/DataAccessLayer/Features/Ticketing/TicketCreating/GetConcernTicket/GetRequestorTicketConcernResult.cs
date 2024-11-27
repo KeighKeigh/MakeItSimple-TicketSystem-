@@ -53,6 +53,7 @@
             public class GetRequestSubTicketCategory
             {
                 public int? TicketSubCategoryId { get; set; }
+                public int Category_Id { get; set; }
                 public int? SubCategoryId { get; set; }
                 public string SubCategory_Description { get; set; }
             }

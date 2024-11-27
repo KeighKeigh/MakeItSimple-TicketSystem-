@@ -244,6 +244,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         .Select(t => new GetRequestorTicketConcernResult.GetRequestSubTicketCategory
                         {
                             TicketSubCategoryId = t.Id,
+                            Category_Id = t.SubCategory.CategoryId,
                             SubCategoryId = t.SubCategoryId,
                             SubCategory_Description = t.SubCategory.SubCategoryDescription,
                         }).ToList(),
