@@ -66,14 +66,10 @@ namespace MakeItSimple.WebApi.Models.Ticketing
         public virtual Category Category { get; set; }
         public int? SubCategoryId { get; set; }
         public virtual SubCategory SubCategory { get; set; }
-
         public int ? LocationId { get; set; }
         public virtual Location Location { get; set; }
-
         public DateTime? DateNeeded { get; set; }
-
         public string Notes { get; set; }
-
         public string ContactNumber { get; set; }
 
         public string RequestType { get; set; }

@@ -49,8 +49,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler
             TagAndUntagUserRoleValidator = new UserRole.TagAndUntagUserRoleValidator();
 
 
-
-
             //Sub Category Setup
 
             UpsertSubCategoryValidator = new SubCategory.SubCategoryValidator();

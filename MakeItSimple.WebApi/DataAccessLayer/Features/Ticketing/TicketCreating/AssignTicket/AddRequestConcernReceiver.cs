@@ -121,13 +121,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     {
                         await CreateSubTicketCategory(requestConcernId, subCategory, cancellationToken);
                     }
-
+                     
                 }
 
-                if (ticketCategoryList.Any())
+                //if (ticketCategoryList.Any())
                     await RemoveTicketCategory(requestConcernId, ticketCategoryList, cancellationToken);
 
-                if (ticketSubCategoryList.Any())
+                //if (ticketSubCategoryList.Any())
                     await RemoveTicketSubCategory(requestConcernId, ticketSubCategoryList, cancellationToken);
 
                 if (!Directory.Exists(TicketingConString.AttachmentPath))
@@ -143,7 +143,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
-
   
             private async Task<Result?> ValidationHandler(AddRequestConcernReceiverCommand command, CancellationToken cancellationToken)
             {
@@ -336,7 +335,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 return null;
             }
 
-
             private async Task<RequestConcern> CreateRequestConcern(User user, AddRequestConcernReceiverCommand command,CancellationToken cancellationToken)
             {
                 var addRequestConcern = new RequestConcern
@@ -453,7 +451,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 await _context.TicketTransactionNotifications.AddAsync(addNewTicketTransactionOngoing);
 
             }
-
 
             private async Task CreateTicketCategory(int requestConcernId, AddRequestConcernReceiverCommand.RequestorTicketCategory category, CancellationToken cancellationToken)
             {

@@ -98,7 +98,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     else
                     {
                        await CreateTicketCategory(requestConcernId,category, cancellationToken); 
-
                     }
 
                 }
@@ -119,10 +118,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 }
 
-                if(ticketCategoryList.Any())
+                //if(ticketCategoryList.Any())
                     await RemoveTicketCategory(requestConcernId, ticketCategoryList, cancellationToken);
 
-                if(ticketSubCategoryList.Any())
+                //if(ticketSubCategoryList.Any())
                     await RemoveTicketSubCategory(requestConcernId, ticketSubCategoryList, cancellationToken);
 
 
