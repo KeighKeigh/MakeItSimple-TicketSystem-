@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_Form;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Interface.IPms_Form;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
@@ -10,10 +11,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
         public UnitOfWork(MisDbContext context)
         {
             this.context = context;
+
+            PmsForm = new PmsFormRepository(context);
+
         }
 
         public IPmsForm PmsForm {  get; private set; }
-
 
 
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
