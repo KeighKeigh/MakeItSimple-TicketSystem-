@@ -11,6 +11,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormDropdownSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormQuestionSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.LocationSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two.Pms_Form_Setup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubUnitSetup;
@@ -31,6 +32,7 @@ using MakeItSimple.WebApi.Models.Setup.FormDropdownSetup;
 using MakeItSimple.WebApi.Models.Setup.FormSetup;
 using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
+using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
 using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.Models.Setup.SubCategorySetup;
@@ -87,6 +89,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 
         //Phase 2
 
+        public virtual DbSet<PmsForm> PmsForms { get; set; }
+
 
 
 
@@ -133,6 +137,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
             modelBuilder.ApplyConfiguration(new TicketTransactionNotificationConfiguration());
             modelBuilder.ApplyConfiguration(new TicketOnHoldConfiguration());
             modelBuilder.ApplyConfiguration(new TicketTechnicianConfiguration());
+
+            //Phase 2
+
+            modelBuilder.ApplyConfiguration(new PmsFormConfiguration());
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionCategoryConfiguration());

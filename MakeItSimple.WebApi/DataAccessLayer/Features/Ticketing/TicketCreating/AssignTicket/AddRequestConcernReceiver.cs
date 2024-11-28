@@ -526,8 +526,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
             }
 
-
-
         }
     }
 }

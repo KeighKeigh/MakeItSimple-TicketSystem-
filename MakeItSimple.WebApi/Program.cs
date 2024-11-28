@@ -195,4 +195,16 @@ app.UseEndpoints(endpoints =>
     
 });
 
+try
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MisDbContext>();
+    await context.Database.MigrateAsync();
+}
+catch(Exception ex)
+{
+   Console.WriteLine(ex);
+}
+
 app.Run();
