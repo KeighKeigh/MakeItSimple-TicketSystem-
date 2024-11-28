@@ -16,7 +16,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
 
         }
 
-        public IPmsForm PmsForm {  get; private set; }
+        public IPmsFormRepository PmsForm {  get; set; }
 
 
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)

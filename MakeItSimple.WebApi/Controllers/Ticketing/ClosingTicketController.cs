@@ -9,6 +9,7 @@ using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.ApprovalClosing.ApprovalClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.CancelClosing.CancelClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.ConfirmClosed.ConfirmClosedTicket;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.Get_Ticket_Technician.GetTicketTechnician;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.GetClosing.GetClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.RejectClosing.RejectClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.ReturnClosed.ReturnClosedTicket;
@@ -247,6 +248,23 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 {
                     return BadRequest(results);
                 }
+                return Ok(results);
+
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+
+        [HttpGet("technician")]
+        public async Task<IActionResult> GetTicketTechnicianResult([FromQuery] GetTicketTechnicianQuery command)
+        {
+            try
+            {
+
+                var results = await _mediator.Send(command);
                 return Ok(results);
 
             }

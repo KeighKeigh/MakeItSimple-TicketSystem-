@@ -19,6 +19,7 @@ using MakeItSimple.WebApi;
 using StackExchange.Redis;
 using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 
 
 
@@ -45,10 +46,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 
 builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
-
-
-
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddMediatR(x =>
 {
