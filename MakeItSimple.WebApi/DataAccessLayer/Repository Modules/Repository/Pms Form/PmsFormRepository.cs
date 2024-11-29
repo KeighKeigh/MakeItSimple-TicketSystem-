@@ -1,6 +1,5 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.DataAccessLayer.Dto.Pms_Form_Dto;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Interface.IPms_Form;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
             this.context = context;
         }
 
-        public async void CreatePmsForm(CreatePmsFormCommand pmsForm)
+        public async Task CreatePmsForm(CreatePmsFormCommand pmsForm)
         {
             var add = new PmsForm
             {
@@ -32,6 +31,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
         public async Task<bool> FormNameAlreadyExist(string Form)
         {
             return await context.PmsForms.AnyAsync(pf => pf.Form_Name == Form) ? true : false; 
+        }
+
+        public Task<IQueryable<PmsForm>> GetPmsForm(string Search)
+        {
+            throw new NotImplementedException();
         }
     }
 }

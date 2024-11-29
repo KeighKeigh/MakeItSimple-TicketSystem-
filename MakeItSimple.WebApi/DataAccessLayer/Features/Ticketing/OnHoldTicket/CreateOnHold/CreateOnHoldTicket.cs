@@ -6,8 +6,6 @@ using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult.GetForClosingTicket;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.CreateTransfer.AddNewTransferTicket;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.CreateOnHold
 {
@@ -113,7 +111,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Cr
                 await _context.ApproverTicketings.AddAsync(addApprover, cancellationToken);
 
             }
-
             private async Task<TicketOnHold> CreateOnHold(Approver approver,TicketConcern ticketConcern, CreateOnHoldTicketCommand command , CancellationToken cancellationToken)
             {
                 ticketConcern.OnHold = false;

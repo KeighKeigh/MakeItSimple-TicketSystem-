@@ -24,7 +24,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
                 if (formNameAlreadyExist)
                     return Result.Failure(PmsFormError.PmsFormAlreadyExist());
 
-                 _unitOfWork.PmsForm.CreatePmsForm(command);
+                await _unitOfWork.PmsForm.CreatePmsForm(command);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return Result.Success();

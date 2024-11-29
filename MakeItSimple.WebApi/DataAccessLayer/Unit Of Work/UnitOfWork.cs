@@ -8,16 +8,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
     {
         private readonly MisDbContext context;
 
-        public UnitOfWork(MisDbContext context)
+        public UnitOfWork(MisDbContext context )
         {
             this.context = context;
-
             PmsForm = new PmsFormRepository(context);
 
         }
 
-        public IPmsFormRepository PmsForm {  get; set; }
-
+        public IPmsFormRepository PmsForm {  get; private set; }
 
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
         {
