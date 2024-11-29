@@ -19,10 +19,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
 
             public async Task<Result> Handle(CreatePmsFormCommand command, CancellationToken cancellationToken)
             {
-                //var create = new Request
 
-                // _unitOfWork.PmsForm.CreatePmsForm(command);
-
+                await _unitOfWork.PmsForm.CreatePmsForm(command);
 
                 return Result.Success();
             }

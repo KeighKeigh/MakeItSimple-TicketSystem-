@@ -65,6 +65,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     if (upsertConcern.IsActive is false)
                         return Result.Failure(TicketRequestError.TicketAlreadyCancel());
 
+                    requestConcernId = upsertConcern.Id;
                     await AssignTicket(upsertConcern,command,cancellationToken);
 
                     await TransactionNotification(upsertConcern, userDetails, command, cancellationToken);
@@ -98,12 +99,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     if (ticketCategoryExist is not null)
                     {
                         ticketCategoryList.Add(category.TicketCategoryId.Value);
-
                     }
                     else
                     {
                         await CreateTicketCategory(requestConcernId, category, cancellationToken);
-
                     }
 
                 }
@@ -184,7 +183,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 if (dateToday > command.Target_Date)
                     return Result.Failure(TicketRequestError.DateTimeInvalid());
                 
-
                 return null;
             }
 
@@ -521,7 +519,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         .FirstOrDefaultAsync(t => t.Id == remove.Id, cancellationToken);
 
                     _context.TicketSubCategories.Remove(ticketSubCategoryExist);
-
                 }
 
             }

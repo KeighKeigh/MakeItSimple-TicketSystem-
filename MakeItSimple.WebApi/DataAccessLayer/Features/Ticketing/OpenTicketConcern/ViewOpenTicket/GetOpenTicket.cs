@@ -458,26 +458,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                         })
                         .ToList(),
 
-                        //TransferApprovalTickets = x.TransferTicketConcerns
-                        //.Where(x => x.IsActive == true && x.IsTransfer == false && x.TransferTo == request.UserId)
-                        //.Select(a =>  new GetOpenTicketResult.TransferApprovalTicket
-                        //{
-                        //    TransferTicketConcernId = a.Id,
-                        //    Transfer_Remarks = a.TransferRemarks,
-                        //    Transfer_By = a.TransferBy,
-                        //    Transfer_By_Name = a.TransferByUser.Fullname,
-                        //    IsApprove = a.ApproverTickets.Any(x => x.IsApprove == true) ? true : false,
-                        //    GetAttachmentTransferApprovalTickets = x.TicketAttachments.Select(x => new GetOpenTicketResult.TransferApprovalTicket.GetAttachmentTransferApprovalTicket
-                        //    {
-                        //        TicketAttachmentId = x.Id,
-                        //        Attachment = x.Attachment,
-                        //        FileName = x.FileName,
-                        //        FileSize = x.FileSize,
-
-                        //    }).ToList(),
-
-                        //}).ToList(),
-
                         Transaction_Date = x.ticketHistories.Max(x => x.TransactionDate).Value,
 
                     }).OrderBy(x => x.TicketConcernId); 
