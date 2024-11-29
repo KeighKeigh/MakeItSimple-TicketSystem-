@@ -8,7 +8,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
         public class CreatePmsFormCommand : IRequest<Result>
         {
             public string Form_Name { get; set; }
-            public Guid? AddedBy { get; set; }
+            public Guid? Added_By { get; set; }
 
         }
     }

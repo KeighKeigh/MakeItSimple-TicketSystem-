@@ -1,7 +1,9 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+﻿using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Dto.Pms_Form_Dto;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Interface.IPms_Form;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
+using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_Setup.Create_Pms_Form.CreatePmsForm;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_Form
@@ -15,20 +17,21 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
             this.context = context;
         }
 
-        public async Task CreatePmsForm(CreatePmsFormDto pmsForm)
+        public async void CreatePmsForm(CreatePmsFormCommand pmsForm)
         {
             var add = new PmsForm
             {
-                Form_Name = pmsForm.Form_Name,
-                AddedBy = pmsForm.AddedBy,
+               Form_Name = pmsForm.Form_Name,
+               AddedBy = pmsForm.Added_By,
+
             };
 
-            await context.AddAsync(pmsForm);
+            await context.PmsForms.AddAsync(add);
         }
 
-        public void CreatePmsForm(CreatePmsFormCommand pmsForm)
+        public async Task<bool> FormNameAlreadyExist(string Form)
         {
-            throw new NotImplementedException();
+            return await context.PmsForms.AnyAsync(pf => pf.Form_Name == Form) ? true : false; 
         }
     }
 }

@@ -315,8 +315,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                                         : x.IsApprove == true != false && x.IsTransfer != false && x.IsClosedApprove == null && x.OnHold == null ? TicketingConString.OpenTicket
                                         : x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
                                         .TransferBy == request.UserId ? TicketingConString.ForTransfer
-                                        //: x.TransferTicketConcerns.FirstOrDefault(x => x.IsTransfer == false && x.IsActive == true)
-                                        //.TransferTo == request.UserId ? TicketingConString.TransferApproval
                                         : x.OnHold == false ? TicketingConString.ForOnHold
                                         : x.OnHold == true ? TicketingConString.OnHold
                                         : x.IsClosedApprove == false && x.OnHold == null ? TicketingConString.ForClosing
