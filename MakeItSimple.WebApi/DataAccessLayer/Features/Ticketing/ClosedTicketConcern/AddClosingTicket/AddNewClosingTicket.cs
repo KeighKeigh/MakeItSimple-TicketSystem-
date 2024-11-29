@@ -101,14 +101,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
 
                     if (ticketTechnicianExist is not null)
+                    {
                         ticketTechnicianList.Add(ticketTechnicianExist.Id);
 
-                    await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
+                    }
+                    else
+                    {
+                        await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
 
+                    }
                 }
-
-                if (ticketTechnicianList.Any())
-                    await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
 
             }
 
@@ -151,8 +153,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             await RemoveTicketSubCategory(ticketConcernExist.RequestConcernId.Value, ticketSubCategoryList, cancellationToken);
 
             await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
-
-
 
 
             if (!Directory.Exists(TicketingConString.AttachmentPath))
