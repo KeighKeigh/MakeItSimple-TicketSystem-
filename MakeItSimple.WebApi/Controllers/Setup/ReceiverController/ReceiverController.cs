@@ -1,20 +1,18 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.BusinessUnitSetup.SyncBusinessUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.BusinessUnitSetup.SyncBusinessUnit;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.GetReceiverRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.AddNewReceiver;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.GetReceiverRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.AddNewReceiver;
 using MakeItSimple.WebApi.Common.Extension;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup.GetLocation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.GetReceiver;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.LocationSetup.GetLocation;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.GetReceiver;
 using MakeItSimple.WebApi.Common;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.GetReceiverBusinessUnit;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.UpdateApproverStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ReceiverSetup.UpdateReceiverStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.UpdateChannelStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.GetReceiverBusinessUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.UpdateApproverStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.UpdateReceiverStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.UpdateChannelStatus;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.ReceiverController
 {

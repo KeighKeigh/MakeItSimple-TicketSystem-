@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.AddNewUserRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UpdateUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.AddNewUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UpdateUserRole;
 
 namespace MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount
 {

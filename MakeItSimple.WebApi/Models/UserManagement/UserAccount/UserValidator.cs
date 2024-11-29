@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures.AddNewUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures.UpdateUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UserChangePassword;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.AddNewUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UpdateUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UserChangePassword;
 
 
 namespace MakeItSimple.WebApi.Models

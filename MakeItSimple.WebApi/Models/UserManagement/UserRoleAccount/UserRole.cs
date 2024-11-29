@@ -1,8 +1,4 @@
 ﻿using MakeItSimple.WebApi.Common;
-using MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Intrinsics.X86;
-
 namespace MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount
 {
     public partial class UserRole : BaseEntity

@@ -1,8 +1,13 @@
-﻿using MediatR;
+﻿using MakeItSimple.WebApi.Common.Extension;
+using MakeItSimple.WebApi.Common;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ReceiverSetup.GetReceiver;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_Setup.Create_Pms_Form.CreatePmsForm;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_Setup.Get_Pms_Form;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_Setup.Get_Pms_Form.GetPmsForm;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Form_Controller
 {
@@ -36,5 +41,47 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Form_Controller
                 return Conflict(ex.Message);
             }
         }
+
+
+        [HttpGet("page")]
+        public async Task<IActionResult> GetPmsForm([FromQuery] GetPmsFormQuery query)
+        {
+            try
+            {
+                var pmsForm = await mediator.Send(query);
+
+                Response.AddPaginationHeader(
+
+                pmsForm.CurrentPage,
+                pmsForm.PageSize,
+                pmsForm.TotalCount,
+                pmsForm.TotalPages,
+                pmsForm.HasPreviousPage,
+                pmsForm.HasNextPage
+
+                );
+
+                var result = new
+                {
+                    pmsForm,
+                    pmsForm.CurrentPage,
+                    pmsForm.PageSize,
+                    pmsForm.TotalCount,
+                    pmsForm.TotalPages,
+                    pmsForm.HasPreviousPage,
+                    pmsForm.HasNextPage
+                };
+
+                var successResult = Result.Success(result);
+                return Ok(successResult);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

@@ -1,7 +1,7 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup.SyncLocation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup.SyncLocation.SyncLocationCommand;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.LocationSetup.SyncLocation;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.LocationSetup.SyncLocation.SyncLocationCommand;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Setup
 {

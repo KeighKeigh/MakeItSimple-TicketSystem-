@@ -1,14 +1,12 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.AccountTitleSetup;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.BusinessUnitSetup;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.AccountTitleSetup.GetAccountTitle;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.BusinessUnitSetup.GetBusinessUnit;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.BusinessUnitSetup.SyncBusinessUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.AccountTitleSetup.GetAccountTitle;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.BusinessUnitSetup.GetBusinessUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.BusinessUnitSetup.SyncBusinessUnit;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.BusinessUnitController
 {

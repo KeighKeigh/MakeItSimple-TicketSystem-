@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DataAccessLayer\Features\Ticketing\TransferTicket\5ozgqzxa.rqe~" />
-    <None Remove="DataAccessLayer\Features\Ticketing\TransferTicket\GetTransferTicket.cs~RF3f371b.TMP" />
-    <None Remove="DataAccessLayer\Features\Ticketing\TransferTicket\o2axl55t.rqn~" />
+    <None Remove="DataAccessLayer\Features\CQRS\Ticketing\TransferTicket\5ozgqzxa.rqe~" />
+    <None Remove="DataAccessLayer\Features\CQRS\Ticketing\TransferTicket\GetTransferTicket.cs~RF3f371b.TMP" />
+    <None Remove="DataAccessLayer\Features\CQRS\Ticketing\TransferTicket\o2axl55t.rqn~" />
   </ItemGroup>
 
   <ItemGroup>

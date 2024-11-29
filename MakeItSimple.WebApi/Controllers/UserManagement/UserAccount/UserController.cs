@@ -2,19 +2,18 @@
 using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.Common.Extension;
 using MakeItSimple.WebApi.Common.Pagination;
-using MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount;
 using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
 using MakeItSimple.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures.GetUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures.AddNewUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures.UpdateUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UpdateProfilePic;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UpdateUserStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UserChangePassword;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UserResetPassword;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.GetUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.AddNewUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UpdateUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UpdateProfilePic;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UpdateUserStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UserChangePassword;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UserResetPassword;
 using static NuGet.Packaging.PackagingConstants;
 
 

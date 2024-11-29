@@ -1,7 +1,6 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Authentication;
-using MakeItSimple.WebApi.DataAccessLayer.Features.AuthenticationFeatures;
+using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Common;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Authentication.LogoutAuthentication;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Authentication.LogoutAuthentication;
 
 namespace MakeItSimple.WebApi.Controllers.AuthenticationController
 {

@@ -1,15 +1,14 @@
 ﻿using FluentValidation;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup.GetCategory;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup.UpdateCategoryStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup.UpsertCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup.GetCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup.UpdateCategoryStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup.UpsertCategory;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.CategoryController
 {

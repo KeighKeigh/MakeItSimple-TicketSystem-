@@ -6,11 +6,11 @@ using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.AddNewChannel;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.GetChannel;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.GetChannelValidation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.GetMember;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.UpdateChannelStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.AddNewChannel;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.GetChannel;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.GetChannelValidation;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.GetMember;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.UpdateChannelStatus;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.ChannelController
 {

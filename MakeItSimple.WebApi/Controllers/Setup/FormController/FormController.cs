@@ -4,10 +4,10 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetDepartment;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.DepartmentSetup.GetDepartment;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup.AddForms.AddNewForm;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup.GetForms.GetForm;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubUnitSetup.UpdateSubUnitStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubUnitSetup.UpdateSubUnitStatus;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.FormSetup.UpdateStatus.UpdateFormStatus;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.FormController

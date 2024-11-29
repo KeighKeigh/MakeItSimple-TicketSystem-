@@ -1,17 +1,16 @@
 ﻿using FluentValidation;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount;
 using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.AddNewUserRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.GetUserRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UpdateUserRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UpdateUserRoleStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.AddNewUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.GetUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UpdateUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UpdateUserRoleStatus;
 
 namespace MakeItSimple.WebApi.Controllers.UserManagement.UserRoleAccount
 {

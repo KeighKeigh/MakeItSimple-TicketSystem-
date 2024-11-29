@@ -1,16 +1,15 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.AddNewApprover;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.GetApprover;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.GetApproverRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.GetSubUnitApprover;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ApproverSetup.UpdateApproverStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.ChannelSetup.GetMember;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.AddNewApprover;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.GetApprover;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.GetApproverRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.GetSubUnitApprover;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup.UpdateApproverStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ChannelSetup.GetMember;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.ApproverController
 {

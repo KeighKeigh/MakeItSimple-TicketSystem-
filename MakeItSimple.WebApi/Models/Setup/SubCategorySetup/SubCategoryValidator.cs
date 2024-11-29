@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup.UpsertSubCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubCategorySetup.UpsertSubCategory;
 
 namespace MakeItSimple.WebApi.Models.Setup.SubCategorySetup
 {

@@ -1,12 +1,11 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.AccountTitleSetup;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.AccountTitleSetup.GetAccountTitle;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.AccountTitleSetup.SyncAccountTitle;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.AccountTitleSetup.GetAccountTitle;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.AccountTitleSetup.SyncAccountTitle;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.AccountTitleController
 {

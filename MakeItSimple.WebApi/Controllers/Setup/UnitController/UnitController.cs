@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubUnitSetup.SyncSubUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubUnitSetup.SyncSubUnit;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.UnitSetup.SyncUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.UnitSetup.SyncUnit;
 using MakeItSimple.WebApi.Common.Extension;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.TeamSetup.GetSubUnit;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.UnitSetup.GetUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubUnitSetup.GetSubUnit;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.UnitSetup.GetUnit;
 using MakeItSimple.WebApi.Common;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.UnitController

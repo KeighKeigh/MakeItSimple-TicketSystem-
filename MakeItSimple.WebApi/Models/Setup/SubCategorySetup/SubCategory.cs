@@ -1,6 +1,6 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Models.Setup.CategorySetup;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup.UpsertCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup.UpsertCategory;
 
 namespace MakeItSimple.WebApi.Models.Setup.SubCategorySetup
 {

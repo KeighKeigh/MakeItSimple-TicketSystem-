@@ -1,15 +1,14 @@
 ﻿using FluentValidation;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.ValidatorHandler;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup.GetSubCategory;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup.UpdateSubCategoryStatus;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup.UpsertSubCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubCategorySetup.GetSubCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubCategorySetup.UpdateSubCategoryStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubCategorySetup.UpsertSubCategory;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.SubCategoryController
 {

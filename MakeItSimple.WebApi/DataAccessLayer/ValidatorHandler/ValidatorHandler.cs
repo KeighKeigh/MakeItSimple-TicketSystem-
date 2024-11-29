@@ -4,13 +4,13 @@ using MakeItSimple.WebApi.Models.Setup.CategorySetup;
 using MakeItSimple.WebApi.Models.Setup.ChannelSetup;
 using MakeItSimple.WebApi.Models.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.CategorySetup.UpsertCategory;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.SubCategorySetup.UpsertSubCategory;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserFeatures.AddNewUser;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserAccount.UserChangePassword;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.AddNewUserRole;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.UserManagement.UserRoleAccount.UpdateUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup.UpsertCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubCategorySetup.UpsertSubCategory;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.AddNewUser;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount.UserChangePassword;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.AddNewUserRole;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UntagAndTagUserRolePermission;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserRoleAccount.UpdateUserRole;
 
 
 

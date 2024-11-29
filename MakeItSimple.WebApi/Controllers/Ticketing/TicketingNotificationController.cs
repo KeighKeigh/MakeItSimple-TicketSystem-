@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.CommentNotification;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketingNotification.CommentNotification;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.TicketsNotification.TicketingNotification;
 using System.Security.Claims;
 using Microsoft.Extensions.Caching.Memory;

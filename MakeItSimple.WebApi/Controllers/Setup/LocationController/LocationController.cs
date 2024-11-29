@@ -1,12 +1,11 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup.GetLocation;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.LocationSetup.SyncLocation;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.LocationSetup.GetLocation;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.LocationSetup.SyncLocation;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.LocationController
 {

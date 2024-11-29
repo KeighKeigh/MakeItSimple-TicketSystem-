@@ -1,4 +1,4 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Feature.UserFeatures;
+﻿
 using Microsoft.EntityFrameworkCore;
 
 namespace MakeItSimple.WebApi.Common.Pagination

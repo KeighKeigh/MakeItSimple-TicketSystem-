@@ -1,12 +1,12 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
-using MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.DepartmentSetup;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetByUserDepartment;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetDepartment;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.Setup.DepartmentSetup.GetUserDepartment;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.DepartmentSetup.GetByUserDepartment;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.DepartmentSetup.GetDepartment;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.DepartmentSetup.GetUserDepartment;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.DepartmentController
 {
