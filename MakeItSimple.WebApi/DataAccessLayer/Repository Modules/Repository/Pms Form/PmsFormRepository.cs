@@ -33,9 +33,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
             return await context.PmsForms.AnyAsync(pf => pf.Form_Name == Form) ? true : false; 
         }
 
-        public Task<IQueryable<PmsForm>> GetPmsForm(string Search)
+        public async Task<IQueryable<PmsForm>>GetPmsForm(string Search)
         {
-            throw new NotImplementedException();
+            return context.PmsForms.Where(x => x.Form_Name.ToLower().Contains(Search));
         }
     }
 }

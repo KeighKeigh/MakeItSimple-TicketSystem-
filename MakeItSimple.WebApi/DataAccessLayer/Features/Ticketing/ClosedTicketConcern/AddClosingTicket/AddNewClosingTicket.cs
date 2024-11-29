@@ -85,66 +85,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                     await AddApproverHistory(ticketConcernExist, approver, command, cancellationToken);
                 }
 
-
-                if(command.AddClosingTicketTechnicians.Any())
-                {
-                    foreach (var technician in command.AddClosingTicketTechnicians)
-                    {
-                        var ticketTechnicianExist = await _context.TicketTechnicians
-                            .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
-
-                        if (ticketTechnicianExist is not null)
-                            ticketTechnicianList.Add(ticketTechnicianExist.Id);
-
-                        await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
-
-                    }
-
-                    if (ticketTechnicianList.Any())
-                        await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
-
-                }
-
-
-                foreach (var category in command.ClosingTicketCategories)
-                {
-                    var ticketCategoryExist = await _context.TicketCategories
-                        .FirstOrDefaultAsync(t => t.Id == category.TicketCategoryId, cancellationToken);
-
-                    if (ticketCategoryExist is not null)
-                    {
-                        ticketCategoryList.Add(category.TicketCategoryId.Value);
-
-                    }
-                    else
-                    {
-                        await CreateTicketCategory(ticketConcernExist.RequestConcernId.Value, category, cancellationToken);
-
-                    }
-
-                }
-               
-                foreach (var subCategory in command.ClosingSubTicketCategories)
-                {
-                    var ticketSubCategoryExist = await _context.TicketSubCategories
-                        .FirstOrDefaultAsync(t => t.Id == subCategory.TicketSubCategoryId, cancellationToken);
-
-                    if (ticketSubCategoryExist is not null)
-                    {
-                        ticketSubCategoryList.Add(subCategory.TicketSubCategoryId.Value);
-                    }
-                    else
-                    {
-                        await CreateSubTicketCategory(ticketConcernExist.RequestConcernId.Value, subCategory, cancellationToken);
-                    }
-
-                }
-
-                    await RemoveTicketCategory(ticketConcernExist.RequestConcernId.Value, ticketCategoryList, cancellationToken);
-
-                    await RemoveTicketSubCategory(ticketConcernExist.RequestConcernId.Value, ticketSubCategoryList, cancellationToken);
-
-
                 await AddConfirmationHistory(newClosingTicket, ticketConcernExist, command, cancellationToken);
 
                 await TransactionNotification(newClosingTicket, ticketConcernExist, userDetails, command, cancellationToken);
@@ -152,6 +92,68 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                 ticketConcernExist.IsClosedApprove = false;
 
             }
+
+            if (command.AddClosingTicketTechnicians.Any())
+            {
+                foreach (var technician in command.AddClosingTicketTechnicians)
+                {
+                    var ticketTechnicianExist = await _context.TicketTechnicians
+                        .FirstOrDefaultAsync(t => t.Id == technician.TicketTechnicianId, cancellationToken);
+
+                    if (ticketTechnicianExist is not null)
+                        ticketTechnicianList.Add(ticketTechnicianExist.Id);
+
+                    await CreateTicketTechnician(closingTicketExist.Id, technician, cancellationToken);
+
+                }
+
+                if (ticketTechnicianList.Any())
+                    await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
+
+            }
+
+
+            foreach (var category in command.ClosingTicketCategories)
+            {
+                var ticketCategoryExist = await _context.TicketCategories
+                    .FirstOrDefaultAsync(t => t.Id == category.TicketCategoryId, cancellationToken);
+
+                if (ticketCategoryExist is not null)
+                {
+                    ticketCategoryList.Add(category.TicketCategoryId.Value);
+
+                }
+                else
+                {
+                    await CreateTicketCategory(ticketConcernExist.RequestConcernId.Value, category, cancellationToken);
+
+                }
+
+            }
+
+            foreach (var subCategory in command.ClosingSubTicketCategories)
+            {
+                var ticketSubCategoryExist = await _context.TicketSubCategories
+                    .FirstOrDefaultAsync(t => t.Id == subCategory.TicketSubCategoryId, cancellationToken);
+
+                if (ticketSubCategoryExist is not null)
+                {
+                    ticketSubCategoryList.Add(subCategory.TicketSubCategoryId.Value);
+                }
+                else
+                {
+                    await CreateSubTicketCategory(ticketConcernExist.RequestConcernId.Value, subCategory, cancellationToken);
+                }
+
+            }
+            await RemoveTicketCategory(ticketConcernExist.RequestConcernId.Value, ticketCategoryList, cancellationToken);
+
+            await RemoveTicketSubCategory(ticketConcernExist.RequestConcernId.Value, ticketSubCategoryList, cancellationToken);
+
+            await RemoveTicketTechnician(closingTicketExist.Id, ticketTechnicianList, cancellationToken);
+
+
+
 
             if (!Directory.Exists(TicketingConString.AttachmentPath))
             {
