@@ -14,7 +14,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Inte
 
         IQueryable<PmsForm> ArchivedPmsForm(bool? is_Archived);
 
-        IQueryable<PmsForm> OrderByPmsForm(string order);
 
     }
 }
