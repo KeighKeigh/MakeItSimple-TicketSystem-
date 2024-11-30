@@ -9,27 +9,8 @@ using System.Linq;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_Setup.Get_Pms_Form
 {
-    public class GetPmsForm
+    public partial class GetPmsForm
     {
-        public class GetPmsFormResult
-        {
-            public int Id { get; set; }
-            public string Form_Name { get; set; }
-            public string Added_By { get; set; }
-            public DateTime Created_At { get; set; }
-            public string Modified_By { get; set; }
-            public DateTime? Updated_At { get; set; }
-            public bool Is_Archived { get; set; }
-
-        }
-
-        public class GetPmsFormQuery : UserParams , IRequest<PagedList<GetPmsFormResult>> 
-        {
-            public string Search {  get; set; }
-            public bool? Is_Archived { get; set; }
-            public string Order_By { get; set; }
-
-        }
 
         public class Handler : IRequestHandler<GetPmsFormQuery, PagedList<GetPmsFormResult>>
         {
@@ -45,23 +26,24 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
 
             public async Task<PagedList<GetPmsFormResult>> Handle(GetPmsFormQuery request, CancellationToken cancellationToken)
             {
-                IQueryable<PmsForm> query = context.PmsForms
+                var query = context.PmsForms
                      .AsNoTrackingWithIdentityResolution()
                      .Include(q => q.AddedByUser)
                      .Include(q => q.ModifiedByUser)
                      .AsSplitQuery();
 
-               
-                if(!string.IsNullOrEmpty(request.Search))
-                    query = query.Where(q => unitOfWork.PmsForm.SearchPmsForm(request.Search).Contains(q));
+                query = request.Order_By.Equals("asc") ?  query.OrderBy(x => x.Id)
+               : request.Order_By.Equals("desc") ? query.OrderByDescending(x => x.Id)
+               : query.OrderBy(x => x.Form_Name);
 
                 if (request.Is_Archived is not null)
                     query = query.Where(q => unitOfWork.PmsForm.ArchivedPmsForm(request.Is_Archived).Contains(q));
 
-                if(!string.IsNullOrEmpty(request.Order_By))
-                    query = query.Where(q => unitOfWork.PmsForm.OrderByPmsForm(request.Order_By).Contains(q));
+                if (!string.IsNullOrEmpty(request.Search))
+                    query = query.Where(q => unitOfWork.PmsForm.SearchPmsForm(request.Search).Contains(q));
 
-                var result = query
+
+                 var results = query
                     .Select(q => new GetPmsFormResult
                     {
                         Id = q.Id,
@@ -72,9 +54,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
                         Updated_At = q.UpdatedAt.Value.Date,
                         Is_Archived = q.IsActive,
 
-                    });
+                    }).AsQueryable();
 
-                return await PagedList<GetPmsFormResult>.CreateAsync(result,request.PageNumber,request.PageSize);   
+                return await PagedList<GetPmsFormResult>.CreateAsync(results, request.PageNumber,request.PageSize);   
             }
         }
     }

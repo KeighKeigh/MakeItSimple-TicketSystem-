@@ -43,19 +43,5 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
             return context.PmsForms.Where(q => q.IsActive == is_Archived);
         }
 
-        public IQueryable<PmsForm> OrderByPmsForm(string order)
-        {
-            switch (order)
-            {
-                case PmsConsString.Order_By:
-                     return context.PmsForms.OrderBy(x => x.Id);
-   
-                case PmsConsString.Order_By_Descending:
-                    return context.PmsForms.OrderByDescending(x => x.Id);
-                default:
-                    return context.PmsForms.OrderBy(x => x.Form_Name);
-
-            }
-        }
     }
 }

@@ -94,7 +94,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.ClosedTick
 
             }
 
-            if (command.AddClosingTicketTechnicians.Any())
+            if (command.AddClosingTicketTechnicians.Any() && command.AddClosingTicketTechnicians.First().Technician_By is not null)
             {
 
                 foreach (var technician in command.AddClosingTicketTechnicians)
