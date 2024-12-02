@@ -9,7 +9,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
         {
             public string Search {  get; set; }
             public bool? Is_Archived { get; set; }
-            public string Order_By { get; set; }
+            public string Orders { get; set; }
 
         }
     }

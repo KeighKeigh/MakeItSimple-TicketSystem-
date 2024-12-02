@@ -2,7 +2,7 @@
 {
     public class PmsConsString
     {
-        public const string Order_By = "";
-        public const string Order_By_Descending = "Order By Descending";
+        public const string desc = "desc";
+        public const string asc = "asc";
     }
 }

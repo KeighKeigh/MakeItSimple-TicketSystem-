@@ -32,10 +32,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
                      .Include(q => q.ModifiedByUser)
                      .AsSplitQuery();
 
-                query = request.Order_By.Equals("asc") ?  query.OrderBy(x => x.Id)
-               : request.Order_By.Equals("desc") ? query.OrderByDescending(x => x.Id)
-               : query.OrderBy(x => x.Form_Name);
+                // query = request.Order_By.Equals("asc") ?  query.OrderBy(x => x.Id)
+                //: request.Order_By.Equals("desc") ? query.OrderByDescending(x => x.Id)
+                //: query.OrderBy(x => x.Form_Name);
 
+                if (!string.IsNullOrEmpty(request.Orders))
+                    query = unitOfWork.PmsForm.OrdersPmsForm(request.Orders);
+            
                 if (request.Is_Archived is not null)
                     query = query.Where(q => unitOfWork.PmsForm.ArchivedPmsForm(request.Is_Archived).Contains(q));
 
