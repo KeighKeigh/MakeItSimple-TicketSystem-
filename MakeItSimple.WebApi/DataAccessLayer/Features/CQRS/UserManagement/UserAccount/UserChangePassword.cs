@@ -1,6 +1,6 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.DataAccessLayer.Errors;
+using MakeItSimple.WebApi.DataAccessLayer.Errors.UserManagement.UserAccount;
 using MediatR;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;

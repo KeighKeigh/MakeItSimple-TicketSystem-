@@ -1,9 +1,9 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Errors;
-using MakeItSimple.WebApi.Common;
+﻿using MakeItSimple.WebApi.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MakeItSimple.WebApi.DataAccessLayer.Errors.UserManagement.UserAccount;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserAccount
 {

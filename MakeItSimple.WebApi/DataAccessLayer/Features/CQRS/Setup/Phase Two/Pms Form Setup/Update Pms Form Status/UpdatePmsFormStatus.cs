@@ -6,12 +6,8 @@ using MediatR;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Form_Setup.Update_Pms_Form_Status
 {
-    public class UpdatePmsFormStatus
+    public partial class UpdatePmsFormStatus
     {
-        public class UpdatePmsFormStatusCommand : IRequest<Result>
-        {
-            public int Id { get; set; }
-        }
 
         public class Handler : IRequestHandler<UpdatePmsFormStatusCommand, Result>
         {

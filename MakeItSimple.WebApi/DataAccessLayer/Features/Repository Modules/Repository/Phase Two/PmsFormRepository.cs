@@ -34,7 +34,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
 
         public async Task<bool> FormNameAlreadyExist(string form)
         {
-            return await context.PmsForms.AnyAsync(pf => pf.Form_Name == form) ? true : false; 
+            return await context.PmsForms.AnyAsync(pf => pf.Form_Name == form); 
         }
 
         public IQueryable<PmsForm> SearchPmsForm(string search)

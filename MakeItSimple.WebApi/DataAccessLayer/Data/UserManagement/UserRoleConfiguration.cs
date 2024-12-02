@@ -1,11 +1,10 @@
-﻿
-using MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount;
+﻿using MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Text.Json;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension
+namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
 {
     public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     {
@@ -15,19 +14,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension
             {
                 Id = 1,
                 UserRoleName = "Admin",
-                Permissions = new List<string> 
+                Permissions = new List<string>
                 { "Overview","User Management","User Role","User Account","Channel","Filing","Generate","Masterlist","Company","Business Unit","Unit","Location","Sub Unit","Department","Category","Sub Category","Channel Setup","Approver","Receiver Concerns","Receiver","Reports" },
 
                 CreatedAt = DateTime.Parse("2024-01-08"),
             });
 
-             builder.Property(e => e.Permissions).HasConversion(
-                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null),
-                new ValueComparer<ICollection<string>>(
-                    (c1, c2) => c1.SequenceEqual(c2),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList()));
+            builder.Property(e => e.Permissions).HasConversion(
+               v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+               v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null),
+               new ValueComparer<ICollection<string>>(
+                   (c1, c2) => c1.SequenceEqual(c2),
+                   c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                   c => c.ToList()));
 
 
             builder.HasOne(ur => ur.AddedByUser)
@@ -35,12 +34,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension
                     .HasForeignKey(ur => ur.AddedBy)
                      .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(ur =>ur.ModifiedByUser)
+            builder.HasOne(ur => ur.ModifiedByUser)
                    .WithMany()
                    .HasForeignKey(ur => ur.ModifiedBy)
                    .OnDelete(DeleteBehavior.Restrict);
 
-           
+
         }
     }
 }

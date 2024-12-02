@@ -1,16 +1,13 @@
-﻿
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace MakeItSimple.WebApi
+namespace MakeItSimple.WebApi.Hubs
 {
     public class NotificationHub : Hub
     {
         private readonly IHubCaller _hubCaller;
 
-        public NotificationHub(IHubCaller hubCaller) 
+        public NotificationHub(IHubCaller hubCaller)
         {
             _hubCaller = hubCaller;
         }
@@ -38,11 +35,11 @@ namespace MakeItSimple.WebApi
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendNotificationToUser(string userId, string notificationType,string message)
+        public async Task SendNotificationToUser(string userId, string notificationType, string message)
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                await _hubCaller.SendNotificationAsync(Guid.Parse(userId),notificationType ,message);
+                await _hubCaller.SendNotificationAsync(Guid.Parse(userId), notificationType, message);
             }
         }
 

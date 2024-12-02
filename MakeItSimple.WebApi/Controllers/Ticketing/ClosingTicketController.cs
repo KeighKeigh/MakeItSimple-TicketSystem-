@@ -4,7 +4,6 @@ using MakeItSimple.WebApi.Common.SignalR;
 using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.ClosedTicketConcern.AddClosingTicket;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.ApprovalClosing.ApprovalClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketConcern.CancelClosing.CancelClosingTicket;
@@ -24,13 +23,11 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
     {
         private readonly IMediator _mediator;
         private readonly TimerControl _timerControl;
-        private readonly IHubContext<NotificationHub> _client;
 
-        public ClosingTicketController(IMediator mediator, TimerControl timerControl, IHubContext<NotificationHub> client)
+        public ClosingTicketController(IMediator mediator, TimerControl timerControl)
         {
             _mediator = mediator;
             _timerControl = timerControl;
-            _client = client;
         }
 
         [HttpPost]

@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.TransactionNotification.GetTicketTransactionNotification;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.ClickedTicketTransaction.ClickedTransaction;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotification.AllTransactionNotification.GetAllTransactionNotification;
-using MakeItSimple.WebApi;
+using MakeItSimple.WebApi.Hubs;
 
 [ApiController]
 [Route("api/ticketing-notification")]

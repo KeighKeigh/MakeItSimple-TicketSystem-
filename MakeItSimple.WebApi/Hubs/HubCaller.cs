@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace MakeItSimple.WebApi
+namespace MakeItSimple.WebApi.Hubs
 {
     public interface IHubCaller
     {
@@ -19,7 +19,7 @@ namespace MakeItSimple.WebApi
             _hubContext = hubContext;
         }
 
-        public async Task SendNotificationAsync(Guid userId, string notificationType ,object message)
+        public async Task SendNotificationAsync(Guid userId, string notificationType, object message)
         {
             await _hubContext.Clients.Group(userId.ToString()).SendAsync(notificationType, message);
         }

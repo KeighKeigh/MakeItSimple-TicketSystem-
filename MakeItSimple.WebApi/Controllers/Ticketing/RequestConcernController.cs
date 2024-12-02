@@ -31,13 +31,11 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
     {
         private readonly IMediator _mediator;
         private readonly TimerControl _timerControl;
-        private readonly IHubContext<NotificationHub> _client;
 
-        public RequestConcernController(IMediator mediator , TimerControl timerControl , IHubContext<NotificationHub> client)
+        public RequestConcernController(IMediator mediator , TimerControl timerControl )
         {
             _mediator = mediator;
             _timerControl = timerControl;
-            _client = client;
         }
 
 
@@ -237,9 +235,6 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 }; 
 
                 var successResult = Result.Success(result);
-
-
-                await _client.Clients.All.SendAsync("ReceiveNotification", "New data has been received or sent.");
 
                 return Ok(successResult);
             }

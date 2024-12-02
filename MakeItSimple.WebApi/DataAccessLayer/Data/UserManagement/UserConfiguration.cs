@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension
+namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
 {
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
@@ -24,8 +24,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension
            .WithMany()
            .HasForeignKey(u => u.AddedBy)
            .OnDelete(DeleteBehavior.Restrict);
-           
-            
+
+
             builder.HasOne(u => u.ModifiedByUser)
            .WithMany()
            .HasForeignKey(u => u.ModifiedBy)

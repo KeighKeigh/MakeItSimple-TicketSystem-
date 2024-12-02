@@ -45,8 +45,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                             Approver_Level = x.Approver_Level,
                             IsApproved = x.IsApprove,
 
-                        })
-                        .ToList(),
+                        }).ToList(),
                         UpComingApprovers = x.OrderBy(x => x.Id)
                         .OrderByDescending(x => x.Id)
                         .Where(x => x.IsApprove == null && x.Approver_Level != null || x.Request.Contains(TicketingConString.Approval)

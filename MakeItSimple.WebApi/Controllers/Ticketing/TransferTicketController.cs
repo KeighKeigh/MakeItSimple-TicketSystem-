@@ -8,7 +8,6 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTick
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.GetTransfer.GetTransferTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.RejectTransfer.RejectTransferTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.CreateTransfer.AddNewTransferTicket;
-using Microsoft.AspNetCore.SignalR;
 using MakeItSimple.WebApi.Common.SignalR;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.TransferUser.TransferTicketUser;
 
@@ -20,13 +19,11 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
     {
         private readonly IMediator _mediator;
         private readonly TimerControl _timerControl;
-        private readonly IHubContext<NotificationHub> _client;
 
-        public TransferTicketController(IMediator mediator, TimerControl timerControl, IHubContext<NotificationHub> client)
+        public TransferTicketController(IMediator mediator, TimerControl timerControl)
         {
             _mediator = mediator;
             _timerControl = timerControl;
-            _client = client;
         }
 
         [HttpPost("add-transfer")]

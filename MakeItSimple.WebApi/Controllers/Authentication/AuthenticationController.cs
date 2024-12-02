@@ -10,7 +10,7 @@ using NuGet.Common;
 using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Authentication.LogoutAuthentication;
 
-namespace MakeItSimple.WebApi.Controllers.AuthenticationController
+namespace MakeItSimple.WebApi.Controllers.Authentication
 {
     [Route("api/Authentication")]
     [ApiController]
@@ -20,7 +20,7 @@ namespace MakeItSimple.WebApi.Controllers.AuthenticationController
         private readonly IMediator _mediator;
         private readonly TokenGenerator _tokenGenerator;
         private readonly MisDbContext _context;
-        public AuthenticationController(IMediator mediator , TokenGenerator tokenGenerator , MisDbContext context)
+        public AuthenticationController(IMediator mediator, TokenGenerator tokenGenerator, MisDbContext context)
         {
             _mediator = mediator;
             _tokenGenerator = tokenGenerator;
@@ -33,13 +33,13 @@ namespace MakeItSimple.WebApi.Controllers.AuthenticationController
         {
             try
             {
-               
+
                 var result = await _mediator.Send(request);
-                if(result.IsFailure)
+                if (result.IsFailure)
                 {
                     return BadRequest(result);
-                }    
-                return Ok(result);  
+                }
+                return Ok(result);
             }
             catch (Exception ex)
             {

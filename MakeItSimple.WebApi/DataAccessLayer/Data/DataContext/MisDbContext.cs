@@ -5,19 +5,20 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.CategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ChannelSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.CompanySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.DepartmentSetup;
-using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCheckBoxSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormDropdownSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormQuestionSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.LocationSetup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two.Pms_Form_Setup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.QuestionCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.SubUnitSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.UnitSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Ticketing;
-using MakeItSimple.WebApi.DataAccessLayer.Data.UserConfigurationExtension;
+using MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Setup.AccountTitleSetup;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
@@ -32,6 +33,7 @@ using MakeItSimple.WebApi.Models.Setup.FormDropdownSetup;
 using MakeItSimple.WebApi.Models.Setup.FormSetup;
 using MakeItSimple.WebApi.Models.Setup.FormsQuestionSetup;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
+using MakeItSimple.WebApi.Models.Setup.Phase_Two;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
 using MakeItSimple.WebApi.Models.Setup.ReceiverSetup;
@@ -41,8 +43,6 @@ using MakeItSimple.WebApi.Models.Setup.UnitSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MakeItSimple.WebApi.Models.UserManagement.UserRoleAccount;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Text.Json;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 {
@@ -90,6 +90,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         //Phase 2
 
         public virtual DbSet<PmsForm> PmsForms { get; set; }
+        public virtual DbSet<PmsQuestionaireModule> PmsQuestionaireModules { get; set; }
 
 
 
@@ -141,6 +142,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
             //Phase 2
 
             modelBuilder.ApplyConfiguration(new PmsFormConfiguration());
+            modelBuilder.ApplyConfiguration(new PmsQuestionaireModuleConfiguration());
+
+            //Phase 3
 
             modelBuilder.ApplyConfiguration(new FormConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionCategoryConfiguration());

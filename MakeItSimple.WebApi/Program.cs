@@ -15,11 +15,11 @@ using Microsoft.AspNetCore.Http.Connections;
 using MakeItSimple.WebApi.Common.SignalR;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using MakeItSimple.WebApi;
 using StackExchange.Redis;
 using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
+using MakeItSimple.WebApi.Hubs;
 
 
 

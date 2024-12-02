@@ -13,7 +13,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two.Pms_Form_Setu
            .HasForeignKey(u => u.AddedBy)
            .OnDelete(DeleteBehavior.Restrict);
 
-
             builder.HasOne(u => u.ModifiedByUser)
            .WithMany()
            .HasForeignKey(u => u.ModifiedBy)

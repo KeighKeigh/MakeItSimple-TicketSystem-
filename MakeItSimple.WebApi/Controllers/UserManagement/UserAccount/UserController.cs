@@ -17,7 +17,7 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.Us
 using static NuGet.Packaging.PackagingConstants;
 
 
-namespace MakeItSimple.WebApi.Controllers.UserController
+namespace MakeItSimple.WebApi.Controllers.UserManagement.UserAccount
 {
     [Route("api/User")]
     [ApiController]

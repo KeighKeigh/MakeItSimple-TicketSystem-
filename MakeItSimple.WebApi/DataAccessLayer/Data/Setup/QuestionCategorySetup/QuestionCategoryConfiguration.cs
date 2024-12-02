@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup;
 
-namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.FormCategorySetup
+namespace MakeItSimple.WebApi.DataAccessLayer.Data.Setup.QuestionCategorySetup
 {
     public class QuestionCategoryConfiguration : IEntityTypeConfiguration<QuestionCategory>
     {
-        public void Configure(EntityTypeBuilder<QuestionCategory> builder) 
+        public void Configure(EntityTypeBuilder<QuestionCategory> builder)
         {
 
             builder.HasOne(u => u.AddedByUser)
