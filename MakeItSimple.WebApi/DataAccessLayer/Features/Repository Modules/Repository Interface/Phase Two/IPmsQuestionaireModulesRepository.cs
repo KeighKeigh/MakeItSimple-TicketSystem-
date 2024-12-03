@@ -20,5 +20,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
 
         Task UpdatePmsQuestionaireModule(UpdatePmsQuestionaireModuleCommand pmsQModules);
 
+        Task UpdatePmsQuestionaireModuleStatus(int id , bool status);
+
     }
 }

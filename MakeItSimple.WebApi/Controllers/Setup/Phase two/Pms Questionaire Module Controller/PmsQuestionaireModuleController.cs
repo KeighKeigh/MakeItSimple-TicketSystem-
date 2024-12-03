@@ -4,9 +4,11 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Form_Setup.Update_Pms_Form_Status.UpdatePmsFormStatus;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.CreatePmsQuestionaireModule;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Get_Pms_Questionaire_Module.GetPmsQuestionaireModule;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Update_Pms_Questionaire_Module.UpdatePmsQuestionaireModule;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Update_Pms_Questionaire_Module.UpdatePmsQuestionaireModuleStatus;
 
 namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Questionaire_Module_Controller
 {
@@ -88,6 +90,27 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Questionaire_Modul
                 {
                     command.Modified_By = userId;
                 }
+
+                var result = await mediator.Send(command);
+                return result.IsFailure ? BadRequest(result) : Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpPatch("archived/{id}")]
+        public async Task<IActionResult> UpdatePmsQuestionaireModuleStatus([FromRoute] int id)
+        {
+            try
+            {
+                var command = new UpdatePmsQuestionaireModuleStatusCommand
+                {
+                    Id = id
+                };
+
                 var result = await mediator.Send(command);
 
                 return result.IsFailure ? BadRequest(result) : Ok(result);

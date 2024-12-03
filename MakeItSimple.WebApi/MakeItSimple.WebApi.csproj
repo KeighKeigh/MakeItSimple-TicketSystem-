@@ -52,8 +52,4 @@
     <!--<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />-->
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataAccessLayer\Features\CQRS\Setup\Phase Two\Pms Questionaire Module Setup\Update Pms Questionaire Module Status\" />
-  </ItemGroup>
-
 </Project>

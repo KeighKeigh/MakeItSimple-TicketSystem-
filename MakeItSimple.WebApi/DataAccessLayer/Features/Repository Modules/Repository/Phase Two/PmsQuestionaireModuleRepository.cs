@@ -98,5 +98,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
 
             return Task.CompletedTask;
         }
+
+        public Task UpdatePmsQuestionaireModuleStatus(int id, bool status)
+        {
+            context.ChangeTracker.Clear();
+
+            var pmsUpdate = new PmsQuestionaireModule
+            {
+                Id = id,
+                IsActive = !status,
+
+            };
+
+            context.PmsQuestionaireModules.Attach(pmsUpdate);
+            context.Entry(pmsUpdate).Property(x => x.IsActive).IsModified = true;
+
+            return Task.CompletedTask;
+
+        }
     }
 }
