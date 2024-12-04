@@ -86,7 +86,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_
                 UpdatedAt = DateTime.Now,
             };
 
-
             context.PmsForms.Attach(updateForm);
             context.Entry(updateForm).Property(x => x.Form_Name).IsModified = true;
             context.Entry(updateForm).Property(x => x.ModifiedBy).IsModified = true;

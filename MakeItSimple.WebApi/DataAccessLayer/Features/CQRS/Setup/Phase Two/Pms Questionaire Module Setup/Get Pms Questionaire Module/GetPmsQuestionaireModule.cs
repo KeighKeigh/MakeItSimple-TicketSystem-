@@ -9,38 +9,18 @@ using System.Linq;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Get_Pms_Questionaire_Module
 {
-    public class GetPmsQuestionaireModule 
+    public partial class GetPmsQuestionaireModule 
     {
-        public class GetPmsQuestionaireModuleResult
-        {
-            public int Id { get; set; }
-            public string Questionaire_Module_Name { get; set; }
-            public int PmsFormId { get; set; }
-            public string Pms_Form_Name { get; set; }
-            public string Added_By { get; set; }
-            public DateTime Created_At { get; set; }
-            public string Modified_By { get; set; }
-            public DateTime? Updated_At { get; set; }
-            public bool Is_Archived { get; set; }
-
-        }
-
-        public class GetPmsQuestionaireModuleQuery : UserParams, IRequest<PagedList<GetPmsQuestionaireModuleResult>>
-        {
-            public string Search { get; set; }
-            public bool? Is_Archived { get; set; }
-            public string Orders { get; set; }
-
-        }
 
         public class Handler : IRequestHandler<GetPmsQuestionaireModuleQuery, PagedList<GetPmsQuestionaireModuleResult>>
         {
             private readonly IUnitOfWork unitOfWork;
             private readonly MisDbContext context;
 
-            public Handler(IUnitOfWork unitOfWork)
+            public Handler(IUnitOfWork unitOfWork, MisDbContext context)
             {
                 this.unitOfWork = unitOfWork;
+                this.context = context;
             }
 
             public async Task<PagedList<GetPmsQuestionaireModuleResult>> Handle(GetPmsQuestionaireModuleQuery request, CancellationToken cancellationToken)

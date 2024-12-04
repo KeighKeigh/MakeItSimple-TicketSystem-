@@ -173,10 +173,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 
             private async Task ApprovalTransferNotification(TransferTicketConcern transferTicketConcern, User user, ApproverTicketing approverTicketing, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
-                transferTicketConcern.TicketApprover = approverTicketing.UserId;
-
-                if(transferTicketConcern.TargetDate != command.Target_Date)
-                    transferTicketConcern.TargetDate = command.Target_Date;
+                transferTicketConcern.TicketApprover = approverTicketing.UserId;   
+                transferTicketConcern.TargetDate = command.Target_Date;
 
                 var addNewTicketTransactionNotification = new TicketTransactionNotification
                 {
