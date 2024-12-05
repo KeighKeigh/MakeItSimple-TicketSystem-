@@ -1,10 +1,8 @@
 ﻿using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup;
-using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Update_Pms_Questionaire_Module;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Phase_Two;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two;
-using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Module_Setup.Update_Pms_Questionaire_Module.UpdatePmsQuestionaireModule;
 
@@ -87,14 +85,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
                 UpdatedAt = DateTime.Now,
 
             };
-
-            
+        
             context.PmsQuestionaireModules.Attach(pmsUpdate);
             context.Entry(pmsUpdate).Property(x => x.QuestionaireModuleName).IsModified = true;
             context.Entry(pmsUpdate).Property(x => x.PmsFormId).IsModified = true;
             context.Entry(pmsUpdate).Property(x => x.ModifiedBy).IsModified = true;
             context.Entry(pmsUpdate).Property(x => x.UpdatedAt).IsModified = true;
-
 
             return Task.CompletedTask;
         }

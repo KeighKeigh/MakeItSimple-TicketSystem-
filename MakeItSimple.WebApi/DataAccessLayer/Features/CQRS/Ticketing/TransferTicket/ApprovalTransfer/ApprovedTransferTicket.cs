@@ -12,7 +12,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
 {
     public partial class ApprovedTransferTicket
     {
-
         public class Handler : IRequestHandler<ApprovedTransferTicketCommand, Result>
         {
             private readonly MisDbContext _context;
@@ -103,7 +102,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 return Result.Success();
             }
 
-            private async Task ApprovalTicketHistory(List<TicketHistory> ticketHistory, User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
+            private  Task ApprovalTicketHistory(List<TicketHistory> ticketHistory, User user, ApprovedTransferTicketCommand command, CancellationToken cancellationToken)
             {
                 var ticketHistoryApproval = ticketHistory
                     .FirstOrDefault(x => x.Approver_Level != null
@@ -114,6 +113,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                 ticketHistoryApproval.Request = TicketingConString.Approve;
                 ticketHistoryApproval.Status = $"{TicketingConString.TransferApprove} {user.Fullname}";
                 ticketHistoryApproval.IsApprove = true;
+
+                return Task.CompletedTask;
             }
 
             private async Task UpdateTransferTicket(TransferTicketConcern transferTicketConcern,User user ,ApprovedTransferTicketCommand command, CancellationToken cancellationToken)

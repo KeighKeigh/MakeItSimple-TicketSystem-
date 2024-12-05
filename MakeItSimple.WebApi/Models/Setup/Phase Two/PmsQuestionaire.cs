@@ -1,12 +1,12 @@
-﻿using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MakeItSimple.WebApi.Models.Setup.Phase_Two
 {
-    public class PmsQuestionaireModule : BaseIdEntity
+    public class PmsQuestionaire : BaseIdEntity
     {
         [Required]
-        public string QuestionaireModuleName { get; set; }
+        public string Question {  get; set; }
+        public  string QuestionType { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
@@ -14,9 +14,8 @@ namespace MakeItSimple.WebApi.Models.Setup.Phase_Two
         public virtual User AddedByUser { get; set; }
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
-        public int PmsFormId { get; set; }
-        public virtual PmsForm PmsForm { get; set; }
-
         public ICollection<QuestionaireTransactionId> QuestionaireTransactionIds { get; set; }
+
     }
 }
+

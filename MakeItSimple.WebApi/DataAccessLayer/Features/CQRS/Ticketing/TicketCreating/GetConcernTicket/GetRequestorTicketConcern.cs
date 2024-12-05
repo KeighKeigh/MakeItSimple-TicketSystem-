@@ -109,9 +109,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                     }
 
 
-                    if (request.Ascending != null)
+                    if (request.Ascending is not null)
                     {
-                        requestConcernsQuery = request.Ascending.Value
+                        
+                        requestConcernsQuery = request.Ascending.Value is true
                             ? requestConcernsQuery
                             .OrderBy(x => x.Id)
                             : requestConcernsQuery
@@ -293,10 +294,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 Transfer_At = tc.TransferAt,
                                 Transfer_By = tc.TransferByUser.Fullname,
 
-                            })
-                            .ToList()
+                            }).ToList()
 
-                    }).OrderBy(x => x.RequestConcernId);
+                    });
 
                 return await PagedList<GetRequestorTicketConcernResult>.CreateAsync(results, request.PageNumber, request.PageSize);
             }

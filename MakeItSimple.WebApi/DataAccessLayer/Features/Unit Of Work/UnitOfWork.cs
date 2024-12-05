@@ -15,11 +15,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
             this.context = context;
             PmsForm = new PmsFormRepository(context);
             PmsQuestionaireModules = new PmsQuestionaireModuleRepository(context);
-
         }
 
         public IPmsFormRepository PmsForm {  get; private set; }
-
         public IPmsQuestionaireModulesRepository PmsQuestionaireModules {  get; private set; }
 
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
