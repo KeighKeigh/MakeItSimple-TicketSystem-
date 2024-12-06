@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Phase_Two;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_Two;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Interface.IPms_Form;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
@@ -7,8 +8,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
     {
         IPmsFormRepository PmsForm { get; }
         IPmsQuestionaireModulesRepository PmsQuestionaireModules { get; }
+        IPmsQuestionRepository PmsQuestion { get; }
 
         Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
-        
+
     }
 }

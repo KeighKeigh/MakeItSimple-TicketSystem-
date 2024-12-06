@@ -14,7 +14,7 @@ namespace MakeItSimple.WebApi.Models.Setup.Phase_Two
         public virtual User AddedByUser { get; set; }
         public Guid? ModifiedBy { get; set; }
         public virtual User ModifiedByUser { get; set; }
-        public ICollection<QuestionaireTransactionId> QuestionaireTransactionIds { get; set; }
+        public ICollection<QuestionTransactionId> QuestionTransactionIds { get; set; }
 
     }
 }

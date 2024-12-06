@@ -17,7 +17,6 @@ namespace MakeItSimple.WebApi.Models.Setup.QuestionCategorySetup
         public int FormId { get; set; }
         public virtual Form Form { get; set; }
         public string QuestionCategoryName {  get; set; }
-
         public ICollection<FormQuestion> FormQuestions { get; set; }
     }
 }

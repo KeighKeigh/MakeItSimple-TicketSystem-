@@ -15,11 +15,10 @@ using Microsoft.AspNetCore.Http.Connections;
 using MakeItSimple.WebApi.Common.SignalR;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using StackExchange.Redis;
 using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 using MakeItSimple.WebApi.Hubs;
+using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 
 
 
@@ -202,9 +201,9 @@ try
     var context = services.GetRequiredService<MisDbContext>();
     await context.Database.MigrateAsync();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
-   Console.WriteLine(ex);
+    Console.WriteLine(ex);
 }
 
 app.Run();

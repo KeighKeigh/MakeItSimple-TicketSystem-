@@ -91,6 +91,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 
         public virtual DbSet<PmsForm> PmsForms { get; set; }
         public virtual DbSet<PmsQuestionaireModule> PmsQuestionaireModules { get; set; }
+        public virtual DbSet<PmsQuestionaire> PmsQuestionaires { get; set; }
+        public virtual DbSet<QuestionTransactionId> QuestionTransactionIds { get; set; }
 
 
 
@@ -143,6 +145,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
 
             modelBuilder.ApplyConfiguration(new PmsFormConfiguration());
             modelBuilder.ApplyConfiguration(new PmsQuestionaireModuleConfiguration());
+            modelBuilder.ApplyConfiguration(new PmsQuestionaireConfiguration());
+
+
 
             //Phase 3
 

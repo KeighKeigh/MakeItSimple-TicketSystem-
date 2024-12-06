@@ -38,7 +38,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 if (!File.Exists(filePath))
                     return Result.Failure(TicketRequestError.FileNotFound());
-                
+
 
                 var fileName = Path.GetFileName(filePath);
                 var fileExtension = Path.GetExtension(fileName).ToLowerInvariant();

@@ -17,6 +17,6 @@ namespace MakeItSimple.WebApi.Models.Setup.Phase_Two
         public int PmsFormId { get; set; }
         public virtual PmsForm PmsForm { get; set; }
 
-        public ICollection<QuestionaireTransactionId> QuestionaireTransactionIds { get; set; }
+        public ICollection<QuestionTransactionId> QuestionTransactionIds { get; set; }
     }
 }

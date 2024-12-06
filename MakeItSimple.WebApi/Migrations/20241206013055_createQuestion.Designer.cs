@@ -4,6 +4,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MakeItSimple.WebApi.Migrations
 {
     [DbContext(typeof(MisDbContext))]
-    partial class MisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241206013055_createQuestion")]
+    partial class createQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -787,6 +790,10 @@ namespace MakeItSimple.WebApi.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("added_by");
 
+                    b.Property<Guid?>("AddedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("added_by_user_id");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
@@ -798,6 +805,10 @@ namespace MakeItSimple.WebApi.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("modified_by");
+
+                    b.Property<Guid?>("ModifiedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("modified_by_user_id");
 
                     b.Property<string>("Question")
                         .IsRequired()
@@ -813,15 +824,15 @@ namespace MakeItSimple.WebApi.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_pms_questionaires");
+                        .HasName("pk_pms_questionaire");
 
-                    b.HasIndex("AddedBy")
-                        .HasDatabaseName("ix_pms_questionaires_added_by");
+                    b.HasIndex("AddedByUserId")
+                        .HasDatabaseName("ix_pms_questionaire_added_by_user_id");
 
-                    b.HasIndex("ModifiedBy")
-                        .HasDatabaseName("ix_pms_questionaires_modified_by");
+                    b.HasIndex("ModifiedByUserId")
+                        .HasDatabaseName("ix_pms_questionaire_modified_by_user_id");
 
-                    b.ToTable("pms_questionaires", (string)null);
+                    b.ToTable("pms_questionaire", (string)null);
                 });
 
             modelBuilder.Entity("MakeItSimple.WebApi.Models.Setup.Phase_Two.PmsQuestionaireModule", b =>
@@ -2905,15 +2916,13 @@ namespace MakeItSimple.WebApi.Migrations
                 {
                     b.HasOne("MakeItSimple.WebApi.Models.User", "AddedByUser")
                         .WithMany()
-                        .HasForeignKey("AddedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_pms_questionaires_users_added_by_user_id");
+                        .HasForeignKey("AddedByUserId")
+                        .HasConstraintName("fk_pms_questionaire_users_added_by_user_id");
 
                     b.HasOne("MakeItSimple.WebApi.Models.User", "ModifiedByUser")
                         .WithMany()
-                        .HasForeignKey("ModifiedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_pms_questionaires_users_modified_by_user_id");
+                        .HasForeignKey("ModifiedByUserId")
+                        .HasConstraintName("fk_pms_questionaire_users_modified_by_user_id");
 
                     b.Navigation("AddedByUser");
 
@@ -2972,7 +2981,7 @@ namespace MakeItSimple.WebApi.Migrations
                     b.HasOne("MakeItSimple.WebApi.Models.Setup.Phase_Two.PmsQuestionaire", "PmsQuestionaire")
                         .WithMany("QuestionTransactionIds")
                         .HasForeignKey("PmsQuestionaireId")
-                        .HasConstraintName("fk_question_transaction_id_pms_questionaires_pms_questionaire_id");
+                        .HasConstraintName("fk_question_transaction_id_pms_questionaire_pms_questionaire_id");
 
                     b.HasOne("MakeItSimple.WebApi.Models.Setup.Phase_Two.PmsQuestionaireModule", "PmsQuestionaireModule")
                         .WithMany("QuestionTransactionIds")

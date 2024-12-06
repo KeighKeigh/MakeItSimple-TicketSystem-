@@ -45,7 +45,6 @@
                 public int? TicketCategoryId {  get; set; }
                 public int? CategoryId { get; set; }
                 public string Category_Description { get; set; }
-
             }
 
             public List<GetRequestSubTicketCategory> GetRequestSubTicketCategories { get; set; }

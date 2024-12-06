@@ -17,7 +17,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
             private readonly MisDbContext context;
             private readonly IUnitOfWork unitOfWork;
 
-
             public Handler(MisDbContext context, IUnitOfWork unitOfWork)
             {
                 this.context = context;
@@ -26,25 +25,21 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
 
             public async Task<PagedList<GetPmsFormResult>> Handle(GetPmsFormQuery request, CancellationToken cancellationToken)
             {
-                var query = context.PmsForms
+                 IQueryable<PmsForm> query = context.PmsForms
                      .AsNoTrackingWithIdentityResolution()
                      .Include(q => q.AddedByUser)
                      .Include(q => q.ModifiedByUser)
+                     .OrderBy(x => x.Id)
                      .AsSplitQuery();
-
-                // query = request.Order_By.Equals("asc") ?  query.OrderBy(x => x.Id)
-                //: request.Order_By.Equals("desc") ? query.OrderByDescending(x => x.Id)
-                //: query.OrderBy(x => x.Form_Name);
 
                 if (!string.IsNullOrEmpty(request.Orders))
                     query = unitOfWork.PmsForm.OrdersPmsForm(request.Orders);
-            
+
                 if (request.Is_Archived is not null)
                     query = query.Where(q => unitOfWork.PmsForm.ArchivedPmsForm(request.Is_Archived).Contains(q));
 
                 if (!string.IsNullOrEmpty(request.Search))
                     query = query.Where(q => unitOfWork.PmsForm.SearchPmsForm(request.Search).Contains(q));
-
 
                  var results = query
                     .Select(q => new GetPmsFormResult
@@ -56,8 +51,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
                         Modified_By = q.ModifiedByUser.Fullname,
                         Updated_At = q.UpdatedAt.Value.Date,
                         Is_Archived = q.IsActive,
+                        PmsQuestionModules = q.PmsQuestionaireModules
+                        .Where(pqm => pqm.IsActive == true)
+                        .Select(pqm => new GetPmsFormResult.PmsQuestionModule
+                        {
+                            Id = pqm.Id,
+                            Question_Module_Name = pqm.QuestionaireModuleName,
 
-                    }).AsQueryable();
+                        }).ToList()
+
+                    });
 
                 return await PagedList<GetPmsFormResult>.CreateAsync(results, request.PageNumber,request.PageSize);   
             }

@@ -7,12 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating
 {
-    public class DownloadImageTicketing
+    public partial class DownloadImageTicketing
     {
-        public class DownloadImageTicketingCommand : IRequest<Result>
-        {
-            public int TicketAttachmentId { get; set; }
-        }
 
         public class Handler : IRequestHandler<DownloadImageTicketingCommand, Result>
         {
@@ -37,6 +33,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCrea
                 }
 
                 var filePath = ticketAttachment.Attachment;
+                var documentName = ticketAttachment.FileName;
 
                 if (!File.Exists(filePath))
                 {
@@ -49,7 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCrea
 
                 var fileResult = new FileStreamResult(new FileStream(filePath, FileMode.Open, FileAccess.Read), contentType)
                 {
-                    FileDownloadName = fileName
+                    FileDownloadName = documentName
                 };
 
                 return Result.Success(fileResult);

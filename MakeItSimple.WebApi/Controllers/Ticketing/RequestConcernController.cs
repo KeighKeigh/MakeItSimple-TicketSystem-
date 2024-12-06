@@ -424,6 +424,7 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 }
 
                 return BadRequest(new { ErrorCode = result.Error.Code, ErrorMessage = result.Error.Message });
+
             }
             catch (Exception ex)
             {

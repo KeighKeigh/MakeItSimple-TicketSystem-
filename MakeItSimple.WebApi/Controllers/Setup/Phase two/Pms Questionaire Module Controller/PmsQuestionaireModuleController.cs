@@ -81,11 +81,12 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Questionaire_Modul
             }
         }
 
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdatePmsQuestionaireModule([FromBody] UpdatePmsQuestionaireModuleCommand command)
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdatePmsQuestionModule([FromRoute] int id, [FromBody] UpdatePmsQuestionaireModuleCommand command)
         {
             try
             {
+                command.Id = id;
                 if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
                 {
                     command.Modified_By = userId;
@@ -102,7 +103,7 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Questionaire_Modul
         }
 
         [HttpPatch("archived/{id}")]
-        public async Task<IActionResult> UpdatePmsQuestionaireModuleStatus([FromRoute] int id)
+        public async Task<IActionResult> UpdatePmsQuestionModuleStatus([FromRoute] int id)
         {
             try
             {

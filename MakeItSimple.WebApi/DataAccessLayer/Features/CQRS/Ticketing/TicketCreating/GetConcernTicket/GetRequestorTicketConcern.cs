@@ -1,11 +1,9 @@
 ﻿using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CompanySetup.GetCompany.GetCompanyResult;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.GetConcernTicket.GetRequestorTicketConcern.GetRequestorTicketConcernResult;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.GetConcernTicket
@@ -29,7 +27,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                 IQueryable<RequestConcern> requestConcernsQuery = _context.RequestConcerns
                      .AsNoTrackingWithIdentityResolution()
-                    .Include(x => x.User)
+                     .Include(x => x.User)
                      .Include(x => x.AddedByUser)
                      .Include(x => x.ModifiedByUser)
                      .Include(x => x.Company)
@@ -46,8 +44,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                      .Include(x => x.BackJob)
                      .Include(x => x.TicketCategories)
                      .Include(x => x.TicketSubCategories)
+                     .OrderBy(x => x.Id)
                      .AsSplitQuery();
-
 
                 if (requestConcernsQuery.Any())
                 {
@@ -108,7 +106,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                            .Where(x => ticketStatusList.Contains(x.Id));
                     }
 
-
                     if (request.Ascending is not null)
                     {
                         
@@ -124,7 +121,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                         switch (request.Concern_Status)
                         {
-
                             case TicketingConString.Approval:
                                 requestConcernsQuery = requestConcernsQuery
                                     .Where(x => x.ConcernStatus == TicketingConString.ForApprovalTicket);
@@ -191,7 +187,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                                 requestConcernsQuery = requestConcernsQuery
                                     .Where(x => receiverList.Contains(x.User.BusinessUnitId));
-
                             }
                             else
                             {
