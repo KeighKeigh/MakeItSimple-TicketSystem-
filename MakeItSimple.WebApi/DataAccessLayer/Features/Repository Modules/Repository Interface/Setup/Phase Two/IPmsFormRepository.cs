@@ -9,7 +9,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Inte
     {
         Task CreatePmsForm(CreatePmsFormCommand pmsForm);
 
-        Task<bool> FormNameAlreadyExist(string form);
+        Task<bool> FormNameAlreadyExist(string form, string currentForm);
 
         IQueryable<PmsForm> SearchPmsForm(string search);
 

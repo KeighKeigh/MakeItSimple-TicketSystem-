@@ -6,7 +6,7 @@ namespace MakeItSimple.WebApi.Models.Setup.Phase_Two
     {
         [Required]
         public string Question {  get; set; }
-        public  string QuestionType { get; set; }
+        public string QuestionType { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }

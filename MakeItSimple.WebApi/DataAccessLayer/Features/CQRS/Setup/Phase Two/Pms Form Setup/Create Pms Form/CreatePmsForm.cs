@@ -20,7 +20,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
             public async Task<Result> Handle(CreatePmsFormCommand command, CancellationToken cancellationToken)
             {
 
-               var formNameAlreadyExist =  await _unitOfWork.PmsForm.FormNameAlreadyExist(command.Form_Name);
+               var formNameAlreadyExist =  await _unitOfWork.PmsForm.FormNameAlreadyExist(command.Form_Name,null);
                 if (formNameAlreadyExist)
                     return Result.Failure(PmsFormError.PmsFormAlreadyExist());
 

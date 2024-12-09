@@ -21,12 +21,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
         public async Task<PmsQuestionaire> CreatePmsQuestion(CreatePmsQuestionCommand pmsQuestion)
         {
 
-            var nextId = await context.Database
-                .ExecuteSqlRawAsync("SELECT IDENT_CURRENT('pms_questionaire_modules') + 1");
-
             var create = new PmsQuestionaire
             {
-                Id = nextId,
                 Question = pmsQuestion.Question,
                 AddedBy = pmsQuestion.Added_By,
             };
@@ -36,14 +32,58 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             return create;
         }
 
-        public async Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsForm pmsForm, int id)
+        public async Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, int id)
         {
             var create = new QuestionTransactionId
             {
-                PmsQuestionaireModuleId = pmsForm.PmsFormId,
+                PmsQuestionaireModuleId = pmsForm.PmsQuestionModuleId,
                 PmsQuestionId = id,
             };
 
+            await context.QuestionTransactionIds.AddAsync(create);
         }
+
+        public async Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType, int id, string questionType)
+        {
+            var create = new PmsQuestionType
+            {
+                Description = pmsQuestionType.Description,
+                PmsQuestionaireId = id,
+                QuestionType = questionType,
+
+            };
+
+            await context.PmsQuestionTypes.AddAsync(create);
+        }
+
+        public async Task<bool> PmsQuestionAlreadyExist(string pmsQuestion, string currentQuestion)
+        {
+            if(string.IsNullOrEmpty(currentQuestion))
+                return await context.PmsQuestionaires
+                    .AnyAsync(x => x.Question == pmsQuestion);
+
+            return await context.PmsQuestionaires
+                .Where(x => x.Question == pmsQuestion
+                && !pmsQuestion.Equals(currentQuestion)) 
+                .AnyAsync();
+        }
+
+        public async Task<bool> PmsQuestionTypeAlreadyExist(string pmsQuestionType, string currentQuestionType)
+        {
+            if (string.IsNullOrEmpty(currentQuestionType))
+                return await context.PmsQuestionTypes
+                    .AnyAsync(x => x.Description == pmsQuestionType);
+
+            return await context.PmsQuestionTypes
+                .Where(x => x.Description == pmsQuestionType
+                && !pmsQuestionType.Equals(currentQuestionType))
+                .AnyAsync();
+        }
+
+        public async Task<PmsQuestionaire> PmsQuestionNotExist(int id)
+        {
+            return await context.PmsQuestionaires.FindAsync(id);
+        }
+
     }
 }

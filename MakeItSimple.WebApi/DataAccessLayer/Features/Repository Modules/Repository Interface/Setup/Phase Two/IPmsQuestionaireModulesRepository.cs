@@ -8,18 +8,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
     public interface IPmsQuestionaireModulesRepository 
     {
         Task CreateQuestionaireModule(CreatePmsQuestionaireModuleCommand pmsQModules);
-        Task<bool> QuestionaireModuleNameAlreadyExist(string pmsQModuleName);
-
+        Task<bool> QuestionaireModuleNameAlreadyExist(string pmsQModuleName, string currentQModuleName);
         IQueryable<PmsQuestionaireModule> SearchPmsForm(string search);
-
         IQueryable<PmsQuestionaireModule> ArchivedPmsForm(bool? is_Archived);
-
         IQueryable<PmsQuestionaireModule> OrdersPmsForm(string order_By);
-
         Task<PmsQuestionaireModule> PmsQuestionaireModuleIdNotExist(int id);
-
         Task UpdatePmsQuestionaireModule(UpdatePmsQuestionaireModuleCommand pmsQModules);
-
         Task UpdatePmsQuestionaireModuleStatus(int id , bool status);
 
     }

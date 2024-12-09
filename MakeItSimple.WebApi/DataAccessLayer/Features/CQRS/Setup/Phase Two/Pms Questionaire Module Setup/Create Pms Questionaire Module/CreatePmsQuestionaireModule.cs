@@ -28,7 +28,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_
                     return Result.Failure(PmsFormError.PmsFormIdNotExist());
 
                 var questionaireModuleNameAlreadyExist = await unitOfWork.PmsQuestionaireModules
-                    .QuestionaireModuleNameAlreadyExist(command.Questionaire_Module_Name);
+                    .QuestionaireModuleNameAlreadyExist(command.Questionaire_Module_Name,null);
                 if (questionaireModuleNameAlreadyExist)
                     return Result.Failure(PmsQuestionaireModuleError.PmsQuestionaireModuleAlreadyExist());
 

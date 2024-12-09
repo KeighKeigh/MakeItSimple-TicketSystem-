@@ -6,8 +6,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
 {
     public interface IPmsQuestionRepository
     {
+        Task<bool> PmsQuestionAlreadyExist(string pmsQuestion , string currentQuestion);
+        Task<bool> PmsQuestionTypeAlreadyExist(string pmsQuestionType, string currentQuestionType);
+        Task<PmsQuestionaire> PmsQuestionNotExist(int id);
         Task<PmsQuestionaire> CreatePmsQuestion(CreatePmsQuestionCommand pmsQuestion);
-
-        Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsForm pmsForm, int id);
+        Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, int id);
+        Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType , int id, string questionType);
     }
 }

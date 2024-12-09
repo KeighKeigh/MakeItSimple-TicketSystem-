@@ -83,18 +83,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         public virtual DbSet<TicketTransactionNotification> TicketTransactionNotifications { get; set; }
         public virtual DbSet<TicketOnHold> TicketOnHolds { get; set; }
         public virtual DbSet<TicketCategory> TicketCategories { get; set; }
-
         public virtual DbSet<TicketSubCategory> TicketSubCategories {  get; set; } 
         public virtual DbSet<TicketTechnician> TicketTechnicians { get; set; }
 
-        //Phase 2
+        //Pms Setup
 
         public virtual DbSet<PmsForm> PmsForms { get; set; }
         public virtual DbSet<PmsQuestionaireModule> PmsQuestionaireModules { get; set; }
         public virtual DbSet<PmsQuestionaire> PmsQuestionaires { get; set; }
         public virtual DbSet<QuestionTransactionId> QuestionTransactionIds { get; set; }
-
-
+        public virtual DbSet<PmsQuestionType> PmsQuestionTypes { get; set; }
 
 
         //Phase 3

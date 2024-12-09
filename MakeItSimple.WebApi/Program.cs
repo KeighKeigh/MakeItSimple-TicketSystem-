@@ -20,12 +20,8 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.Hubs;
 using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
-
-
 
 var connectionString = builder.Configuration.GetConnectionString("Testing");
 builder.Services.AddDbContext<MisDbContext>(x =>

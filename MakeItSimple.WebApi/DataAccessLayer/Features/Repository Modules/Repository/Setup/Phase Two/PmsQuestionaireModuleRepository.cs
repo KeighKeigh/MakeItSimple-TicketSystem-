@@ -30,9 +30,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             await context.PmsQuestionaireModules.AddAsync(create);
         }
 
-        public async Task<bool> QuestionaireModuleNameAlreadyExist(string pmsQModuleName)
+        public async Task<bool> QuestionaireModuleNameAlreadyExist(string pmsQModuleName, string currentQModuleName)
         {
-            return await context.PmsQuestionaireModules.AnyAsync(x => x.QuestionaireModuleName.Equals(pmsQModuleName));
+            if (string.IsNullOrEmpty(currentQModuleName))
+                return await context.PmsQuestionaireModules
+                    .AnyAsync(x => x.QuestionaireModuleName == pmsQModuleName);
+
+            return await context.PmsQuestionaireModules
+                .Where(x => x.QuestionaireModuleName == pmsQModuleName
+                && !pmsQModuleName.Equals(currentQModuleName))
+                .AnyAsync();
         }
 
         public IQueryable<PmsQuestionaireModule> SearchPmsForm(string search)

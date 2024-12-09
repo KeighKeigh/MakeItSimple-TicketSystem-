@@ -25,14 +25,14 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_
                 if (pmsIdNotExist is null)
                     return Result.Failure(PmsFormError.PmsFormIdNotExist());
 
-                var formNameAlreadyExist = await unitOfWork.PmsForm.FormNameAlreadyExist(command.Form_Name);
+                var formNameAlreadyExist = await unitOfWork.PmsForm
+                    .FormNameAlreadyExist(command.Form_Name,pmsIdNotExist.Form_Name);
                 if (formNameAlreadyExist)
                     return Result.Failure(PmsFormError.PmsFormAlreadyExist());
 
                await unitOfWork.PmsForm.UpdatePmsForm(command);
-       
+                
                 await unitOfWork.SaveChangesAsync(cancellationToken);
-
                 return Result.Success();
             }
         }

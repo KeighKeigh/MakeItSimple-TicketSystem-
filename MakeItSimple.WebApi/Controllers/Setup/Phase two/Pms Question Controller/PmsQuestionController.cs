@@ -1,7 +1,12 @@
-﻿using MediatR;
+﻿using MakeItSimple.WebApi.Common.ConstantString;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Create_Pms_Questionaire.CreatePmsQuestion;
+
 
 namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controller
 {
@@ -9,29 +14,42 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
     [ApiController]
     public class PmsQuestionController : ControllerBase
     {
-        private readonly IMediator mediator;
 
-        public PmsQuestionController(IMediator mediator)
+        private readonly IMediator mediator;
+        private readonly MisDbContext context;
+
+        public PmsQuestionController(IMediator mediator,MisDbContext context)
         {
             this.mediator = mediator;
+            this.context = context;
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> CreatePmsQuestion([FromBody] CreatePmsQuestionCommand command)
         {
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
+
                 if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
                 {
                     command.Added_By = userId;
                 }
                 var result = await mediator.Send(command);
 
-                return result.IsFailure ? BadRequest(result) : Ok(result);
+                if (result.IsFailure)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(result);
+                }
+
+                await transaction.CommitAsync();
+                return Ok(result);
 
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 return Conflict(ex.Message);
             }
         }
