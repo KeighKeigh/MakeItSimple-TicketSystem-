@@ -21,5 +21,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Errors.Setup.Phase_two
 
         public static Error PmsQuestionTypeDuplicated() =>
         new Error("PmsQuestionaire.PmsQuestionTypeDuplicated", "Pms question type was duplicate!");
+        public static Error PmsQuestionTypeNotExist() =>
+        new Error("PmsQuestionaire.PmsQuestionTypeNotExist", "Pms question type not exist!");
+
     }
 }

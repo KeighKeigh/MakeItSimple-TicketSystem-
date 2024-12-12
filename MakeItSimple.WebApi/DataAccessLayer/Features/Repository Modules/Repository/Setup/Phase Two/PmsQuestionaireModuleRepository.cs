@@ -77,7 +77,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
         {
             return await context.PmsQuestionaireModules.FindAsync(id);
         }
-
         public Task UpdatePmsQuestionaireModule(UpdatePmsQuestionaireModuleCommand pmsQModules)
         {
 
@@ -110,7 +109,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             {
                 Id = id,
                 IsActive = !status,
-
             };
 
             context.PmsQuestionaireModules.Attach(pmsUpdate);

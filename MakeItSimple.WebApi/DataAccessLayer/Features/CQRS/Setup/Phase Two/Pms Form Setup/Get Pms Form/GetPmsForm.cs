@@ -26,9 +26,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
             public async Task<PagedList<GetPmsFormResult>> Handle(GetPmsFormQuery request, CancellationToken cancellationToken)
             {
                  IQueryable<PmsForm> query = context.PmsForms
-                     .AsNoTrackingWithIdentityResolution()
-                     .Include(q => q.AddedByUser)
-                     .Include(q => q.ModifiedByUser)
+                     .AsNoTracking()
                      .OrderBy(x => x.Id)
                      .AsSplitQuery();
 
@@ -57,6 +55,26 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Setup.Phase_Two.Pms_Form_
                         {
                             Id = pqm.Id,
                             Question_Module_Name = pqm.QuestionaireModuleName,
+                            PmsQuestions = pqm.QuestionTransactionIds
+                            .GroupBy(x => new
+                            {
+                                x.PmsQuestionaireModuleId,
+                                x.PmsQuestionaireId,
+                            })
+                            .Select(x => new GetPmsFormResult.PmsQuestionModule.PmsQuestion
+                            {
+                                Id = x.Key.PmsQuestionaireModuleId,
+                                Question_Name = x.First().PmsQuestionaire.Question,
+                                Question_Type = x.First().PmsQuestionaire.QuestionType,
+                                QuestionTypeChoices = x.First().PmsQuestionaire.PmsQuestionTypes
+                                .Select(x => new GetPmsFormResult.PmsQuestionModule.PmsQuestion.QuestionTypeChoice
+                                {
+                                    Id = x.Id,
+                                    Description = x.Description,
+                                   
+                                }).ToList(),
+
+                            }).ToList(),
 
                         }).ToList()
 

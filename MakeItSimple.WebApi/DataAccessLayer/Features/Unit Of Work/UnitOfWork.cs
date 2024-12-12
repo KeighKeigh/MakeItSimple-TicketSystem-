@@ -26,6 +26,20 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
 
         public IPmsQuestionRepository PmsQuestion { get; }
 
+        public async Task CommitTransaction()
+        {
+            using var transaction = await context.Database.BeginTransactionAsync();
+
+            await transaction.CommitAsync();
+        }
+
+        public async Task RollBackTransaction()
+        {
+           using var transaction = await context.Database.BeginTransactionAsync();
+
+            await transaction.RollbackAsync();
+        }
+
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
         {
             return await context.SaveChangesAsync(cancellationToken) > 0;

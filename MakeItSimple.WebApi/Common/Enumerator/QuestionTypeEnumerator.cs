@@ -5,5 +5,6 @@
         CheckBox,
         Dropdown,
         OpenField,
+        TextType,
     }
 }

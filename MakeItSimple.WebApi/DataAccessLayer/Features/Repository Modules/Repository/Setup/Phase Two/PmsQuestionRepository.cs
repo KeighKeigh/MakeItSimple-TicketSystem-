@@ -1,6 +1,6 @@
-﻿
+﻿using MakeItSimple.WebApi.Common.ConstantString;
+using MakeItSimple.WebApi.Common.Enumerator;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
-using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Create_Pms_Questionaire;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_Two;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +17,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             this.context = context;
         }
 
-
         public async Task<PmsQuestionaire> CreatePmsQuestion(CreatePmsQuestionCommand pmsQuestion)
         {
 
             var create = new PmsQuestionaire
             {
                 Question = pmsQuestion.Question,
+                QuestionType = pmsQuestion.Question_Type,
                 AddedBy = pmsQuestion.Added_By,
             };
 
@@ -32,23 +32,23 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             return create;
         }
 
-        public async Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, int id)
+        public async Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, PmsQuestionaire question)
         {
             var create = new QuestionTransactionId
             {
                 PmsQuestionaireModuleId = pmsForm.PmsQuestionModuleId,
-                PmsQuestionId = id,
+                PmsQuestionaire = question,
             };
 
             await context.QuestionTransactionIds.AddAsync(create);
         }
 
-        public async Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType, int id, string questionType)
+        public async Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType,PmsQuestionaire question, string questionType)
         {
             var create = new PmsQuestionType
             {
-                Description = pmsQuestionType.Description,
-                PmsQuestionaireId = id,
+                Description = questionType.Contains(PmsConsString.TextType) ? "" : pmsQuestionType.Description,
+                PmsQuestionaire = question,
                 QuestionType = questionType,
 
             };
@@ -85,5 +85,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             return await context.PmsQuestionaires.FindAsync(id);
         }
 
+        public async Task<bool> QuestionTypeNotExist(string questionType)
+        {
+
+            bool doesNotExist = Enum.TryParse(questionType,out QuestionTypeEnumerator result) ? true : false;
+            return await Task.FromResult(doesNotExist);
+
+        }
     }
 }

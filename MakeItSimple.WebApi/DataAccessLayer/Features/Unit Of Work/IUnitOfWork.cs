@@ -10,6 +10,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
         IPmsQuestionaireModulesRepository PmsQuestionaireModules { get; }
         IPmsQuestionRepository PmsQuestion { get; }
 
+        Task RollBackTransaction();
+        Task CommitTransaction();
+
         Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
 
     }

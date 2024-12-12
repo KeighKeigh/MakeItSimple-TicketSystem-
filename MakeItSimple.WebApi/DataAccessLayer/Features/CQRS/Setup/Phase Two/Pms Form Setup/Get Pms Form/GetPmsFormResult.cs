@@ -17,6 +17,22 @@
             {
                 public int Id { get; set; }
                 public string Question_Module_Name { get; set; }
+                public List<PmsQuestion> PmsQuestions { get; set; }
+
+                public record PmsQuestion
+                {
+                    public int Id { set; get; }
+                    public string Question_Name { get; set; }
+                    public string Question_Type { get; set; }
+                    public List<QuestionTypeChoice> QuestionTypeChoices { get; set; }
+
+                    public record QuestionTypeChoice
+                    {
+                        public int Id { get; set; }
+                        public string Description { get; set; }
+
+                    }
+                }
             }
 
 

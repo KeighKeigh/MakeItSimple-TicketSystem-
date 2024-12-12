@@ -1,4 +1,6 @@
-﻿using MakeItSimple.WebApi.Common;
+﻿using DocumentFormat.OpenXml.Office2013.Excel;
+using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Setup.Phase_two;
 using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 using MediatR;
@@ -26,6 +28,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_
                 if (questionAlreadyExist)
                     return Result.Failure(PmsQuestionaireError.PmsQuestionAlreadyExist());
 
+                var questionTypeNotExist = await unitOfWork.PmsQuestion.QuestionTypeNotExist(command.Question_Type);
+                if (!questionTypeNotExist)
+                    return Result.Failure(PmsQuestionaireError.PmsQuestionTypeNotExist());
+
                 var newPmsQuestion = await unitOfWork.PmsQuestion.CreatePmsQuestion(command);
 
                 foreach (var pmsQuestionModule in command.PmsQuestionModules)
@@ -39,7 +45,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_
                     if(pmsQuestionModuleNotExist is null)
                         return Result.Failure(PmsQuestionaireModuleError.PmsQuestionaireModuleIdNotExist());
 
-                    await unitOfWork.PmsQuestion.CreateQuestionTransaction(pmsQuestionModule, newPmsQuestion.Id);
+                    await unitOfWork.PmsQuestion.CreateQuestionTransaction(pmsQuestionModule, newPmsQuestion);
                 }
 
                 foreach (var questionType in command.PmsQuestionTypes)
@@ -47,13 +53,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_
                     if (command.PmsQuestionTypes.Count(x => x.Description == questionType.Description) > 1)
                         return Result.Failure(PmsQuestionaireError.PmsQuestionTypeDuplicated());
 
-                    var pmsQuestionTypeAlreadyExist = await unitOfWork.PmsQuestion
-                        .PmsQuestionTypeAlreadyExist(questionType.Description,null);
-                    if(pmsQuestionTypeAlreadyExist)
-                        return Result.Failure(PmsQuestionaireError.PmsQuestionTypeAlreadyExist());
+                    //var pmsQuestionTypeAlreadyExist = await unitOfWork.PmsQuestion
+                    //    .PmsQuestionTypeAlreadyExist(questionType.Description,null);
+                    //if(pmsQuestionTypeAlreadyExist)
+                    //    return Result.Failure(PmsQuestionaireError.PmsQuestionTypeAlreadyExist());
 
                     await unitOfWork.PmsQuestion
-                        .CreateQuestionType(questionType,newPmsQuestion.Id, command.Question_Type);
+                        .CreateQuestionType(questionType,newPmsQuestion, command.Question_Type);
                 }
 
                 await unitOfWork.SaveChangesAsync(cancellationToken);

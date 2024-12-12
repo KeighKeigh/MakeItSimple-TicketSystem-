@@ -9,8 +9,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
         Task<bool> PmsQuestionAlreadyExist(string pmsQuestion , string currentQuestion);
         Task<bool> PmsQuestionTypeAlreadyExist(string pmsQuestionType, string currentQuestionType);
         Task<PmsQuestionaire> PmsQuestionNotExist(int id);
+        Task<bool> QuestionTypeNotExist(string questionType);
         Task<PmsQuestionaire> CreatePmsQuestion(CreatePmsQuestionCommand pmsQuestion);
-        Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, int id);
-        Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType , int id, string questionType);
+        Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, PmsQuestionaire question);
+        Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType , PmsQuestionaire question, string questionType);
     }
 }

@@ -5,5 +5,6 @@
         public const string desc = "desc";
         public const string asc = "asc";
         public const string pmsQuestion = "pms_questionaires";
+        public const string TextType = "TextType";
     }
 }
