@@ -73,8 +73,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                     if (!string.IsNullOrEmpty(request.Search))
                     {
                         ticketConcernQuery = ticketConcernQuery
-                            .Where(x => x.User.Fullname.Contains(request.Search)
-                        || x.User.SubUnit.SubUnitName.Contains(request.Search));
+                            .Where(x => x.User.Fullname.ToLower().Contains(request.Search.ToLower())
+                        || x.User.SubUnit.SubUnitName.ToLower().Contains(request.Search.ToLower())
+                        || x.Id.ToString().Contains(request.Search));
 
                     }
 

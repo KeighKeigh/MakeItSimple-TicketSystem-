@@ -1,8 +1,11 @@
-﻿using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+﻿using MakeItSimple.WebApi.Common.Extension;
+using MakeItSimple.WebApi.Common;
+using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Create_Pms_Questionaire.CreatePmsQuestion;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Get_Pms_Question.GetPmsQuestion;
 
 
 namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controller
@@ -29,7 +32,6 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
             try
             {
 
-
                 if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
                 {
                     command.Added_By = userId;
@@ -38,20 +40,55 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
 
                 if (result.IsFailure)
                 {
-                    //await unitOfWork.RollBackTransaction();
                     await transaction.RollbackAsync();
                     return BadRequest(result);
                 }
 
-                //await unitOfWork.CommitTransaction();
                 await transaction.CommitAsync();
                 return Ok(result);
 
             }
             catch (Exception ex)
             {
-                //await unitOfWork.RollBackTransaction();
                 await transaction.RollbackAsync();
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("page")]
+        public async Task<IActionResult> GetPmsQuestion([FromQuery] GetPmsQuestionQuery query)
+        {
+            try
+            {
+                var pmsQuestion = await mediator.Send(query);
+
+                Response.AddPaginationHeader(
+
+                pmsQuestion.CurrentPage,
+                pmsQuestion.PageSize,
+                pmsQuestion.TotalCount,
+                pmsQuestion.TotalPages,
+                pmsQuestion.HasPreviousPage,
+                pmsQuestion.HasNextPage
+
+                );
+                var result = new
+                {
+                    pmsQuestion,
+                    pmsQuestion.CurrentPage,
+                    pmsQuestion.PageSize,
+                    pmsQuestion.TotalCount,
+                    pmsQuestion.TotalPages,
+                    pmsQuestion.HasPreviousPage,
+                    pmsQuestion.HasNextPage
+                };
+
+                var successResult = Result.Success(result);
+                return Ok(successResult);
+
+            }
+            catch (Exception ex)
+            {
                 return Conflict(ex.Message);
             }
         }

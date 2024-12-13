@@ -16,7 +16,6 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
                 UserRoleName = "Admin",
                 Permissions = new List<string>
                 { "Overview","User Management","User Role","User Account","Channel","Filing","Generate","Masterlist","Company","Business Unit","Unit","Location","Sub Unit","Department","Category","Sub Category","Channel Setup","Approver","Receiver Concerns","Receiver","Reports" },
-
                 CreatedAt = DateTime.Parse("2024-01-08"),
             });
 
@@ -32,7 +31,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
             builder.HasOne(ur => ur.AddedByUser)
                     .WithMany()
                     .HasForeignKey(ur => ur.AddedBy)
-                     .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(ur => ur.ModifiedByUser)
                    .WithMany()

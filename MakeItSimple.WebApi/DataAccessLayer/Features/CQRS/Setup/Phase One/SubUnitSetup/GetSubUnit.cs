@@ -77,8 +77,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.SubUnitSetup
 
                 if (!string.IsNullOrEmpty(request.Search))
                 {
-                    subUnitQuery = subUnitQuery.Where(x => x.SubUnitCode.Contains(request.Search)
-                    || x.SubUnitName.Contains(request.Search));
+                    subUnitQuery = subUnitQuery.Where(x => x.SubUnitCode.ToLower().Contains(request.Search.ToLower())
+                    || x.SubUnitName.ToLower().Contains(request.Search.ToLower()));
                 }
 
                 if (request.Status != null)

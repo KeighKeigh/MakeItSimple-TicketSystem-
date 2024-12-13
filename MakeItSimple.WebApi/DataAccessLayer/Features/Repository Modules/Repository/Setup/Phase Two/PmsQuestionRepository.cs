@@ -3,6 +3,7 @@ using MakeItSimple.WebApi.Common.Enumerator;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_Two;
 using MakeItSimple.WebApi.Models.Setup.Phase_Two;
+using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using Microsoft.EntityFrameworkCore;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Create_Pms_Questionaire.CreatePmsQuestion;
 
@@ -92,5 +93,38 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
             return await Task.FromResult(doesNotExist);
 
         }
+
+        public IQueryable<PmsQuestionaire> SearchPmsForm(string search)
+        {
+            return context.PmsQuestionaires.Where(x => x.Question.ToLower().Contains(search));
+        }
+        public IQueryable<PmsQuestionaire> ArchivedPmsForm(bool? is_Archived)
+        {
+            return context.PmsQuestionaires.Where(q => q.IsActive == is_Archived);
+        }
+        public IQueryable<PmsQuestionaire> OrdersPmsForm(string order_By)
+        {
+            var query = context.PmsQuestionaires.AsQueryable();
+
+            switch (order_By)
+            {
+                case PmsConsString.asc:
+                    query = query.OrderBy(x => x.Id);
+                    break;
+
+                case PmsConsString.desc:
+                    query = query.OrderByDescending(x => x.Id);
+                    break;
+
+                default:
+                    query = query.OrderBy(x => x.Question);
+                    break;
+            }
+
+            return query;
+        }
+
+
+
     }
 }

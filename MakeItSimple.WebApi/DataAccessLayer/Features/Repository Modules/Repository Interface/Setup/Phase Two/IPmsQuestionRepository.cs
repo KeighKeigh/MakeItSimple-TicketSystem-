@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.Models.Setup.Phase_Two;
+using MakeItSimple.WebApi.Models.Setup.Phase_Two.Pms_Form_Setup;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Create_Pms_Questionaire.CreatePmsQuestion;
 
 
@@ -13,5 +14,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Reposi
         Task<PmsQuestionaire> CreatePmsQuestion(CreatePmsQuestionCommand pmsQuestion);
         Task CreateQuestionTransaction(CreatePmsQuestionCommand.PmsQuestionModule pmsForm, PmsQuestionaire question);
         Task CreateQuestionType(CreatePmsQuestionCommand.PmsQuestionType pmsQuestionType , PmsQuestionaire question, string questionType);
+
+        IQueryable<PmsQuestionaire> SearchPmsForm(string search);
+        IQueryable<PmsQuestionaire> ArchivedPmsForm(bool? is_Archived);
+        IQueryable<PmsQuestionaire> OrdersPmsForm(string order_By);
     }
 }

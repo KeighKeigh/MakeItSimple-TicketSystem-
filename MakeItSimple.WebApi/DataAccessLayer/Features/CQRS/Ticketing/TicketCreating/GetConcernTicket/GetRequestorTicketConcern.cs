@@ -85,7 +85,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                             .Where(x => x.User.Fullname
                             .Contains(request.Search)
                             || x.Id.ToString().Contains(request.Search)
-                            || x.Concern.Contains(request.Search));
+                            || x.Concern.ToLower().Contains(request.Search.ToLower()));
                     }
 
                     if (request.Status != null)

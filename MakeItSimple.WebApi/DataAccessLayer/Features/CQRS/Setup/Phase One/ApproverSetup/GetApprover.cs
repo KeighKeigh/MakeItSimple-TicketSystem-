@@ -56,7 +56,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.ApproverSetup
 
                 if (!string.IsNullOrEmpty(request.Search))
                 {
-                    approverQuery = approverQuery.Where(x => x.Channel.ChannelName.Contains(request.Search));
+                    approverQuery = approverQuery
+                        .Where(x => x.SubUnit.SubUnitCode.ToLower().Contains(request.Search.ToLower()) ||
+                         x.SubUnit.SubUnitName.ToLower().Contains(request.Search.ToLower()));
                 }
 
 

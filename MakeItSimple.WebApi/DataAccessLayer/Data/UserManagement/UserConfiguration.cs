@@ -19,12 +19,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
                 CreatedAt = DateTime.Parse("2024-01-08"),
             });
 
-
             builder.HasOne(u => u.AddedByUser)
            .WithMany()
            .HasForeignKey(u => u.AddedBy)
            .OnDelete(DeleteBehavior.Restrict);
-
 
             builder.HasOne(u => u.ModifiedByUser)
            .WithMany()
@@ -32,8 +30,5 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement
             .OnDelete(DeleteBehavior.Restrict);
 
         }
-
-
-
     }
 }
